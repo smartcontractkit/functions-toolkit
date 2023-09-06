@@ -1,0 +1,9 @@
+{
+  "deno.enablePaths": ["/src/simulateScript/deno-sandbox/"],
+  "deno.lint": true,
+  "deno.unstable": true,
+  "deno.enable": true,
+  "markdown.extension.toc.omittedFromToc": {
+    "README.md": ["# functions-toolkit"]
+  }
+}

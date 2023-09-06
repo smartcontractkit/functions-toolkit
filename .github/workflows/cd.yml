@@ -1,0 +1,71 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  # This job will either:
+  # 1. Upsert a "version" pull request if there are changesets and publish a dev snapshot to NPM
+  # 2. Publish an official version to NPM if there are no changesets
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: '18'
+          # When registry-url is specified, a .npmrc file referencing NODE_AUTH_TOKEN
+          # is created. This is needed for the changesets action to publish to NPM.
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Run npm ci
+        run: npm ci
+
+      - name: Setup project
+        run: npm run build
+
+      - name: Create Release Pull Request or Publish to NPM
+        id: changesets
+        uses: changesets/action@f13b1baaa620fde937751f5d2c3572b9da32af23
+        with:
+          publish: npx changeset publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Action needs NPM_TOKEN https://github.com/changesets/action#with-publishing
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # actions/setup-node creates an .npmrc file that references NODE_AUTH_TOKEN
+          # https://github.com/actions/setup-node/blob/5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d/docs/advanced-usage.md?plain=1#L346
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # The step above only calls the publish script if
+      # there are no changesets to publish. When there are no changesets
+      # to publish, it means that "changesets version" was run, consuming
+      # the changesets.
+      #
+      # If there are changesets to publish, then the publish script is not
+      # called, and the changesets are not consumed.
+      # This means that we're in a "snapshot" state, and we should publish
+      # a snapshot version for previewing.
+      - name: Publish dev snapshot
+        if: steps.changesets.outputs.published != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # actions/setup-node creates an .npmrc file that references NODE_AUTH_TOKEN
+          # https://github.com/actions/setup-node/blob/5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d/docs/advanced-usage.md?plain=1#L346
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # We need to checkout main again because the changesets action
+          # consumes the changesets via "changeset version", but we 
+          # want to do a snapshot versioning instead, hence checking out
+          # main again.
+          git checkout main 
+          npx changeset version --snapshot
+          npx changeset publish --tag dev

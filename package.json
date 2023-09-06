@@ -1,0 +1,78 @@
+{
+  "name": "@chainlink/functions-toolkit",
+  "private": false,
+  "version": "0.0.2",
+  "description": "An NPM package with collection of functions that can be used for working with Chainlink Functions.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "rimraf dist && tsc -P tsconfig.build.json && cpy src/simulateScript/deno-sandbox/**/* dist/simulateScript/deno-sandbox",
+    "build:browser": "webpack && browserify dist/simulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/simulateScript.bundle.js",
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:package": "jest --config jest.config.package.js",
+    "lint": "prettier --check . && tsc --noEmit",
+    "lint:fix": "npx prettier -w ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartcontractkit/functions-toolkit.git"
+  },
+  "keywords": [
+    "chainlink",
+    "functions",
+    "blockchain",
+    "oracle"
+  ],
+  "author": "Morgan Kuphal (@KuphJr) & Zubin Pratap (@ZeusLawyer)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smartcontractkit/functions-toolkit/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/smartcontractkit/functions-toolkit#readme",
+  "devDependencies": {
+    "@babel/core": "7.21.8",
+    "@babel/preset-env": "7.21.5",
+    "@babel/preset-typescript": "7.21.5",
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.2",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.3",
+    "@types/prettier": "^2.7.2",
+    "babel-loader": "9.1.2",
+    "browserify": "17.0.0",
+    "cpy-cli": "^5.0.0",
+    "esmify": "2.1.1",
+    "jest": "^29.5.0",
+    "nock": "^13.3.1",
+    "prettier": "^2.8.8",
+    "rimraf": "^5.0.1",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4",
+    "webpack": "5.82.1",
+    "webpack-cli": "5.1.1"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "arrowParens": "avoid",
+    "proseWrap": "preserve"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "bcrypto": "^5.4.0",
+    "cbor": "^9.0.1",
+    "eth-crypto": "^2.6.0",
+    "ethers": "^5.7.2",
+    "ganache": "^7.9.1",
+    "uniq": "^1.0.1"
+  }
+}

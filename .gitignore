@@ -1,0 +1,8 @@
+node_modules
+/test/hardhat/node_modules
+/test/hardhat/build
+/test/hardhat/.openzeppelin
+/coverage
+coverage.json
+.DS_Store
+dist

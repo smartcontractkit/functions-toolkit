@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declarationMap": false,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*", "src/**/*.json"],
+  "exclude": ["dist", "**/*.spec.ts", "**/*.test.ts", "src/simulateScript/deno-sandbox/**/*.ts"]
+}

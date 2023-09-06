@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*", "src/**/*.json", "test/**/*", "test/**/*.json"],
+  "exclude": ["dist", "src/simulateScript/deno-sandbox/**/*.ts"]
+}

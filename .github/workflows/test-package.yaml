@@ -1,0 +1,36 @@
+name: Package Artifact Tests
+
+on:
+  pull_request:
+
+jobs:
+  test-package-artifacts:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG_TEST_SETUP: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Deno
+        uses: denolib/setup-deno@v2
+        with:
+          deno-version: '1.36.2'
+
+      - name: Build package artifacts
+        run: npm run build
+
+      - name: Remove source files
+        run: rm -rf src
+
+      - name: Run tests against package artifacts
+        run: npm run test:package
