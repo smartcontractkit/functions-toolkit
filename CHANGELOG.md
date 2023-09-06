@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.0.3
+
+### Patch Changes
+
+- [#1](https://github.com/smartcontractkit/functions-toolkit/pull/1) [`2dc777d`](https://github.com/smartcontractkit/functions-toolkit/commit/2dc777de7316974405e5bf669ae4bbacbe5e09a5) Thanks [@KuphJr](https://github.com/KuphJr)! - Test CI workflow
+
 ## 0.0.2
 
 ### Patch Changes
