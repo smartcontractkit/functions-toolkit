@@ -13,6 +13,7 @@ import {
   callReportGasLimit,
   simulatedSecretsKeys,
   simulatedTransmitters,
+  numberOfSimulatedNodeExecutions,
 } from './simulationConfig'
 import {
   LinkTokenSource,
@@ -23,9 +24,9 @@ import {
   FunctionsClientExampleSource,
 } from './v1_contract_sources'
 
-import type { Server, Ethereum } from 'ganache'
+import type { Server, ServerOptions } from 'ganache'
 
-import type { FunctionsRequestParams, RequestCommitment } from './types'
+import type { FunctionsRequestParams, RequestCommitment, SimulationResult } from './types'
 
 export interface RequestEventData {
   requestId: string
@@ -49,6 +50,8 @@ interface FunctionsContracts {
 
 export const startLocalFunctionsTestnet = async (
   port = 8545,
+  secrets?: Record<string, string>,
+  options?: ServerOptions,
 ): Promise<
   {
     server: Server
@@ -63,13 +66,7 @@ export const startLocalFunctionsTestnet = async (
     close: () => Promise<void>
   } & FunctionsContracts
 > => {
-  const server = Ganache.server({
-    logging: {
-      debug: false,
-      verbose: false,
-      quiet: true,
-    },
-  })
+  const server = Ganache.server(options)
 
   server.listen(port, 'localhost', (err: Error | null) => {
     if (err) {
@@ -113,7 +110,7 @@ export const startLocalFunctionsTestnet = async (
         callbackGasLimit,
         commitment,
       }
-      handleOracleRequest(requestEvent, contracts.mockCoordinator, admin)
+      handleOracleRequest(requestEvent, contracts.mockCoordinator, admin, secrets)
     },
   )
 
@@ -155,14 +152,11 @@ const handleOracleRequest = async (
   requestEventData: RequestEventData,
   mockCoordinator: Contract,
   admin: Wallet,
+  secrets: Record<string, string> = {},
 ) => {
   const requestData = await constructRequestDataObject(requestEventData.data)
-  const response = await simulateScript({
-    source: requestData.source,
-    secrets: {}, // TODO: Decrypt secrets
-    args: requestData.args,
-    // TODO: Support bytes args
-  })
+  const response = await simulateDONExecution(requestData, secrets)
+
   const errorHexstring = response.errorString
     ? '0x' + Buffer.from(response.errorString.toString()).toString('hex')
     : undefined
@@ -181,6 +175,76 @@ const handleOracleRequest = async (
     .connect(admin)
     .callReport(encodedReport, transmitters31AddressArray, { gasLimit: callReportGasLimit })
   await reportTx.wait(1)
+}
+
+const simulateDONExecution = async (
+  requestData: FunctionsRequestParams,
+  secrets: Record<string, string>,
+): Promise<{ responseBytesHexstring?: string; errorString?: string }> => {
+  // Perform the simulation numberOfSimulatedNodeExecution times
+  const simulations = [...Array(numberOfSimulatedNodeExecutions)].map(() =>
+    simulateScript({
+      source: requestData.source,
+      secrets,
+      args: requestData.args,
+      bytesArgs: requestData.bytesArgs,
+    }),
+  )
+  const responses = await Promise.all(simulations)
+
+  const successfulResponses = responses.filter(response => response.errorString === undefined)
+  const errorResponses = responses.filter(response => response.errorString !== undefined)
+
+  if (successfulResponses.length > errorResponses.length) {
+    return {
+      responseBytesHexstring: aggregateMedian(
+        successfulResponses.map(response => response.responseBytesHexstring!),
+      ),
+    }
+  } else {
+    return {
+      errorString: aggregateModeString(errorResponses.map(response => response.errorString!)),
+    }
+  }
+}
+
+const aggregateMedian = (responses: string[]): string => {
+  const bufResponses = responses.map(response => Buffer.from(response.slice(2), 'hex'))
+
+  bufResponses.sort((a, b) => {
+    if (a.length !== b.length) {
+      return a.length - b.length
+    }
+    for (let i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) {
+        return a[i] - b[i]
+      }
+    }
+    return 0
+  })
+
+  return '0x' + bufResponses[Math.floor((bufResponses.length - 1) / 2)].toString('hex')
+}
+
+const aggregateModeString = (items: string[]): string => {
+  const counts = new Map<string, number>()
+
+  for (const str of items) {
+    const existingCount = counts.get(str) || 0
+    counts.set(str, existingCount + 1)
+  }
+
+  let modeString = items[0]
+  let maxCount = counts.get(modeString) || 0
+
+  for (const [str, count] of counts.entries()) {
+    if (count > maxCount) {
+      maxCount = count
+      modeString = str
+    }
+  }
+
+  return modeString
 }
 
 const encodeReport = (
@@ -226,35 +290,37 @@ const encodeReport = (
 
 const constructRequestDataObject = async (requestData: string): Promise<FunctionsRequestParams> => {
   const decodedRequestData = await cbor.decodeAll(Buffer.from(requestData.slice(2), 'hex'))
+
   const requestDataObject = {} as FunctionsRequestParams
 
   for (let i = 0; i < decodedRequestData.length - 1; i += 2) {
     const elem = decodedRequestData[i]
-    // TODO: support encrypted secrets & bytesArgs
     switch (elem) {
       case 'codeLocation':
         requestDataObject.codeLocation = decodedRequestData[i + 1]
         break
-      // case 'secretsLocation':
-      //   requestDataObject.secretsLocation = decodedRequestData[i + 1]
-      //   break
+      case 'secretsLocation':
+        // Unused as secrets provided as an argument to startLocalFunctionsTestnet() are used instead
+        break
       case 'language':
         requestDataObject.codeLanguage = decodedRequestData[i + 1]
         break
       case 'source':
         requestDataObject.source = decodedRequestData[i + 1]
         break
-      // case 'encryptedSecretsReference':
-      //   requestDataObject.encryptedSecretsReference = decodedRequestData[i + 1]
-      //   break
+      case 'secrets':
+        // Unused as secrets provided as an argument to startLocalFunctionsTestnet() are used instead
+        break
       case 'args':
         requestDataObject.args = decodedRequestData[i + 1]
         break
-      // case 'bytesArgs':
-      //   requestDataObject.bytesArgs = decodedRequestData[i + 1]
-      //   break
-      // default:
-      //   throw Error(`Invalid request data key ${elem}`)
+      case 'bytesArgs':
+        requestDataObject.bytesArgs = decodedRequestData[i + 1].map((bytesArg: Buffer) => {
+          return '0x' + bytesArg.toString('hex')
+        })
+        break
+      default:
+      // Ignore unknown keys
     }
   }
 

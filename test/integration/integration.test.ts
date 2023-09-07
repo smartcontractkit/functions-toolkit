@@ -28,7 +28,14 @@ describe('Functions toolkit classes', () => {
   let subFunder_A: Wallet
 
   beforeAll(async () => {
-    const localFunctionsTestnet = await startLocalFunctionsTestnet()
+    const port = 8001
+    const localFunctionsTestnet = await startLocalFunctionsTestnet(port, undefined, {
+      logging: {
+        debug: false,
+        verbose: false,
+        quiet: true,
+      },
+    })
 
     linkTokenContract = localFunctionsTestnet.linkToken
     linkTokenAddress = localFunctionsTestnet.linkToken.address
@@ -38,7 +45,10 @@ describe('Functions toolkit classes', () => {
     consumerAddress = localFunctionsTestnet.exampleClient.address
     close = localFunctionsTestnet.close
 
-    const [admin, walletA, walletB, walletC, _] = createTestWallets(localFunctionsTestnet.server)
+    const [admin, walletA, walletB, walletC, _] = createTestWallets(
+      localFunctionsTestnet.server,
+      port,
+    )
     allowlistedUser_A = walletA
     allowlistedUser_B_NoLINK = walletB
     subFunder_A = walletC

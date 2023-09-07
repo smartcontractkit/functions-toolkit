@@ -20,8 +20,14 @@ describe('Functions toolkit classes', () => {
   let allowlistedUser_A: Wallet
 
   beforeAll(async () => {
-    const port = 9501
-    const localFunctionsTestnet = await startLocalFunctionsTestnet(port)
+    const port = 8002
+    const localFunctionsTestnet = await startLocalFunctionsTestnet(port, undefined, {
+      logging: {
+        debug: false,
+        verbose: false,
+        quiet: true,
+      },
+    })
 
     linkTokenAddress = localFunctionsTestnet.linkToken.address
     functionsRouterAddress = localFunctionsTestnet.router.address

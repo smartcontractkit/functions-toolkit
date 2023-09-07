@@ -28,13 +28,9 @@ describe('simulateScript', () => {
       const server = createTestServer()
       const port = (server.address() as AddressInfo).port
 
-      console.log(port)
-
       const result = await simulateScript({
         source: `const response = await fetch('http://localhost:${port}'); const jsonResponse = await response.json(); console.log(jsonResponse); return Functions.encodeString(jsonResponse.message);`,
       })
-
-      console.log(result)
 
       const expected = {
         capturedTerminalOutput: '{ message: "Hello, world!" }\n',

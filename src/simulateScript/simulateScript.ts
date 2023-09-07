@@ -74,8 +74,7 @@ export const simulateScript = async ({
 
   // Check if deno is installed
   try {
-    const result = execSync('deno --version', { stdio: 'pipe' })
-    console.log(`Performing simulation with the following versions:\n${result.toString()}\n`)
+    execSync('deno --version', { stdio: 'pipe' })
   } catch {
     throw Error(
       'Deno must be installed and accessible via the PATH environment variable (ie: the `deno --version` command must work).\nVisit https://deno.land/#installation for installation instructions.',
