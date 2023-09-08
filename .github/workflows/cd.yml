@@ -27,7 +27,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Run npm ci
-        run: npm ci --no-optional
+        run: npm ci --omit=optional
 
       - name: Setup project
         run: npm run build
