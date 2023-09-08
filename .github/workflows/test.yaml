@@ -19,7 +19,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci --omit=optional
+        run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency
 
       - name: Setup Deno
         uses: denolib/setup-deno@v2
