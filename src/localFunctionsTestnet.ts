@@ -139,7 +139,7 @@ const handleOracleRequest = async (
   admin: Wallet,
   secrets: Record<string, string> = {},
 ) => {
-  const requestData = await constructRequestDataObject(requestEventData.data)
+  const requestData = await buildRequestDataObject(requestEventData.data)
   const response = await simulateDONExecution(requestData, secrets)
 
   const errorHexstring = response.errorString
@@ -273,7 +273,7 @@ const encodeReport = (
   return encodedReport
 }
 
-const constructRequestDataObject = async (requestData: string): Promise<FunctionsRequestParams> => {
+const buildRequestDataObject = async (requestData: string): Promise<FunctionsRequestParams> => {
   const decodedRequestData = await cbor.decodeAll(Buffer.from(requestData.slice(2), 'hex'))
 
   const requestDataObject = {} as FunctionsRequestParams
