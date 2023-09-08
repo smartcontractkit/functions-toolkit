@@ -27,8 +27,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Run npm ci
-        run: npm ci
-        continue-on-error: true # This is required to ignore unsupported platform errors due to the fsevents sub-dependency
+        run: npm ci --no-optional
 
       - name: Setup project
         run: npm run build
