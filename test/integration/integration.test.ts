@@ -1553,7 +1553,7 @@ describe('Functions toolkit classes', () => {
             'https://dongateway.com/uploadSuccess1',
             'https://dongateway.com/uploadSuccess2',
           ],
-          storageSlotId: 0,
+          slotId: 0,
           minutesUntilExpiration: 10,
         })
 
@@ -1570,7 +1570,7 @@ describe('Functions toolkit classes', () => {
         const result = await sm.uploadEncryptedSecretsToDON({
           encryptedSecretsHexstring: '0xaaaa',
           gatewayUrls: ['https://dongateway.com/1NodeFail'],
-          storageSlotId: 0,
+          slotId: 0,
           minutesUntilExpiration: 10,
         })
 
@@ -1589,7 +1589,7 @@ describe('Functions toolkit classes', () => {
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
               gatewayUrls: ['https://dongateway.com/allNodeFail'],
-              storageSlotId: 0,
+              slotId: 0,
               minutesUntilExpiration: 10,
             }),
         ).rejects.toThrow(/All nodes failed to store the encrypted secrets/)
@@ -1604,7 +1604,7 @@ describe('Functions toolkit classes', () => {
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
               gatewayUrls: [],
-              storageSlotId: 0,
+              slotId: 0,
               minutesUntilExpiration: 10,
             }),
         ).rejects.toThrow(/gatewayUrls must be a non-empty array of strings/)
@@ -1619,7 +1619,7 @@ describe('Functions toolkit classes', () => {
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
               gatewayUrls: ['Invalid URL'],
-              storageSlotId: 0,
+              slotId: 0,
               minutesUntilExpiration: 10,
             }),
         ).rejects.toThrow(/is not a valid URL/)
@@ -1634,7 +1634,7 @@ describe('Functions toolkit classes', () => {
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: 'aaaa',
               gatewayUrls: ['https://dongateway.com/uploadSuccess1'],
-              storageSlotId: 0,
+              slotId: 0,
               minutesUntilExpiration: 10,
             }),
         ).rejects.toThrow(/encryptedSecretsHexstring must be a valid hex string/)
@@ -1649,10 +1649,10 @@ describe('Functions toolkit classes', () => {
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
               gatewayUrls: ['https://dongateway.com/uploadSuccess1'],
-              storageSlotId: -1,
+              slotId: -1,
               minutesUntilExpiration: 10,
             }),
-        ).rejects.toThrow(/storageSlotId must be a integer of at least 0/)
+        ).rejects.toThrow(/slotId must be a integer of at least 0/)
       })
 
       it('Throws error for invalid expiration', async () => {
@@ -1664,7 +1664,7 @@ describe('Functions toolkit classes', () => {
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
               gatewayUrls: ['https://dongateway.com/uploadSuccess1'],
-              storageSlotId: 0,
+              slotId: 0,
               minutesUntilExpiration: 4,
             }),
         ).rejects.toThrow(/minutesUntilExpiration must be an integer of at least 5/)
@@ -1681,7 +1681,7 @@ describe('Functions toolkit classes', () => {
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
               gatewayUrls: ['https://dongateway.com/uploadSuccess1', 'https://dongateway.com/fail'],
-              storageSlotId: 0,
+              slotId: 0,
               minutesUntilExpiration: 10,
             }),
         ).rejects.toThrow(
