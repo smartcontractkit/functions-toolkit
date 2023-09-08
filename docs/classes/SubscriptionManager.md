@@ -1,4 +1,4 @@
-[@chainlink/functions-toolkit](../README.md) / [Exports](../modules.md) / SubscriptionManager
+[@chainlink/functions-toolkit](../README.md) / SubscriptionManager
 
 # Class: SubscriptionManager
 
@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[SubscriptionManager.ts:32](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L32)
+[SubscriptionManager.ts:32](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L32)
 
 ## Properties
 
@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[SubscriptionManager.ts:29](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L29)
+[SubscriptionManager.ts:29](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L29)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:28](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L28)
+[SubscriptionManager.ts:28](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L28)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:30](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L30)
+[SubscriptionManager.ts:30](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L30)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:27](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L27)
+[SubscriptionManager.ts:27](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L27)
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:26](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L26)
+[SubscriptionManager.ts:26](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L26)
 
 ## Methods
 
@@ -111,7 +111,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`SubTransferAcceptConfig`](../modules.md#subtransferacceptconfig) |
+| `«destructured»` | [`SubTransferAcceptConfig`](../README.md#subtransferacceptconfig) |
 
 #### Returns
 
@@ -119,7 +119,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:414](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L414)
+[SubscriptionManager.ts:414](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L414)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`SubConsumerConfig`](../modules.md#subconsumerconfig) |
+| `«destructured»` | [`SubConsumerConfig`](../README.md#subconsumerconfig) |
 
 #### Returns
 
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:136](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L136)
+[SubscriptionManager.ts:136](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L136)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`SubCancelConfig`](../modules.md#subcancelconfig) |
+| `«destructured»` | [`SubCancelConfig`](../README.md#subcancelconfig) |
 
 #### Returns
 
@@ -159,7 +159,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:270](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L270)
+[SubscriptionManager.ts:270](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L270)
 
 ___
 
@@ -171,7 +171,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `subCreateConfig?` | [`SubCreateConfig`](../modules.md#subcreateconfig) |
+| `subCreateConfig?` | [`SubCreateConfig`](../README.md#subcreateconfig) |
 
 #### Returns
 
@@ -179,7 +179,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:93](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L93)
+[SubscriptionManager.ts:93](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L93)
 
 ___
 
@@ -191,7 +191,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`EstimateCostConfig`](../modules.md#estimatecostconfig) |
+| `«destructured»` | [`EstimateCostConfig`](../README.md#estimatecostconfig) |
 
 #### Returns
 
@@ -199,7 +199,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:471](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L471)
+[SubscriptionManager.ts:471](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L471)
 
 ___
 
@@ -211,7 +211,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `config` | [`SubFundConfig`](../modules.md#subfundconfig) |
+| `config` | [`SubFundConfig`](../README.md#subfundconfig) |
 
 #### Returns
 
@@ -219,13 +219,13 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:188](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L188)
+[SubscriptionManager.ts:188](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L188)
 
 ___
 
 ### getSubscriptionInfo
 
-▸ **getSubscriptionInfo**(`subscriptionId`): `Promise`<[`SubscriptionInfo`](../modules.md#subscriptioninfo)\>
+▸ **getSubscriptionInfo**(`subscriptionId`): `Promise`<[`SubscriptionInfo`](../README.md#subscriptioninfo)\>
 
 #### Parameters
 
@@ -235,11 +235,11 @@ ___
 
 #### Returns
 
-`Promise`<[`SubscriptionInfo`](../modules.md#subscriptioninfo)\>
+`Promise`<[`SubscriptionInfo`](../README.md#subscriptioninfo)\>
 
 #### Defined in
 
-[SubscriptionManager.ts:248](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L248)
+[SubscriptionManager.ts:248](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L248)
 
 ___
 
@@ -253,7 +253,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:51](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L51)
+[SubscriptionManager.ts:51](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L51)
 
 ___
 
@@ -273,7 +273,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:83](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L83)
+[SubscriptionManager.ts:83](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L83)
 
 ___
 
@@ -287,7 +287,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:75](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L75)
+[SubscriptionManager.ts:75](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L75)
 
 ___
 
@@ -299,7 +299,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`SubConsumerConfig`](../modules.md#subconsumerconfig) |
+| `«destructured»` | [`SubConsumerConfig`](../README.md#subconsumerconfig) |
 
 #### Returns
 
@@ -307,7 +307,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:318](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L318)
+[SubscriptionManager.ts:318](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L318)
 
 ___
 
@@ -319,7 +319,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`SubTransferConfig`](../modules.md#subtransferconfig) |
+| `«destructured»` | [`SubTransferConfig`](../README.md#subtransferconfig) |
 
 #### Returns
 
@@ -327,7 +327,7 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:370](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L370)
+[SubscriptionManager.ts:370](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L370)
 
 ___
 
@@ -339,7 +339,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`SubTimeoutConfig`](../modules.md#subtimeoutconfig) |
+| `«destructured»` | [`SubTimeoutConfig`](../README.md#subtimeoutconfig) |
 
 #### Returns
 
@@ -347,4 +347,4 @@ ___
 
 #### Defined in
 
-[SubscriptionManager.ts:447](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SubscriptionManager.ts#L447)
+[SubscriptionManager.ts:447](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SubscriptionManager.ts#L447)

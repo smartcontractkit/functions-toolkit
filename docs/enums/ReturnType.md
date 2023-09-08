@@ -1,4 +1,4 @@
-[@chainlink/functions-toolkit](../README.md) / [Exports](../modules.md) / ReturnType
+[@chainlink/functions-toolkit](../README.md) / ReturnType
 
 # Enumeration: ReturnType
 
@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[types.ts:19](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L19)
+[types.ts:19](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L19)
 
 ___
 
@@ -31,7 +31,7 @@ ___
 
 #### Defined in
 
-[types.ts:16](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L16)
+[types.ts:16](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L16)
 
 ___
 
@@ -41,7 +41,7 @@ ___
 
 #### Defined in
 
-[types.ts:17](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L17)
+[types.ts:17](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L17)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[types.ts:18](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L18)
+[types.ts:18](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L18)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[types.ts:14](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L14)
+[types.ts:14](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L14)
 
 ___
 
@@ -71,4 +71,4 @@ ___
 
 #### Defined in
 
-[types.ts:15](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L15)
+[types.ts:15](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L15)

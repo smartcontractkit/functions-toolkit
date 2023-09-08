@@ -1,4 +1,4 @@
-[@chainlink/functions-toolkit](../README.md) / [Exports](../modules.md) / Location
+[@chainlink/functions-toolkit](../README.md) / Location
 
 # Enumeration: Location
 
@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[types.ts:6](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L6)
+[types.ts:6](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L6)
 
 ___
 
@@ -28,7 +28,7 @@ ___
 
 #### Defined in
 
-[types.ts:4](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L4)
+[types.ts:4](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L4)
 
 ___
 
@@ -38,4 +38,4 @@ ___
 
 #### Defined in
 
-[types.ts:5](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L5)
+[types.ts:5](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L5)

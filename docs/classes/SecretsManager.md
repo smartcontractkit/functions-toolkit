@@ -1,4 +1,4 @@
-[@chainlink/functions-toolkit](../README.md) / [Exports](../modules.md) / SecretsManager
+[@chainlink/functions-toolkit](../README.md) / SecretsManager
 
 # Class: SecretsManager
 
@@ -51,7 +51,7 @@
 
 #### Defined in
 
-[SecretsManager.ts:27](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L27)
+[SecretsManager.ts:27](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L27)
 
 ## Properties
 
@@ -61,7 +61,7 @@
 
 #### Defined in
 
-[SecretsManager.ts:24](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L24)
+[SecretsManager.ts:24](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L24)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:23](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L23)
+[SecretsManager.ts:23](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L23)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:22](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L22)
+[SecretsManager.ts:22](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L22)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:25](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L25)
+[SecretsManager.ts:25](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L25)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:21](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L21)
+[SecretsManager.ts:21](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L21)
 
 ## Methods
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:464](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L464)
+[SecretsManager.ts:464](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L464)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`GatewayMessageConfig`](../modules.md#gatewaymessageconfig) |
+| `«destructured»` | [`GatewayMessageConfig`](../README.md#gatewaymessageconfig) |
 
 #### Returns
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:317](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L317)
+[SecretsManager.ts:317](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L317)
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`GatewayMessageBody`](../modules.md#gatewaymessagebody) |
+| `«destructured»` | [`GatewayMessageBody`](../README.md#gatewaymessagebody) |
 
 #### Returns
 
@@ -163,7 +163,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:343](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L343)
+[SecretsManager.ts:343](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L343)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:141](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L141)
+[SecretsManager.ts:141](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L141)
 
 ___
 
@@ -203,13 +203,13 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:92](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L92)
+[SecretsManager.ts:92](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L92)
 
 ___
 
 ### extractNodeResponses
 
-▸ `Private` **extractNodeResponses**(`gatewayResponse`): [`NodeResponse`](../modules.md#noderesponse)[]
+▸ `Private` **extractNodeResponses**(`gatewayResponse`): [`NodeResponse`](../README.md#noderesponse)[]
 
 #### Parameters
 
@@ -219,27 +219,27 @@ ___
 
 #### Returns
 
-[`NodeResponse`](../modules.md#noderesponse)[]
+[`NodeResponse`](../README.md#noderesponse)[]
 
 #### Defined in
 
-[SecretsManager.ts:381](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L381)
+[SecretsManager.ts:381](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L381)
 
 ___
 
 ### fetchKeys
 
-▸ **fetchKeys**(): `Promise`<{ `donPublicKey`: `string` ; `thresholdPublicKey`: [`ThresholdPublicKey`](../modules.md#thresholdpublickey)  }\>
+▸ **fetchKeys**(): `Promise`<{ `donPublicKey`: `string` ; `thresholdPublicKey`: [`ThresholdPublicKey`](../README.md#thresholdpublickey)  }\>
 
 #### Returns
 
-`Promise`<{ `donPublicKey`: `string` ; `thresholdPublicKey`: [`ThresholdPublicKey`](../modules.md#thresholdpublickey)  }\>
+`Promise`<{ `donPublicKey`: `string` ; `thresholdPublicKey`: [`ThresholdPublicKey`](../README.md#thresholdpublickey)  }\>
 
 a Promise that resolves to an object that contains the DONpublicKey and an object that maps node addresses to their public keys
 
 #### Defined in
 
-[SecretsManager.ts:76](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L76)
+[SecretsManager.ts:76](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L76)
 
 ___
 
@@ -253,7 +253,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:46](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L46)
+[SecretsManager.ts:46](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L46)
 
 ___
 
@@ -267,13 +267,13 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:67](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L67)
+[SecretsManager.ts:67](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L67)
 
 ___
 
 ### listDONHostedEncryptedSecrets
 
-▸ **listDONHostedEncryptedSecrets**(`gatewayUrls`): `Promise`<{ `error?`: `string` ; `result`: [`GatewayResponse`](../modules.md#gatewayresponse)[]  }\>
+▸ **listDONHostedEncryptedSecrets**(`gatewayUrls`): `Promise`<{ `error?`: `string` ; `result`: [`GatewayResponse`](../README.md#gatewayresponse)[]  }\>
 
 #### Parameters
 
@@ -283,31 +283,31 @@ ___
 
 #### Returns
 
-`Promise`<{ `error?`: `string` ; `result`: [`GatewayResponse`](../modules.md#gatewayresponse)[]  }\>
+`Promise`<{ `error?`: `string` ; `result`: [`GatewayResponse`](../README.md#gatewayresponse)[]  }\>
 
 #### Defined in
 
-[SecretsManager.ts:403](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L403)
+[SecretsManager.ts:403](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L403)
 
 ___
 
 ### sendMessageToGateways
 
-▸ `Private` **sendMessageToGateways**(`gatewayRpcMessageConfig`): `Promise`<[`GatewayResponse`](../modules.md#gatewayresponse)[]\>
+▸ `Private` **sendMessageToGateways**(`gatewayRpcMessageConfig`): `Promise`<[`GatewayResponse`](../README.md#gatewayresponse)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `gatewayRpcMessageConfig` | [`GatewayMessageConfig`](../modules.md#gatewaymessageconfig) |
+| `gatewayRpcMessageConfig` | [`GatewayMessageConfig`](../README.md#gatewaymessageconfig) |
 
 #### Returns
 
-`Promise`<[`GatewayResponse`](../modules.md#gatewayresponse)[]\>
+`Promise`<[`GatewayResponse`](../README.md#gatewayresponse)[]\>
 
 #### Defined in
 
-[SecretsManager.ts:284](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L284)
+[SecretsManager.ts:284](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L284)
 
 ___
 
@@ -331,7 +331,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:186](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L186)
+[SecretsManager.ts:186](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L186)
 
 ___
 
@@ -351,7 +351,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:270](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L270)
+[SecretsManager.ts:270](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L270)
 
 ___
 
@@ -363,7 +363,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `gatewayResponses` | [`GatewayResponse`](../modules.md#gatewayresponse)[] |
+| `gatewayResponses` | [`GatewayResponse`](../README.md#gatewayresponse)[] |
 
 #### Returns
 
@@ -371,7 +371,7 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:423](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L423)
+[SecretsManager.ts:423](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L423)
 
 ___
 
@@ -391,4 +391,4 @@ ___
 
 #### Defined in
 
-[SecretsManager.ts:109](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/SecretsManager.ts#L109)
+[SecretsManager.ts:109](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/SecretsManager.ts#L109)

@@ -13,7 +13,7 @@
     "test:package": "jest --config jest.config.package.js",
     "lint": "prettier --check . && tsc --noEmit",
     "lint:fix": "npx prettier -w .",
-    "docgen": "typedoc --plugin typedoc-plugin-markdown"
+    "docgen": "typedoc --plugin typedoc-plugin-markdown --readme none"
   },
   "repository": {
     "type": "git",

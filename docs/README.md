@@ -1,620 +1,891 @@
-@chainlink/functions-toolkit / [Exports](modules.md)
+@chainlink/functions-toolkit
+
+# @chainlink/functions-toolkit
+
+## Table of contents
+
+### Enumerations
+
+- [CodeLanguage](enums/CodeLanguage.md)
+- [FulfillmentCode](enums/FulfillmentCode.md)
+- [Location](enums/Location.md)
+- [ReturnType](enums/ReturnType.md)
+
+### Classes
+
+- [ResponseListener](classes/ResponseListener.md)
+- [SecretsManager](classes/SecretsManager.md)
+- [SubscriptionManager](classes/SubscriptionManager.md)
 
-# functions-toolkit
+### Interfaces
 
-An NPM package with collections of JavaScript functions that can be used for working with [Chainlink Functions](https://chain.link/functions).
+- [RequestEventData](interfaces/RequestEventData.md)
+- [SimulationInput](interfaces/SimulationInput.md)
 
-Up-to-date documentation on Chainlink Functions can be found [here](https://docs.chain.link/chainlink-functions).
+### Type Aliases
 
-> :warning: Chainlink Functions requires signing a terms of service agreement before creating a billing subscription. See this [getting started](https://docs.chain.link/chainlink-functions/getting-started) section in the docs.
+- [DONStoragePayload](README.md#donstoragepayload)
+- [DecodedResult](README.md#decodedresult)
+- [EncryptedSecretsEntry](README.md#encryptedsecretsentry)
+- [EstimateCostConfig](README.md#estimatecostconfig)
+- [FunctionsRequestParams](README.md#functionsrequestparams)
+- [FunctionsResponse](README.md#functionsresponse)
+- [GatewayMessage](README.md#gatewaymessage)
+- [GatewayMessageBody](README.md#gatewaymessagebody)
+- [GatewayMessageConfig](README.md#gatewaymessageconfig)
+- [GatewayResponse](README.md#gatewayresponse)
+- [NodeResponse](README.md#noderesponse)
+- [RequestCommitment](README.md#requestcommitment)
+- [SimulationResult](README.md#simulationresult)
+- [SubCancelConfig](README.md#subcancelconfig)
+- [SubConsumerConfig](README.md#subconsumerconfig)
+- [SubCreateConfig](README.md#subcreateconfig)
+- [SubFundConfig](README.md#subfundconfig)
+- [SubTimeoutConfig](README.md#subtimeoutconfig)
+- [SubTransferAcceptConfig](README.md#subtransferacceptconfig)
+- [SubTransferConfig](README.md#subtransferconfig)
+- [SubscriptionInfo](README.md#subscriptioninfo)
+- [ThresholdPublicKey](README.md#thresholdpublickey)
+- [TransactionOptions](README.md#transactionoptions)
 
-# How to use this package
+### Variables
 
-The following classes expose functionality one would expect from their name.
+- [DEFAULT\_MAX\_EXECUTION\_DURATION\_MS](README.md#default_max_execution_duration_ms)
+- [DEFAULT\_MAX\_HTTP\_REQUESTS](README.md#default_max_http_requests)
+- [DEFAULT\_MAX\_HTTP\_REQUEST\_BYTES](README.md#default_max_http_request_bytes)
+- [DEFAULT\_MAX\_HTTP\_REQUEST\_DURATION\_MS](README.md#default_max_http_request_duration_ms)
+- [DEFAULT\_MAX\_HTTP\_REQUEST\_URL\_LENGTH](README.md#default_max_http_request_url_length)
+- [DEFAULT\_MAX\_HTTP\_RESPONSE\_BYTES](README.md#default_max_http_response_bytes)
+- [DEFAULT\_MAX\_MEMORY\_USAGE\_MB](README.md#default_max_memory_usage_mb)
+- [DEFAULT\_MAX\_ON\_CHAIN\_RESPONSE\_BYTES](README.md#default_max_on_chain_response_bytes)
+- [callReportGasLimit](README.md#callreportgaslimit)
+- [simulatedAllowListConfig](README.md#simulatedallowlistconfig)
+- [simulatedAllowListId](README.md#simulatedallowlistid)
+- [simulatedCoordinatorConfig](README.md#simulatedcoordinatorconfig)
+- [simulatedDonId](README.md#simulateddonid)
+- [simulatedLinkEthPrice](README.md#simulatedlinkethprice)
+- [simulatedRouterConfig](README.md#simulatedrouterconfig)
+- [simulatedSecretsKeys](README.md#simulatedsecretskeys)
+- [simulatedTransmitters](README.md#simulatedtransmitters)
+- [simulatedWallets](README.md#simulatedwallets)
 
-- [Subscription Manager](#functions-billing-subscription-management)
-- [Secrets Manager](#functions-secrets-manager)
+### Functions
 
-The following utilities are exposed by this package.
+- [buildRequestCBOR](README.md#buildrequestcbor)
+- [createGist](README.md#creategist)
+- [decodeResult](README.md#decoderesult)
+- [deleteGist](README.md#deletegist)
+- [deployFunctionsOracle](README.md#deployfunctionsoracle)
+- [simulateScript](README.md#simulatescript)
+- [startLocalFunctionsTestnet](README.md#startlocalfunctionstestnet)
 
-- [Simulate code execution on your local machine](#local-functions-simulator) (local simulation of your custom JS source code execution)
+## Type Aliases
 
-## Functions Billing Subscription Management
+### DONStoragePayload
 
-The `SubscriptionManager` class is used to manage the Chainlink billing [subscription](https://docs.chain.link/chainlink-functions/resources/concepts#subscriptions) used to pay for Functions requests.
+Ƭ **DONStoragePayload**: `Object`
 
-The typical subscriptions-related operations are
+#### Type declaration
 
-- [How to use this package](#how-to-use-this-package)
-  - [Functions Billing Subscription Management](#functions-billing-subscription-management)
-    - [Subscription Initialization](#subscription-initialization)
-    - [Create Subscription](#create-subscription)
-    - [Fund Subscription](#fund-subscription)
-    - [Adding/Removing Authorized Consumer Contracts](#addingremoving-authorized-consumer-contracts)
-    - [Cancelling Subscriptions](#cancelling-subscriptions)
-    - [Transferring and Accepting Transfers of Subscriptions](#transferring-and-accepting-transfers-of-subscriptions)
-    - [Get subscription details](#get-subscription-details)
-    - [Timing out requests](#timing-out-requests)
-    - [Estimating request costs](#estimating-request-costs)
-    - [Adding transaction options](#adding-transaction-options)
-  - [Functions Secrets Manager](#functions-secrets-manager)
-    - [Initialize a SecretsManager instance](#initialize-a-secretsmanager-instance)
-    - [Fetch public keys](#fetch-public-keys)
-    - [Encrypting Secrets](#encrypting-secrets)
-    - [DON Hosted Secrets](#don-hosted-secrets)
-    - [Off-chain Hosted Secrets](#off-chain-hosted-secrets)
-  - [Functions Response Listener](#functions-response-listener)
-  - [Functions Utilities](#functions-utilities)
-    - [Local Functions Simulator](#local-functions-simulator)
-    - [Decoding Response Bytes](#decoding-response-bytes)
-    - [Storing Encrypted Secrets in Gists](#storing-encrypted-secrets-in-gists)
-    - [Building Functions Request CBOR Bytes](#building-functions-request-cbor-bytes)
+| Name | Type |
+| :------ | :------ |
+| `expiration` | `number` |
+| `payload` | `string` |
+| `signature` | `string` |
+| `slot_id` | `number` |
+| `version` | `number` |
 
-### Subscription Initialization
+#### Defined in
 
-To create a Subscription Manager you need an object with 3 inputs.
+[types.ts:112](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L112)
 
-1. an instance of the [Ethers.js Signer class](https://docs.ethers.org/v5/api/signer/#Signer). Ensure you have a [Provider](https://docs.ethers.org/v5/api/providers/) connected so you can communicate with the blockchain through your endpoint provider. You can use Infura or Alchemy or any other similar provider that provides access to [blockchains that Chainlink Functions supports](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
-2. You need the contract address for the LINK token used to fund subscriptions. Get that for the matching blockchain network [here](https://docs.chain.link/resources/link-token-contracts).
-3. The contract address for the Functions Router smart contract. Get that [here](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
+___
 
-Then create an instance of the Subscription Manager by passing those 3 inputs in as follows:
+### DecodedResult
 
-> const subscriptionManager = new SubscriptionManager({
-> signer: [Signer](https://docs.ethers.org/v5/api/signer/#Signer),
-> [linkTokenAddress](https://docs.chain.link/resources/link-token-contracts): string
-> [functionsRouterAddress](https://docs.chain.link/chainlink-functions/supported-networks): string
-> })
+Ƭ **DecodedResult**: `BigInt` \| `string`
 
-After the class is instantiated, it must be initialized before it can be used. This is done by running the `initialize` async function as shown below:
+#### Defined in
 
-```
-await subscriptionManager.initialize()
-```
+[decodeResult.ts:3](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/decodeResult.ts#L3)
 
-### Create Subscription
+___
 
-`createSubscription()` creates a new Functions billing subscription using the Functions Router contract and returns a promise which resolves to the subscription ID of type `number`. Optionally, a consumer contract address can also be passed to create a subscription and add an authorized consumer in a single transaction.
+### EncryptedSecretsEntry
 
-```
-const subscriptionId = await subscriptionManager.createSubscription({
-  consumerAddress?: string
-})
-```
+Ƭ **EncryptedSecretsEntry**: `Object`
 
-It is a good idea to make a note of your subscription ID as you will put funds in it. You'll also pass your subscription ID as an input for many operations when you're using Chainlink Functions.
+#### Type declaration
 
-### Fund Subscription
+| Name | Type |
+| :------ | :------ |
+| `expiration` | `number` |
+| `slot_id` | `number` |
+| `version` | `number` |
 
-Adds LINK token to your subscription. You must have LINK balance sitting in your subscription in order to fund the gas used by the response transaction, and also to fund the decentralized computation/execution of your custom code that will be performed by the Chainlink Decentralized Oracle Network.
+#### Defined in
 
-To fund the subscription with LINK, ensure the wallet that you have connected to your Provider has LINK. You can get some testnet LINK from the [faucet](https://faucets.chain.link).
+[types.ts:145](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L145)
 
-Note that all values are denominated in [Juels](https://docs.chain.link/resources/link-token-contracts). 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. Do not use the JavaScript `number` type for calculations with Juels as the maximum safe JavaScript integer is only `2^54 - 1`.
+___
 
-```
-const juelsAmount:  BigInt | string = BigInt(2) * BigInt(10**18)
-await subscriptionManager.fundSubscription({
-  subscriptionId,
-  juelsAmount,
-})
-```
+### EstimateCostConfig
 
-`fundSubscription()` returns a promise which resolves to an EthersJS [TransactionReceipt](https://docs.ethers.org/v5/api/providers/types/#providers-TransactionReceipt)
+Ƭ **EstimateCostConfig**: `Object`
 
-### Adding/Removing Authorized Consumer Contracts
+#### Type declaration
 
-A Functions Consumer smart contract is where you will trigger your Functions execution request to the Chainlink Oracle Network. This is also where the Oracle Network will return the results of your decentralized computation. A visualization of this request/response flow is below.
+| Name | Type |
+| :------ | :------ |
+| `callbackGasLimit` | `number` |
+| `donId` | `string` |
+| `gasPriceGwei` | `BigInt` |
+| `subscriptionId` | `BigInt` \| `number` \| `string` |
 
-![Request/Response Flow](https://docs.chain.link/images/chainlink-functions/requestAndReceive.png)
-([source](<(https://docs.chain.link/chainlink-functions/resources/architecture)>))
+#### Defined in
 
-Each subscription can hold a limited number of authorized Functions Consumers. Refer to the [service limits](https://docs.chain.link/chainlink-functions/resources/service-limits) to view the maximum number of consumer contracts per subscription. These are the consumer contracts that are authorized to use your subscription's LINK balance to fund the Oracle Network's compute tasks on your custom code.
+[types.ts:82](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L82)
 
-```
-const addConsumerTxReceipt = await subscriptionManager.addConsumer({
-  subscriptionId,
-  consumerAddress,
-})
-```
+___
 
-Similarly you can remove an authorized consumer contract with:
+### FunctionsRequestParams
 
-```
-const removeConsumerTxReceipt = await subscriptionManager.removeConsumer({
-  subscriptionId,
-  consumerAddress,
-})
-```
+Ƭ **FunctionsRequestParams**: `Object`
 
-Both `addConsumer()` and `removeConsumer()` return a promise which resolves to an EthersJS [TransactionReceipt](https://docs.ethers.org/v5/api/providers/types/#providers-TransactionReceipt).
+#### Type declaration
 
-### Cancelling Subscriptions
+| Name | Type |
+| :------ | :------ |
+| `args?` | `string`[] |
+| `bytesArgs?` | `string`[] |
+| `codeLanguage` | [`CodeLanguage`](enums/CodeLanguage.md) |
+| `codeLocation` | [`Location`](enums/Location.md) |
+| `encryptedSecretsReference?` | `string` |
+| `secretsLocation?` | [`Location`](enums/Location.md) |
+| `source` | `string` |
 
-Unless there is an expired pending request, you can cancel subscriptions with:
+#### Defined in
 
-```
-const cancelSubTxReceipt = await subscriptionManager.cancelSubscription({ subscriptionId })
-```
+[types.ts:22](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L22)
 
-`cancelSubscription()` takes a config object that has the following type definition. You'll note that you can specify a wallet address to which the subscription's LINK balance will be refunded. If unspecified, it will default to the subscription owner's address.
+___
 
-```
-type SubCancelConfig = {
-  subscriptionId: BigInt | number | string
-  refundAddress?: string
-  txOptions?: TransactionOptions
-}
-```
+### FunctionsResponse
 
-If there are any pending requests, you must first "time out" that pending request using the [timeoutRequest() function](#timing-out-requests) before cancelling the subscription.
+Ƭ **FunctionsResponse**: `Object`
 
-### Transferring and Accepting Transfers of Subscriptions
+#### Type declaration
 
-Transferring subscriptions is a two-stage process. The subscription owner proposes the transfer with `requestSubscriptionTransfer()` and it is recorded on chain, but the ownership does not transfer until the transferee accepts by calling `acceptTransfer()`.
+| Name | Type |
+| :------ | :------ |
+| `errorString` | `string` |
+| `fulfillmentCode` | [`FulfillmentCode`](enums/FulfillmentCode.md) |
+| `requestId` | `string` |
+| `responseBytesHexstring` | `string` |
+| `returnDataBytesHexstring` | `string` |
+| `subscriptionId` | `number` |
+| `totalCostInJuels` | `BigInt` |
 
-```
-const transferTxReceipt = await subscriptionManager.requestSubscriptionTransfer({
-  subscriptionId,
-  newOwner, // transferee wallet address
-})
-```
+#### Defined in
 
-To accept the ownership transfer, the transferee will need to have their own `SubscriptionManager` instance which is connected to the wallet address denoted by `newOwner` in the code snippet above. Then the transferee runs:
+[types.ts:171](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L171)
 
-```
-const acceptTransferTxReceipt =  await transfereeSubManager.acceptSubTransfer({ subscriptionId })
-```
+___
 
-### Get subscription details
+### GatewayMessage
 
-You can request details for a given subscription (on the network on which it has been created) using
+Ƭ **GatewayMessage**: `Object`
 
-```
-const subscriptionInfo = await getSubscriptionInfo(subscriptionId)
-```
+#### Type declaration
 
-This is a read-only interaction with the blockchain.
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+| `jsonrpc` | ``"2.0"`` |
+| `method` | `string` |
+| `params` | { `body`: [`GatewayMessageBody`](README.md#gatewaymessagebody) ; `signature`: `string`  } |
+| `params.body` | [`GatewayMessageBody`](README.md#gatewaymessagebody) |
+| `params.signature` | `string` |
 
-The returned promise - the variable `subscriptionInfo` in this example - resolves to a value of type `SubscriptionInfo` and has the following structure:
+#### Defined in
 
-```
-type SubscriptionInfo = {
-  balance: BigInt // Represented in Juels (1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK)
-  owner: string // Subscription owner's address
-  blockedBalance: BigInt // Balance reserved to pay for in-flight requests represented in Juels
-  proposedOwner: string // Address used for transferring subscriptions
-  consumers: string[] // Addresses of consumer contracts allowed to use the subscription
-  flags: string // Indicates resource limits for a given subscription (If the default limits are not enough for your use case, contact the Chainlink team by emailing support@chain.link to inquire about a potential increase.)
-}
-```
+[types.ts:135](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L135)
 
-### Timing out requests
+___
 
-In certain (rare) circumstances pending requests (requests that have not been fulfilled) will be expired and you may need to manually time those requests out. This is because when a request is "in-flight", your LINK tokens that pay for that computation get locked up for the duration of the request's lifecycle. Calling `timeoutRequest()` unlocks those funds and effectively 'cancels' that pending request.
+### GatewayMessageBody
 
-You can timeout more than one request in a single transaction.
+Ƭ **GatewayMessageBody**: `Object`
 
-```
-const timeoutReceipt: TransactionReceipt | void =  await timeoutRequests(timeoutReqConfig)
-```
+#### Type declaration
 
-The `timeoutReqConfig` referred to above has the following shape:
+| Name | Type |
+| :------ | :------ |
+| `don_id` | `string` |
+| `message_id` | `string` |
+| `method` | `string` |
+| `payload?` | [`DONStoragePayload`](README.md#donstoragepayload) |
+| `receiver` | `string` |
 
-```
-{
-  requestCommitments: RequestCommitment[]
-  txOptions?: TransactionOptions
-}
-```
+#### Defined in
 
-The `RequestCommitment` type refers to the data for the in-flight requests. Note that when timing out a request, all this data must exactly match the request commitment that was emitted on-chain by the `OracleRequest` event when the request was initiated.
+[types.ts:127](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L127)
 
-```
-type RequestCommitment = {
-  requestId: string
-  coordinator: string
-  estimatedTotalCostJuels: BigInt
-  client: string
-  subscriptionId: number
-  callbackGasLimit: BigInt
-  adminFee: BigInt
-  donFee: BigInt
-  gasOverheadBeforeCallback: BigInt
-  gasOverheadAfterCallback: BigInt
-  timeoutTimestamp: BigInt
-}
-```
+___
 
-### Estimating request costs
+### GatewayMessageConfig
 
-The SubscriptionManager class's `estimateFunctionsRequestCost` method can be used to estimate the cost of a Functions request.
+Ƭ **GatewayMessageConfig**: `Object`
 
-```
-const estimatedCostInJuels: BigInt = await subscriptionManager.estimateFunctionsRequestCost({
-  donId, // ID of the DON to which the Functions request will be sent
-  subscriptionId, // Subscription ID
-  callbackGasLimit, // Total gas used by the consumer contract's callback
-  gasPriceGwei, // Gas price in gWei
-})
-```
+#### Type declaration
 
-This method will return a promise which resolves to a `BigInt` with the estimated request cost in Juels (1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK).
+| Name | Type |
+| :------ | :------ |
+| `don_id` | `string` |
+| `gatewayUrls` | `string`[] |
+| `method` | `string` |
+| `payload?` | [`DONStoragePayload`](README.md#donstoragepayload) |
 
-### Adding transaction options
+#### Defined in
 
-The SubscriptionManager class's exposed methods can take an optional `TransactionOptions` object that has the following shape.
+[types.ts:120](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L120)
 
-```
-export type TransactionOptions = {
-  overrides?: Overrides
-  confirmations?: number
-}
-```
+___
 
-Overrides are defined by EthersJS for [read-only calls](https://docs.ethers.org/v5/api/contract/contract/#Contract-functionsCall) and for [write transactions](https://docs.ethers.org/v5/api/contract/contract/#Contract--write). `confirmations` refers to the number of block confirmations to wait before proceeding.
+### GatewayResponse
 
-## Functions Secrets Manager
+Ƭ **GatewayResponse**: `Object`
 
-This class helps you encrypt and manage the secrets that your Functions source code needs. These would be data you ordinarily put in your environment variables - such as API keys and auth related passwords etc.
+#### Type declaration
 
-Functions secrets utilize threshold public key cryptography, requiring multiple nodes to participate in a decentralized decryption process such that no single node can decrypt secrets singlehandedly.
+| Name | Type |
+| :------ | :------ |
+| `gatewayUrl` | `string` |
+| `nodeResponses` | [`NodeResponse`](README.md#noderesponse)[] |
 
-Encrypted secrets are never stored directly on the blockchain, but instead can be either hosted by the DON or stored in a JSON file located at one or more URLs. Then, they are referenced in an on-chain request where they are fetched by the DON.
+#### Defined in
 
-### Initialize a SecretsManager instance
+[types.ts:156](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L156)
 
-To create a Secrets Manager you need an object with 3 inputs.
+___
 
-1. An instance of the [Ethers.js Signer class](https://docs.ethers.org/v5/api/signer/#Signer). Ensure you have a [Provider](https://docs.ethers.org/v5/api/providers/) connected so you can communicate with the blockchain through your endpoint provider. You can use Infura or Alchemy or any other similar provider that provides access to [blockchains that Chainlink Functions supports](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
-2. The contract address for the Functions Router smart contract. Get that [here](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
-3. The `donId` string to reference the DON you would like to use which can also be found at the previous link.
+### NodeResponse
 
-> const secretsManager = new SecretsManager({
-> signer: [Signer](https://docs.ethers.org/v5/api/signer/#Signer),
-> [functionsRouterAddress](https://docs.chain.link/chainlink-functions/supported-networks): string
-> [donId](https://docs.chain.link/chainlink-functions/supported-networks): string
-> })
+Ƭ **NodeResponse**: `Object`
 
-After the class is instantiated, it must be initialized before it can be used. This is done by running the `initialize()` async method.
+#### Type declaration
 
-```
-await secretsManager.initialize()
-```
+| Name | Type |
+| :------ | :------ |
+| `rows?` | [`EncryptedSecretsEntry`](README.md#encryptedsecretsentry)[] |
+| `success` | `boolean` |
 
-### Fetch public keys
+#### Defined in
 
-You can fetch the public keys by querying the [Functions Coordinator contract](https://docs.chain.link/chainlink-functions/resources/architecture).
+[types.ts:151](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L151)
 
-In most cases you will not need to call this method directly. The other methods in `SecretsManager` will automatically use this method.
+___
 
-```
-const keys = await secretsManager.fetchKeys()
-```
+### RequestCommitment
 
-`fetchKeys()` returns a promise that resolves to an object with the following properties:
+Ƭ **RequestCommitment**: `Object`
 
-```
-{
-  thresholdPublicKey: ThresholdPublicKey
-  donPublicKey: string
-}
-```
+#### Type declaration
 
-The threshold public key is an added layer of cryptographic protection for the security of your API secrets. Your secrets get encrypted twice - first with the `donPublicKey` and then with the `thresholdPublicKey`.
+| Name | Type |
+| :------ | :------ |
+| `adminFee` | `BigInt` |
+| `callbackGasLimit` | `BigInt` |
+| `client` | `string` |
+| `coordinator` | `string` |
+| `donFee` | `BigInt` |
+| `estimatedTotalCostJuels` | `BigInt` |
+| `gasOverheadAfterCallback` | `BigInt` |
+| `gasOverheadBeforeCallback` | `BigInt` |
+| `requestId` | `string` |
+| `subscriptionId` | `number` |
+| `timeoutTimestamp` | `BigInt` |
 
-Encrypting with the `thresholdPublicKey` requires nodes to collaborate in order to decrypt secrets. This is because secrets cannot be decrypted with a single key; instead, each DON node has a decryption key shard, and multiple nodes must come together in a decentralized process to decrypt the secrets. This improves security since no single DON node can decrypt secrets without collaborating with other DON nodes.
+#### Defined in
 
-### Encrypting Secrets
+[types.ts:98](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L98)
 
-Secrets are encrypted by passing them in an object to the `encryptSecrets()` method.
+___
 
-Here are some important conditions you must satisfy when configuring your secrets for Chainlink Functions.
+### SimulationResult
 
-1. Secrets are optional. You do not need to configure secrets if your custom Functions source code does not need to access any secrets that get passed in at runtime.
-2. Your secrets must be passed in an object with string key/value pairs:
+Ƭ **SimulationResult**: `Object`
 
-```
-{
-  testKey: 'testValue1',
-  testKey2: 'testValue2',
-  testKey3: 'testValue3',
-}
-```
+#### Type declaration
 
-```
-const encryptedSecrets = await secretsManager.encryptSecrets({
-  testKey: 'testValue0'
-})
-```
+| Name | Type |
+| :------ | :------ |
+| `capturedTerminalOutput` | `string` |
+| `errorString?` | `string` |
+| `responseBytesHexstring?` | `string` |
 
-`encryptSecrets()` returns a promise that resolves to an object with a single property `encryptedSecrets`:
+#### Defined in
 
-```
-{
-  encryptedSecrets: string
-}
-```
+[types.ts:196](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L196)
 
-`encryptedSecrets` contains the string representation of your secrets, converted into bytes, and encrypted using the public keys.
+___
 
-### DON Hosted Secrets
+### SubCancelConfig
 
-Encrypted secrets can be uploaded directly to the DON via gateway URLs such that they can be used when making an on-chain request. This is accomplished by sending a signed POST request to gateway URLs which are connected to the DON. The DON then maintains a decentralized database with eventual consistency, such that the stored values will propagate to all DON nodes. To ensure redundancy, it is always recommended to send encrypted secrets storage requests to multiple gateway URLs.
+Ƭ **SubCancelConfig**: `Object`
 
-First, encrypt the secrets with [`encryptSecrets()`](#encrypting-secrets). Then, pass the `encryptedSecrets` hex string in an object to the `uploadEncryptedSecretsToDON()` method as shown below. The `storageSlotId` can be any integer value of zero or greater, however using a previously used slot ID will overwrite the existing data. After `minutesUntilExpiration`, the entry will be deleted from all DON nodes. Get the list of valid gateway URLs for each blockchain network from the [Chainlink Functions documentation](https://docs.chain.link/chainlink-functions/supported-networks).
+#### Type declaration
 
-```
-const encryptedSecretsObj = await secretsManager.encryptSecrets({ my: 'secret' })
-const mySlotIdNumber = 0
-const myExpirationTimeInMinutes = 10
+| Name | Type |
+| :------ | :------ |
+| `refundAddress?` | `string` |
+| `subscriptionId` | `BigInt` \| `number` \| `string` |
+| `txOptions?` | [`TransactionOptions`](README.md#transactionoptions) |
 
-const {
-  version, // Secrets version number (corresponds to timestamp when encrypted secrets were uploaded to DON)
-  success, // Boolean value indicating if encrypted secrets were successfully uploaded to all nodes connected to the gateway
-} = await secretsManager.uploadEncryptedSecretsToDON({
-  encryptedSecretsHexstring: encryptedSecretsObj.encryptedSecrets,
-  gatewayUrls: [ 'https://exampleGatewayUrl1.com/gateway', 'https://exampleGatewayUrl2.com/gateway', ... ],
-  storageSlotId: mySlotIdNumber,
-  minutesUntilExpiration: myExpirationTimeInMinutes,
-})
-```
+#### Defined in
 
-The `uploadEncryptedSecretsToDON()` method will return a promise that resolves to an object of the type shown below.
+[types.ts:61](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L61)
 
-```
-{
-  version: number,
-  success: boolean,
-}
-```
+___
 
-The `version` is a number which represents the version of the uploaded encrypted secrets; it is the POSIX time at which the `uploadEncryptedSecretsToDON()` method was initiated. This will be used when making a Functions request to ensure the latest version of the encrypted secrets are used. If the upload was unsuccessful for one or more nodes, a warning message will be printed and the `success` field will be `false`. If the upload was unsuccessful for all nodes, the method will throw an error.
+### SubConsumerConfig
 
-```
-const secretsEntriesForGateway = await secretsManager.listDONHostedEncryptedSecrets([ 'https://exampleGatewayUrl1.com/gateway', 'https://exampleGatewayUrl2.com/gateway', ... ])
-```
+Ƭ **SubConsumerConfig**: `Object`
 
-`listDONHostedEncryptedSecrets()` will return an array with following shape or throw an error. If the method successfully returns, but the `error` field of the returned object is populated, it indicates that the request to list secrets was successful, but there is a discrepancy between the node responses.
+#### Type declaration
 
-```
-{
-  result: [
-    {
-      gatewayUrl: 'https://examplegatewayurl.com/gateway',
-      nodeResponses: [
-        {
-          success: true,
-          rows: [
-            {
-              slot_id: 0,
-              version: 0,
-              expiration: 100_000,
-            },
-            ...
-          ],
-        },
-        ...
-      ],
-    },
-    ...
-  ],
-  error: 'Possible error message <may be undefined>'
-}
-```
+| Name | Type |
+| :------ | :------ |
+| `consumerAddress` | `string` |
+| `subscriptionId` | `BigInt` \| `number` \| `string` |
+| `txOptions?` | [`TransactionOptions`](README.md#transactionoptions) |
 
-`buildDONHostedEncryptedSecretsReference()` can be used to construct the hex string which represents the `encryptedSecretsReference` bytes used to reference the DON hosted encrypted secrets when making an on-chain Functions request. To use DON hosted encrypted secrets in an on-chain request, also ensure that `secretsLocation` is set to `Location.DONHosted` (ie: `2`).
+#### Defined in
 
-```
-const encryptedSecretsReference: string = buildDONHostedEncryptedSecretsReference({
-  slotId: number,
-  version: number
-})
-```
+[types.ts:49](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L49)
 
-### Off-chain Hosted Secrets
+___
 
-Encrypted secrets can also be stored off-chain in JSON file instead of being hosted on the DON, enabling more direct control over how the encrypted secrets data is stored. The DON nodes fetch this file from one or more URLs.
+### SubCreateConfig
 
-First encrypt the secrets with [`encryptSecrets()`](#encrypting-secrets) and then paste or upload the resulting object into a private Github Gist, cloud storage bucket or or any other location such that the encrypted secrets JSON object can be fetched by the DON via URL. These secrets are encrypted so even if they're public, your secrets are not visible.
+Ƭ **SubCreateConfig**: `Object`
 
-You can also use the [gist uploader utility function](#storing-encrypted-secrets-in-gists) to upload the encrypted secrets string to a JSON file in a Github Gist.
+#### Type declaration
 
-However you'd need to pass the URLs to your Functions Consumer contract so that the DON can retrieve the secrets.
+| Name | Type |
+| :------ | :------ |
+| `consumerAddress?` | `string` |
+| `txOptions?` | [`TransactionOptions`](README.md#transactionoptions) |
 
-**Note:** ⚠️ As an additional layer of security, the URLs must also encrypted with the DON Public key before being included in an on-chain transaction. This is to prevent directly exposing the URL to anyone except DON members. You can build the encrypted URLs with:
+#### Defined in
 
-> const encryptedURLs: string = await encryptSecretsUrls(secretsUrls: string[])
+[types.ts:44](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L44)
 
-The argument `secretsUrls` is an array of URLs and `encryptSecretsUrls()` returns the URLs as an encrypted, space-separated string of all the URLs you supply in the array.
+___
 
-## Functions Response Listener
+### SubFundConfig
 
-The `ResponseListener` class provides an easy way to listen for on-chain responses to Functions requests.
+Ƭ **SubFundConfig**: `Object`
 
-To create a Request Listener you need an object with 2 inputs.
+#### Type declaration
 
-1. An instance of an [Ethers.js provider](https://docs.ethers.org/v5/api/providers/). You can use Infura or Alchemy or any other similar provider that provides access to [blockchains that Chainlink Functions supports](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
-2. The contract address for the Functions Router smart contract. Get that [here](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
+| Name | Type |
+| :------ | :------ |
+| `juelsAmount` | `BigInt` \| `string` |
+| `subscriptionId` | `BigInt` \| `number` \| `string` |
+| `txOptions?` | [`TransactionOptions`](README.md#transactionoptions) |
 
-> const responseListener = new ResponseListener({
-> provider: [Provider](https://docs.ethers.org/v5/api/providers/),
-> [functionsRouterAddress](https://docs.chain.link/chainlink-functions/supported-networks): string,
-> })
+#### Defined in
 
-To listen for the response to a single Functions request by request ID, use the the `listenForResponse()` method. Optionally, you can provide a custom timeout after which the listener will throw an error indicating that the time limit was exceeded. If no timeout is provided, the default timeout is 300 seconds.
+[types.ts:55](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L55)
 
-**Note:** Listening for multiple responses simultaneously is not supported by the `listenForResponse()` method and will lead to undefined behavior.
+___
 
-```
-const response: FunctionsResponse = await responseListener.listenForResponse(
-  requestId: string,
-  timeout?: number,
-)
-```
+### SubTimeoutConfig
 
-The `FunctionsResponse` will have the following shape.
+Ƭ **SubTimeoutConfig**: `Object`
 
-```
-{
-  requestId: string // Request ID of the fulfilled request represented as a bytes32 hex string
-  subscriptionId: number // Subscription ID billed for request
-  totalCostInJuels: BigInt // Actual cost of request in Juels (1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK)
-  responseBytesHexstring: string // Response bytes sent to client contract represented as a hex string
-  errorString: string // Error bytes sent to client contract represented as a hex string
-  returnDataBytesHexstring: string // Data returned by consumer contract's handleOracleFulfillment method represented as a hex string
-  fulfillmentCode: FulfillmentCode // Indicates whether the request was fulfilled successfully or not
-}
-```
+#### Type declaration
 
-The possible fulfillment codes are shown below.
+| Name | Type |
+| :------ | :------ |
+| `requestCommitments` | [`RequestCommitment`](README.md#requestcommitment)[] |
+| `txOptions?` | [`TransactionOptions`](README.md#transactionoptions) |
 
-```
-{
-  FULFILLED = 0, // Indicates that calling the consumer contract's handleOracleFulfill method was successful
-  USER_CALLBACK_ERROR = 1, // Indicates that the consumer contract's handleOracleFulfill method reverted
-  INVALID_REQUEST_ID = 2, // Internal error
-  COST_EXCEEDS_COMMITMENT = 3, // Indicates that the request was not fulfilled because the cost of fulfillment is higher than the estimated cost due to an increase in gas prices
-  INSUFFICIENT_GAS_PROVIDED = 4, // Internal error
-  SUBSCRIPTION_BALANCE_INVARIANT_VIOLATION, // Internal error
-  INVALID_COMMITMENT = 6, // Internal error
-}
-```
+#### Defined in
 
-To listen for multiple Functions responses for a given subscription ID, use the `listenForResponses()` method. This method is particularly useful when Chainlink Automation is being used to trigger the sending of Functions requests. `listenForResponses()` takes the subscription ID and a callback as arguments. The callback will be given a `FunctionsResponse` as an argument.
+[types.ts:77](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L77)
 
-**Note:** To avoid undefined behavior, ensure only one listener method is running at a time.
+___
 
-```
-const callback = (response: FunctionsResponse) => { console.log(response) }
-responseListener.listenForResponses(
-  subscriptionId: number,
-  callback,
-)
-```
+### SubTransferAcceptConfig
 
-When done listener for responses, use the `stopListeningForResponses` method to stop the listener.
+Ƭ **SubTransferAcceptConfig**: `Object`
 
-```
-responseListener.stopListeningForResponses()
-```
+#### Type declaration
 
-## Functions Utilities
+| Name | Type |
+| :------ | :------ |
+| `subscriptionId` | `BigInt` \| `number` \| `string` |
+| `txOptions?` | [`TransactionOptions`](README.md#transactionoptions) |
 
-### Local Functions Simulator
+#### Defined in
 
-> The local Functions JavaScript simulator requires Deno to be installed on your machine be and accessible via the PATH environment variable (ie: the `deno --version` command must work).
-> Visit [deno.land/#installation](https://deno.land/#installation) for installation instructions.
+[types.ts:72](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L72)
 
-The `simulateScript` function is used to simulate the execution of your custom Functions JavaScript source code on your development machine. This means you can use the simulator during development to test your JavaScript code, and you can also run the simulator before you execute an on on-chain transaction that triggers a Functions request on a live network to verify your returns the expected value. This is useful for debugging especially since the `simulateScript` function returns captured terminal output which contains any console log messages or errors.
+___
 
-`simulateScript` takes an object as an argument with the following parameters shown below. Arguments that can be accessed within the source via the global variable `args` or `bytesArgs` which is are injected into the runtime. You can also add API keys and other secrets using the `secrets` object that gets injected as a global variable in the runtime.
+### SubTransferConfig
 
-```
-const result = await simulateScript({
-  source: string // JavaScript source code
-  args?: string[] // Array of string arguments accessible from the source code via the global variable `args`
-  bytesArgs?: string[] // Array of bytes arguments, represented as hex strings, accessible from the source code via the global variable `bytesArgs`
-  secrets?: Record<string, string> // Secret values represented as key-value pairs
-  maxOnChainResponseBytes?: number // Maximum size of the returned value in bytes (defaults to 256)
-  maxExecutionTimeMs?: number // Maximum execution duration (defaults to 10_000ms)
-  maxMemoryUsageMb?: number // Maximum RAM usage (defaults to 128mb)
-  numAllowedQueries?: number // Maximum number of HTTP requests (defaults to 5)
-  maxQueryDurationMs?: number // Maximum duration of each HTTP request (defaults to 9_000ms)
-  maxQueryUrlLength?: number // Maximum HTTP request URL length (defaults to 2048)
-  maxQueryRequestBytes?: number // Maximum size of outgoing HTTP request payload (defaults to 2048 == 2 KB)
-  maxQueryResponseBytes?: number // Maximum size of incoming HTTP response payload (defaults to 2_097_152 == 2 MB)
-})
-```
+Ƭ **SubTransferConfig**: `Object`
 
-`simulateScript` returns a promise which resolves to an object as shown below.
+#### Type declaration
 
-```
-{
-  responseBytesHexstring?: string // Response bytes which would be returned on-chain, represented as a hex string
-  errorString?: string // Error message that would be returned on-chain (either errorString or responseBytesHexstring will be defined)
-  capturedTerminalOutput: string // stdout or stderr terminal output captured during simulated execution
-}
-```
+| Name | Type |
+| :------ | :------ |
+| `newOwner` | `string` |
+| `subscriptionId` | `BigInt` \| `number` \| `string` |
+| `txOptions?` | [`TransactionOptions`](README.md#transactionoptions) |
 
-**_NOTE:_** The `simulateScript` function is a debugging tool and hence is not a perfect representation of the actual Chainlink oracle execution environment. Therefore, it is important to make a Functions request on a supported testnet blockchain before mainnet usage.
+#### Defined in
 
-### Decoding Response Bytes
+[types.ts:66](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L66)
 
-On-chain responses are encoded as Solidity `bytes` which are most frequently displayed as hex strings. However, these hex strings often need to be decoded into a useable type. In order to decode hex strings into human-readable values, this package provides the `decodeResult` function. Currently, the `decodeResult` function supports decoding hex strings into `uint256`, `int256` or `string` values.
+___
 
-```
-const result: BigInt | string = decodeResult(
-  resultHexString: string,
-  expectedReturnType: ReturnType // 'uint256' | 'int256' | 'string'
-)
-```
+### SubscriptionInfo
 
-Possible return values are also available in the `ReturnType` enum shown below.
+Ƭ **SubscriptionInfo**: `Object`
 
-```
-export enum ReturnType {
-  uint = 'uint256',
-  uint256 = 'uint256',
-  int = 'int256',
-  int256 = 'int256',
-  string = 'string',
-  bytes = 'bytes',
-}
-```
+#### Type declaration
 
-### Storing Encrypted Secrets in Gists
+| Name | Type |
+| :------ | :------ |
+| `balance` | `BigInt` |
+| `blockedBalance` | `BigInt` |
+| `consumers` | `string`[] |
+| `flags` | `string` |
+| `owner` | `string` |
+| `proposedOwner` | `string` |
 
-When describing the use of [off-chain secrets](#off-chain-hosted-secrets), we had described the storing of encrypted secrets off-chain, on hosted sites or storage repositories. For example we can store secrets in a private gist.
+#### Defined in
 
-Encrypted default secrets (DON-level secrets) would look something like this:
+[types.ts:89](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L89)
 
-```
-{
- "encryptedSecrets": '0x1234567890abcdefg', // some long hex string
-}
-```
+___
 
-This Functions Package includes utilities to upload the encrypted secrets to a private Github gist and to delete a gist as well.
+### ThresholdPublicKey
 
-To use this utility with Github gist you need to create a [Github Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+Ƭ **ThresholdPublicKey**: `Object`
 
-You can upload encrypted secrets to a private Github gist with
+#### Type declaration
 
-```
-const encryptedSecrets = await secretsManager.encryptSecrets({
-  mySecret: 'secretValue'
-})
+| Name | Type |
+| :------ | :------ |
+| `G_bar` | `string` |
+| `Group` | `string` |
+| `H` | `string` |
+| `HArray` | `string`[] |
 
-const gistURL = await createGist(githubApiToken: string, JSON.stringify(encryptedSecrets)) // encryptedSecrets must be a string, not an object.
-```
+#### Defined in
 
-The `gistURL` itself must then be encrypted by calling [encryptSecretsUrls()](#off-chain-hosted-secrets).
+[types.ts:32](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L32)
 
-You can delete gists (if you need to clean them up, for example) with
+___
 
-```
-const success: boolean = await deleteGist(githubApiToken: string, gistURL: string)
-```
+### TransactionOptions
 
-This function will return a promise which resolves to `true` if deletion is successful, else it will throw an error.
+Ƭ **TransactionOptions**: `Object`
 
-### Building Functions Request CBOR Bytes
+#### Type declaration
 
-Instead of performing the [CBOR encoding for a Functions request on-chain](https://docs.chain.link/chainlink-functions/api-reference/functions#encodecbor) in your Functions consumer contract, it is also possible to generate the CBOR encoding off-chain in order to save gas. Then, the resulting encoded CBOR bytes can be used when making an on-chain request. You can either store the encoded request in a `bytes` storage variable within your consumer contract, or initiate the Functions request by passing the CBOR-encoded request object `bytes` direclty into the `_sendRequest()` method which [is inherited from `FunctionsClient.sol`](https://docs.chain.link/chainlink-functions/api-reference/functions-client) .
+| Name | Type |
+| :------ | :------ |
+| `confirmations?` | `number` |
+| `overrides?` | `Overrides` |
 
-Note that when encoding a request off-chain, `args` or `bytesArgs` cannot be added to the request on-chain. This is a limitation of CBOR encoding due to its immutable structure.
+#### Defined in
 
-To build the CBOR encoded Functions request bytes off-chain, use the `buildRequestCBOR()` function as shown below
+[types.ts:39](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L39)
 
-```
-const functionsRequestBytesHexString: string = buildRequestCBOR({
-  codeLocation: number  // Must be 0 for inline source code.  No other values are supported at this time.
-  secretsLocation?: number // Must be 1 for Remote or 2 for DONHosted secrets.  No other values are supported at this time.
-  codeLanguage: number // Must be 0 for JavaScript.  No other values are supported at this time.
-  source: string // JavaScript source code
-  encryptedSecretsReference?: string // Hex string representing an encrypted secrets URLs or DON hosted encrypted secrets reference
-  args?: string[] // Array of string arguments
-  bytesArgs?: string[] // Array of bytes arguments, represented as hex strings
-})
-```
+## Variables
+
+### DEFAULT\_MAX\_EXECUTION\_DURATION\_MS
+
+• `Const` **DEFAULT\_MAX\_EXECUTION\_DURATION\_MS**: ``10000``
+
+#### Defined in
+
+[simulationConfig.ts:84](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L84)
+
+___
+
+### DEFAULT\_MAX\_HTTP\_REQUESTS
+
+• `Const` **DEFAULT\_MAX\_HTTP\_REQUESTS**: ``5``
+
+#### Defined in
+
+[simulationConfig.ts:86](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L86)
+
+___
+
+### DEFAULT\_MAX\_HTTP\_REQUEST\_BYTES
+
+• `Const` **DEFAULT\_MAX\_HTTP\_REQUEST\_BYTES**: ``2048``
+
+#### Defined in
+
+[simulationConfig.ts:89](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L89)
+
+___
+
+### DEFAULT\_MAX\_HTTP\_REQUEST\_DURATION\_MS
+
+• `Const` **DEFAULT\_MAX\_HTTP\_REQUEST\_DURATION\_MS**: ``9000``
+
+#### Defined in
+
+[simulationConfig.ts:87](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L87)
+
+___
+
+### DEFAULT\_MAX\_HTTP\_REQUEST\_URL\_LENGTH
+
+• `Const` **DEFAULT\_MAX\_HTTP\_REQUEST\_URL\_LENGTH**: ``2048``
+
+#### Defined in
+
+[simulationConfig.ts:88](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L88)
+
+___
+
+### DEFAULT\_MAX\_HTTP\_RESPONSE\_BYTES
+
+• `Const` **DEFAULT\_MAX\_HTTP\_RESPONSE\_BYTES**: ``2097152``
+
+#### Defined in
+
+[simulationConfig.ts:90](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L90)
+
+___
+
+### DEFAULT\_MAX\_MEMORY\_USAGE\_MB
+
+• `Const` **DEFAULT\_MAX\_MEMORY\_USAGE\_MB**: ``128``
+
+#### Defined in
+
+[simulationConfig.ts:85](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L85)
+
+___
+
+### DEFAULT\_MAX\_ON\_CHAIN\_RESPONSE\_BYTES
+
+• `Const` **DEFAULT\_MAX\_ON\_CHAIN\_RESPONSE\_BYTES**: ``256``
+
+#### Defined in
+
+[simulationConfig.ts:83](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L83)
+
+___
+
+### callReportGasLimit
+
+• `Const` **callReportGasLimit**: ``5000000``
+
+#### Defined in
+
+[simulationConfig.ts:32](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L32)
+
+___
+
+### simulatedAllowListConfig
+
+• `Const` **simulatedAllowListConfig**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `enabled` | `boolean` |
+| `signerPublicKey` | `string` |
+
+#### Defined in
+
+[simulationConfig.ts:27](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L27)
+
+___
+
+### simulatedAllowListId
+
+• `Const` **simulatedAllowListId**: ``"allowlist1"``
+
+#### Defined in
+
+[simulationConfig.ts:5](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L5)
+
+___
+
+### simulatedCoordinatorConfig
+
+• `Const` **simulatedCoordinatorConfig**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `donFee` | `number` |
+| `fallbackNativePerUnitLink` | `bigint` |
+| `feedStalenessSeconds` | `number` |
+| `fulfillmentGasPriceOverEstimationBP` | `number` |
+| `gasOverheadAfterCallback` | `number` |
+| `gasOverheadBeforeCallback` | `number` |
+| `maxCallbackGasLimit` | `number` |
+| `maxSupportedRequestDataVersion` | `number` |
+| `requestTimeoutSeconds` | `number` |
+
+#### Defined in
+
+[simulationConfig.ts:15](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L15)
+
+___
+
+### simulatedDonId
+
+• `Const` **simulatedDonId**: ``"coordinator1"``
+
+#### Defined in
+
+[simulationConfig.ts:3](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L3)
+
+___
+
+### simulatedLinkEthPrice
+
+• `Const` **simulatedLinkEthPrice**: `bigint`
+
+#### Defined in
+
+[simulationConfig.ts:1](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L1)
+
+___
+
+### simulatedRouterConfig
+
+• `Const` **simulatedRouterConfig**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `adminFee` | `number` |
+| `gasForCallExactCheck` | `number` |
+| `handleOracleFulfillmentSelector` | `string` |
+| `maxCallbackGasLimits` | `number`[] |
+| `maxConsumersPerSubscription` | `number` |
+
+#### Defined in
+
+[simulationConfig.ts:7](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L7)
+
+___
+
+### simulatedSecretsKeys
+
+• `Const` **simulatedSecretsKeys**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `donKey` | { `privateKey`: `string` ; `publicKey`: `string`  } |
+| `donKey.privateKey` | `string` |
+| `donKey.publicKey` | `string` |
+| `thresholdKeys` | { `privateKeyShares`: { `[address: string]`: `string`;  } ; `publicKey`: `string`  } |
+| `thresholdKeys.privateKeyShares` | { `[address: string]`: `string`;  } |
+| `thresholdKeys.publicKey` | `string` |
+
+#### Defined in
+
+[simulationConfig.ts:55](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L55)
+
+___
+
+### simulatedTransmitters
+
+• `Const` **simulatedTransmitters**: `string`[]
+
+#### Defined in
+
+[simulationConfig.ts:53](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L53)
+
+___
+
+### simulatedWallets
+
+• `Const` **simulatedWallets**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `node0` | { `address`: `string` = '0xAe24F6e7e046a0C764DF51F333dE5e2fE360AC72'; `privateKey`: `string` = '0x493f20c367e9c5190b14b8071a6c765da973d41428b841c25e4aaba3577f8ece' } |
+| `node0.address` | `string` |
+| `node0.privateKey` | `string` |
+| `node1` | { `address`: `string` = '0x37d7bf16f6fd8c37b766Fa87e047c68c51dfdf4a'; `privateKey`: `string` = '0x7abd90843922984dda18358a179679e5cabda5ad8d0ebab5714ac044663a6a14' } |
+| `node1.address` | `string` |
+| `node1.privateKey` | `string` |
+| `node2` | { `address`: `string` = '0x6e7EF53D9811B70834902D2D9137DaD2720eAC47'; `privateKey`: `string` = '0xcb8801121add786869aac78ceb4003bf3aa8a68ae8dd31f80d61f5f98eace3c5' } |
+| `node2.address` | `string` |
+| `node2.privateKey` | `string` |
+| `node3` | { `address`: `string` = '0xBe83eA9868AE964f8C46EFa0fea798EbE16441c5'; `privateKey`: `string` = '0x06c7ca21f24edf450251e87097264b1fd184c9570084a78aa3300e937e1954b8' } |
+| `node3.address` | `string` |
+| `node3.privateKey` | `string` |
+
+#### Defined in
+
+[simulationConfig.ts:34](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulationConfig.ts#L34)
+
+## Functions
+
+### buildRequestCBOR
+
+▸ **buildRequestCBOR**(`requestParams`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `requestParams` | [`FunctionsRequestParams`](README.md#functionsrequestparams) |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[buildRequestCBOR.ts:8](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/buildRequestCBOR.ts#L8)
+
+___
+
+### createGist
+
+▸ **createGist**(`githubApiToken`, `content`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `githubApiToken` | `string` |
+| `content` | `string` |
+
+#### Returns
+
+`Promise`<`string`\>
+
+#### Defined in
+
+[offchain_storage/github.ts:3](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/offchain_storage/github.ts#L3)
+
+___
+
+### decodeResult
+
+▸ **decodeResult**(`resultHexstring`, `expectedReturnType`): [`DecodedResult`](README.md#decodedresult)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `resultHexstring` | `string` |
+| `expectedReturnType` | [`ReturnType`](enums/ReturnType.md) |
+
+#### Returns
+
+[`DecodedResult`](README.md#decodedresult)
+
+#### Defined in
+
+[decodeResult.ts:5](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/decodeResult.ts#L5)
+
+___
+
+### deleteGist
+
+▸ **deleteGist**(`githubApiToken`, `gistURL`): `Promise`<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `githubApiToken` | `string` |
+| `gistURL` | `string` |
+
+#### Returns
+
+`Promise`<`boolean`\>
+
+#### Defined in
+
+[offchain_storage/github.ts:69](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/offchain_storage/github.ts#L69)
+
+___
+
+### deployFunctionsOracle
+
+▸ **deployFunctionsOracle**(`deployer`): `Promise`<`FunctionsContracts`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `deployer` | `Wallet` |
+
+#### Returns
+
+`Promise`<`FunctionsContracts`\>
+
+#### Defined in
+
+[localFunctionsTestnet.ts:264](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/localFunctionsTestnet.ts#L264)
+
+___
+
+### simulateScript
+
+▸ **simulateScript**(`«destructured»`): `Promise`<[`SimulationResult`](README.md#simulationresult)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | [`SimulationInput`](interfaces/SimulationInput.md) |
+
+#### Returns
+
+`Promise`<[`SimulationResult`](README.md#simulationresult)\>
+
+#### Defined in
+
+[simulateScript/simulateScript.ts:28](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/simulateScript/simulateScript.ts#L28)
+
+___
+
+### startLocalFunctionsTestnet
+
+▸ **startLocalFunctionsTestnet**(`port?`): `Promise`<{ `adminWallet`: { `address`: `string` ; `privateKey`: `string`  } ; `close`: () => `Promise`<`void`\> ; `getFunds`: (`address`: `string`, `__namedParameters`: { `ethAmount`: `number` ; `linkAmount`: `number`  }) => `Promise`<`void`\> ; `server`: `Server`<`EthereumFlavor`\>  } & `FunctionsContracts`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `port` | `number` | `8545` |
+
+#### Returns
+
+`Promise`<{ `adminWallet`: { `address`: `string` ; `privateKey`: `string`  } ; `close`: () => `Promise`<`void`\> ; `getFunds`: (`address`: `string`, `__namedParameters`: { `ethAmount`: `number` ; `linkAmount`: `number`  }) => `Promise`<`void`\> ; `server`: `Server`<`EthereumFlavor`\>  } & `FunctionsContracts`\>
+
+#### Defined in
+
+[localFunctionsTestnet.ts:50](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/localFunctionsTestnet.ts#L50)

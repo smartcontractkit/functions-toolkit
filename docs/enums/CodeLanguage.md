@@ -1,4 +1,4 @@
-[@chainlink/functions-toolkit](../README.md) / [Exports](../modules.md) / CodeLanguage
+[@chainlink/functions-toolkit](../README.md) / CodeLanguage
 
 # Enumeration: CodeLanguage
 
@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[types.ts:10](https://github.com/smartcontractkit/functions-toolkit/blob/bbc061a/src/types.ts#L10)
+[types.ts:10](https://github.com/smartcontractkit/functions-toolkit/blob/1164b15/src/types.ts#L10)
