@@ -186,12 +186,12 @@ export class SecretsManager {
   public async uploadEncryptedSecretsToDON({
     encryptedSecretsHexstring,
     gatewayUrls,
-    storageSlotId,
+    slotId,
     minutesUntilExpiration,
   }: {
     encryptedSecretsHexstring: string
     gatewayUrls: string[]
-    storageSlotId: number
+    slotId: number
     minutesUntilExpiration: number
   }): Promise<{ version: number; success: boolean }> {
     this.isInitialized()
@@ -201,8 +201,8 @@ export class SecretsManager {
       throw Error('encryptedSecretsHexstring must be a valid hex string')
     }
 
-    if (!Number.isInteger(storageSlotId) || storageSlotId < 0) {
-      throw Error('storageSlotId must be a integer of at least 0')
+    if (!Number.isInteger(slotId) || slotId < 0) {
+      throw Error('slotId must be a integer of at least 0')
     }
 
     if (!Number.isInteger(minutesUntilExpiration) || minutesUntilExpiration < 5) {
@@ -219,7 +219,7 @@ export class SecretsManager {
 
     const message = {
       address: signerAddressBase64,
-      slotid: storageSlotId,
+      slotid: slotId,
       payload: encryptedSecretsBase64,
       version: secretsVersion,
       expiration: secretsExpiration,
@@ -228,7 +228,7 @@ export class SecretsManager {
     const storageSignatureBase64 = Buffer.from(storageSignature.slice(2), 'hex').toString('base64')
 
     const payload = {
-      slot_id: storageSlotId,
+      slot_id: slotId,
       version: secretsVersion,
       payload: encryptedSecretsBase64,
       expiration: secretsExpiration,

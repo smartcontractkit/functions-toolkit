@@ -340,7 +340,7 @@ const encryptedSecrets = await secretsManager.encryptSecrets({
 
 Encrypted secrets can be uploaded directly to the DON via gateway URLs such that they can be used when making an on-chain request. This is accomplished by sending a signed POST request to gateway URLs which are connected to the DON. The DON then maintains a decentralized database with eventual consistency, such that the stored values will propagate to all DON nodes. To ensure redundancy, it is always recommended to send encrypted secrets storage requests to multiple gateway URLs.
 
-First, encrypt the secrets with [`encryptSecrets()`](#encrypting-secrets). Then, pass the `encryptedSecrets` hex string in an object to the `uploadEncryptedSecretsToDON()` method as shown below. The `storageSlotId` can be any integer value of zero or greater, however using a previously used slot ID will overwrite the existing data. After `minutesUntilExpiration`, the entry will be deleted from all DON nodes. Get the list of valid gateway URLs for each blockchain network from the [Chainlink Functions documentation](https://docs.chain.link/chainlink-functions/supported-networks).
+First, encrypt the secrets with [`encryptSecrets()`](#encrypting-secrets). Then, pass the `encryptedSecrets` hex string in an object to the `uploadEncryptedSecretsToDON()` method as shown below. The `slotId` can be any integer value of zero or greater, however using a previously used slot ID will overwrite the existing data. After `minutesUntilExpiration`, the entry will be deleted from all DON nodes. Get the list of valid gateway URLs for each blockchain network from the [Chainlink Functions documentation](https://docs.chain.link/chainlink-functions/supported-networks).
 
 ```
 const encryptedSecretsObj = await secretsManager.encryptSecrets({ my: 'secret' })
@@ -353,7 +353,7 @@ const {
 } = await secretsManager.uploadEncryptedSecretsToDON({
   encryptedSecretsHexstring: encryptedSecretsObj.encryptedSecrets,
   gatewayUrls: [ 'https://exampleGatewayUrl1.com/gateway', 'https://exampleGatewayUrl2.com/gateway', ... ],
-  storageSlotId: mySlotIdNumber,
+  slotId: mySlotIdNumber,
   minutesUntilExpiration: myExpirationTimeInMinutes,
 })
 ```
