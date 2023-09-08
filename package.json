@@ -12,7 +12,8 @@
     "test:integration": "jest --testPathPattern=integration",
     "test:package": "jest --config jest.config.package.js",
     "lint": "prettier --check . && tsc --noEmit",
-    "lint:fix": "npx prettier -w ."
+    "lint:fix": "npx prettier -w .",
+    "docgen": "typedoc --plugin typedoc-plugin-markdown"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,8 @@
     "prettier": "^2.8.8",
     "rimraf": "^5.0.1",
     "ts-jest": "^29.1.0",
+    "typedoc": "^0.25.1",
+    "typedoc-plugin-markdown": "^3.16.0",
     "typescript": "^5.0.4",
     "webpack": "5.82.1",
     "webpack-cli": "5.1.1"
