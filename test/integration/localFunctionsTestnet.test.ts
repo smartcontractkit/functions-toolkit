@@ -1,49 +1,34 @@
 import {
   SubscriptionManager,
-  startLocalFunctionsTestnet,
   simulatedDonId,
   decodeResult,
   ResponseListener,
   ReturnType,
 } from '../../src'
-import { createTestWallets } from '../utils'
+import { setupLocalTestnet } from '../utils'
 
-import { Contract, Wallet, utils } from 'ethers'
+import { utils } from 'ethers'
+
+import type { GetFunds } from '../../src'
+
+import type { Contract, Wallet } from 'ethers'
 
 describe('Local Functions Testnet', () => {
   let linkTokenAddress: string
   let functionsRouterAddress: string
   let exampleClient: Contract
   let close: () => Promise<void>
-
   let allowlistedUser_A: Wallet
+  let getFunds: GetFunds
 
   beforeAll(async () => {
-    const mockSecrets = {
-      test: 'hello world',
-    }
-
-    const port = 8003
-    const localFunctionsTestnet = await startLocalFunctionsTestnet(port, mockSecrets, {
-      logging: {
-        debug: false,
-        verbose: false,
-        quiet: true,
-      },
-    })
-
-    linkTokenAddress = localFunctionsTestnet.linkToken.address
-    functionsRouterAddress = localFunctionsTestnet.router.address
-    exampleClient = localFunctionsTestnet.exampleClient
-    close = localFunctionsTestnet.close
-
-    const [_admin, walletA, _] = createTestWallets(localFunctionsTestnet.server, port)
-    allowlistedUser_A = walletA
-
-    await localFunctionsTestnet.getFunds(allowlistedUser_A.address, {
-      ethAmount: 0,
-      linkAmount: 100,
-    })
+    const testSetup = await setupLocalTestnet(8003)
+    linkTokenAddress = testSetup.linkTokenAddress
+    functionsRouterAddress = testSetup.functionsRouterAddress
+    exampleClient = testSetup.exampleConsumer
+    close = testSetup.close
+    allowlistedUser_A = testSetup.user_A
+    getFunds = testSetup.getFunds
   })
 
   afterAll(async () => {
@@ -194,5 +179,19 @@ describe('Local Functions Testnet', () => {
     const response = await functionsListener.listenForResponse(requestId)
 
     expect(parseInt(response.errorString)).toBeGreaterThan(0)
+  })
+
+  it('getFunds throws error for invalid weiAmount', async () => {
+    expect(async () => {
+      // @ts-ignore
+      await getFunds('0xc0ffee254729296a45a3885639AC7E10F9d54979', { weiAmount: 1 })
+    }).rejects.toThrow(/weiAmount must be a BigInt or string/)
+  })
+
+  it('getFunds throws error for invalid juelsAmount', async () => {
+    expect(async () => {
+      // @ts-ignore
+      await getFunds('0xc0ffee254729296a45a3885639AC7E10F9d54979', { juelsAmount: 1 })
+    }).rejects.toThrow(/juelsAmount must be a BigInt or string/)
   })
 })

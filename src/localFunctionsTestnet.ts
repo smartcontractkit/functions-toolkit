@@ -21,51 +21,24 @@ import {
   FunctionsRouterSource,
   MockFunctionsCoordinatorSource,
   TermsOfServiceAllowListSource,
-  FunctionsClientExampleSource,
 } from './v1_contract_sources'
 
-import type { Server, ServerOptions } from 'ganache'
+import type { ServerOptions } from 'ganache'
 
-import type { FunctionsRequestParams, RequestCommitment, SimulationResult } from './types'
-
-export interface RequestEventData {
-  requestId: string
-  requestingContract: string
-  requestInitiator: string
-  subscriptionId: any
-  subscriptionOwner: string
-  data: string
-  dataVersion: number
-  flags: string
-  callbackGasLimit: number
-  commitment: RequestCommitment
-}
-
-interface FunctionsContracts {
-  linkToken: Contract
-  router: Contract
-  mockCoordinator: Contract
-  exampleClient: Contract
-}
+import type {
+  FunctionsRequestParams,
+  RequestCommitment,
+  LocalFunctionsTestnet,
+  GetFunds,
+  FunctionsContracts,
+  RequestEventData,
+} from './types'
 
 export const startLocalFunctionsTestnet = async (
-  port = 8545,
   secrets?: Record<string, string>,
   options?: ServerOptions,
-): Promise<
-  {
-    server: Server
-    adminWallet: {
-      address: string
-      privateKey: string
-    }
-    getFunds: (
-      address: string,
-      { ethAmount, linkAmount }: { ethAmount: number; linkAmount: number },
-    ) => Promise<void>
-    close: () => Promise<void>
-  } & FunctionsContracts
-> => {
+  port = 8545,
+): Promise<LocalFunctionsTestnet> => {
   const server = Ganache.server(options)
 
   server.listen(port, 'localhost', (err: Error | null) => {
@@ -84,7 +57,7 @@ export const startLocalFunctionsTestnet = async (
 
   const contracts = await deployFunctionsOracle(admin)
 
-  contracts.mockCoordinator.on(
+  contracts.functionsMockCoordinatorContract.on(
     'OracleRequest',
     (
       requestId,
@@ -110,29 +83,41 @@ export const startLocalFunctionsTestnet = async (
         callbackGasLimit,
         commitment,
       }
-      handleOracleRequest(requestEvent, contracts.mockCoordinator, admin, secrets)
+      handleOracleRequest(requestEvent, contracts.functionsMockCoordinatorContract, admin, secrets)
     },
   )
 
-  const getFunds = async (
-    address: string,
-    { ethAmount, linkAmount }: { ethAmount: number; linkAmount: number },
-  ): Promise<void> => {
-    const weiAmount = utils.parseEther(ethAmount.toString())
-    const juelsAmount = utils.parseEther(linkAmount.toString())
-
+  const getFunds: GetFunds = async (address, { weiAmount, juelsAmount }) => {
+    if (!juelsAmount) {
+      juelsAmount = BigInt(0)
+    }
+    if (!weiAmount) {
+      weiAmount = BigInt(0)
+    }
+    if (typeof weiAmount !== 'string' && typeof weiAmount !== 'bigint') {
+      throw Error(`weiAmount must be a BigInt or string, got ${typeof weiAmount}`)
+    }
+    if (typeof juelsAmount !== 'string' && typeof juelsAmount !== 'bigint') {
+      throw Error(`juelsAmount must be a BigInt or string, got ${typeof juelsAmount}`)
+    }
+    weiAmount = BigInt(weiAmount)
+    juelsAmount = BigInt(juelsAmount)
     const ethTx = await admin.sendTransaction({
       to: address,
-      value: weiAmount,
+      value: weiAmount.toString(),
     })
-    const linkTx = await contracts.linkToken.connect(admin).transfer(address, juelsAmount)
+    const linkTx = await contracts.linkTokenContract.connect(admin).transfer(address, juelsAmount)
     await ethTx.wait(1)
     await linkTx.wait(1)
-    console.log(`Sent ${ethAmount} ETH and ${linkAmount} LINK to ${address}`)
+    console.log(
+      `Sent ${utils.formatEther(weiAmount.toString())} ETH and ${utils.formatEther(
+        juelsAmount.toString(),
+      )} LINK to ${address}`,
+    )
   }
 
   const close = async (): Promise<void> => {
-    contracts.mockCoordinator.removeAllListeners('OracleRequest')
+    contracts.functionsMockCoordinatorContract.removeAllListeners('OracleRequest')
     await server.close()
   }
 
@@ -369,13 +354,6 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   )
   const allowlist = await allowlistFactory.connect(deployer).deploy(simulatedAllowListConfig)
 
-  const exampleClientFactory = new ContractFactory(
-    FunctionsClientExampleSource.abi,
-    FunctionsClientExampleSource.bytecode,
-    deployer,
-  )
-  const exampleClient = await exampleClientFactory.connect(deployer).deploy(router.address)
-
   const setAllowListIdTx = await router.setAllowListId(
     utils.formatBytes32String(simulatedAllowListId),
   )
@@ -400,5 +378,10 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     )
   await mockCoordinator.connect(deployer).setTransmitters(simulatedTransmitters)
 
-  return { linkToken, router, mockCoordinator, exampleClient }
+  return {
+    donId: simulatedDonId,
+    linkTokenContract: linkToken,
+    functionsRouterContract: router,
+    functionsMockCoordinatorContract: mockCoordinator,
+  }
 }

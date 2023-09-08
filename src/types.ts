@@ -1,4 +1,5 @@
-import type { Overrides } from 'ethers'
+import type { Overrides, Contract } from 'ethers'
+import type { Server } from 'ganache'
 
 export enum Location {
   Inline = 0,
@@ -198,3 +199,38 @@ export type SimulationResult = {
   errorString?: string
   capturedTerminalOutput: string
 }
+
+export interface RequestEventData {
+  requestId: string
+  requestingContract: string
+  requestInitiator: string
+  subscriptionId: any
+  subscriptionOwner: string
+  data: string
+  dataVersion: number
+  flags: string
+  callbackGasLimit: number
+  commitment: RequestCommitment
+}
+
+export interface FunctionsContracts {
+  donId: string
+  linkTokenContract: Contract
+  functionsRouterContract: Contract
+  functionsMockCoordinatorContract: Contract
+}
+
+export type GetFunds = (
+  address: string,
+  { weiAmount, juelsAmount }: { weiAmount?: BigInt | string; juelsAmount?: BigInt | string },
+) => Promise<void>
+
+export type LocalFunctionsTestnet = {
+  server: Server
+  adminWallet: {
+    address: string
+    privateKey: string
+  }
+  getFunds: GetFunds
+  close: () => Promise<void>
+} & FunctionsContracts

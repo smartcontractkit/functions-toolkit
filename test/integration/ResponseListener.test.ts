@@ -4,10 +4,9 @@ import {
   FunctionsResponse,
   SubscriptionManager,
   ResponseListener,
-  startLocalFunctionsTestnet,
   simulatedDonId,
 } from '../../src'
-import { createTestWallets } from '../utils'
+import { setupLocalTestnet } from '../utils'
 
 import { Contract, Wallet, utils } from 'ethers'
 
@@ -16,34 +15,15 @@ describe('Functions toolkit classes', () => {
   let functionsRouterAddress: string
   let exampleClient: Contract
   let close: () => Promise<void>
-
   let allowlistedUser_A: Wallet
 
   beforeAll(async () => {
-    const port = 8002
-    const localFunctionsTestnet = await startLocalFunctionsTestnet(port, undefined, {
-      logging: {
-        debug: false,
-        verbose: false,
-        quiet: true,
-      },
-    })
-
-    linkTokenAddress = localFunctionsTestnet.linkToken.address
-    functionsRouterAddress = localFunctionsTestnet.router.address
-    exampleClient = localFunctionsTestnet.exampleClient
-    close = localFunctionsTestnet.close
-
-    const [admin, walletA, walletB, walletC, _] = createTestWallets(
-      localFunctionsTestnet.server,
-      port,
-    )
-    allowlistedUser_A = walletA
-
-    await localFunctionsTestnet.getFunds(allowlistedUser_A.address, {
-      ethAmount: 0,
-      linkAmount: 100,
-    })
+    const testSetup = await setupLocalTestnet(8002)
+    linkTokenAddress = testSetup.linkTokenAddress
+    functionsRouterAddress = testSetup.functionsRouterAddress
+    exampleClient = testSetup.exampleConsumer
+    close = testSetup.close
+    allowlistedUser_A = testSetup.user_A
   })
 
   afterAll(async () => {
