@@ -17,7 +17,8 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci --omit=optional
+        run: npm ci
+        continue-on-error: true # This is required to ignore unsupported platform errors due to the fsevents sub-dependency
 
       - name: Run Prettier check
         run: npx prettier --check .
