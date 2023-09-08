@@ -19,7 +19,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci --no-optional
+        run: npm ci --omit=optional
 
       - name: Setup Deno
         uses: denolib/setup-deno@v2
