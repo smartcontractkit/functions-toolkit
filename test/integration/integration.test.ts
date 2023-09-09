@@ -1694,7 +1694,7 @@ describe('Functions toolkit classes', () => {
           async () =>
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
-              gatewayUrls: ['https://dongateway.com/fail'],
+              gatewayUrls: ['https://dongateway.com/fail', 'https://dongateway.com/fail'],
               slotId: 0,
               minutesUntilExpiration: 10,
             }),

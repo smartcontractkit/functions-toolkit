@@ -298,7 +298,7 @@ export class SecretsManager {
           gatewayUrl: url,
           nodeResponses,
         }
-        break
+        break // Break after first successful message is sent to a gateway
       } catch (e) {
         const error = e as any
         const errorResponseData = error?.response?.data
