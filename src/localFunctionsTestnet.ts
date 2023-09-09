@@ -35,7 +35,7 @@ import type {
 } from './types'
 
 export const startLocalFunctionsTestnet = async (
-  secrets?: Record<string, string>,
+  simulationConfigPath?: string,
   options?: ServerOptions,
   port = 8545,
 ): Promise<LocalFunctionsTestnet> => {
@@ -83,7 +83,12 @@ export const startLocalFunctionsTestnet = async (
         callbackGasLimit,
         commitment,
       }
-      handleOracleRequest(requestEvent, contracts.functionsMockCoordinatorContract, admin, secrets)
+      handleOracleRequest(
+        requestEvent,
+        contracts.functionsMockCoordinatorContract,
+        admin,
+        simulationConfigPath,
+      )
     },
   )
 
@@ -137,10 +142,10 @@ const handleOracleRequest = async (
   requestEventData: RequestEventData,
   mockCoordinator: Contract,
   admin: Wallet,
-  secrets: Record<string, string> = {},
+  simulationConfigPath?: string,
 ) => {
   const requestData = await buildRequestDataObject(requestEventData.data)
-  const response = await simulateDONExecution(requestData, secrets)
+  const response = await simulateDONExecution(requestData, simulationConfigPath)
 
   const errorHexstring = response.errorString
     ? '0x' + Buffer.from(response.errorString.toString()).toString('hex')
@@ -164,15 +169,25 @@ const handleOracleRequest = async (
 
 const simulateDONExecution = async (
   requestData: FunctionsRequestParams,
-  secrets: Record<string, string>,
+  simulationConfigPath?: string,
 ): Promise<{ responseBytesHexstring?: string; errorString?: string }> => {
+  const simulationConfig = simulationConfigPath ? require(simulationConfigPath) : {}
+
   // Perform the simulation numberOfSimulatedNodeExecution times
   const simulations = [...Array(numberOfSimulatedNodeExecutions)].map(() =>
     simulateScript({
       source: requestData.source,
-      secrets,
+      secrets: simulationConfig.secrets, // Secrets are taken from simulationConfig, not request data included in transaction
       args: requestData.args,
       bytesArgs: requestData.bytesArgs,
+      maxOnChainResponseBytes: simulationConfig.maxOnChainResponseBytes,
+      maxExecutionTimeMs: simulationConfig.maxExecutionTimeMs,
+      maxMemoryUsageMb: simulationConfig.maxMemoryUsageMb,
+      numAllowedQueries: simulationConfig.numAllowedQueries,
+      maxQueryDurationMs: simulationConfig.maxQueryDurationMs,
+      maxQueryUrlLength: simulationConfig.maxQueryUrlLength,
+      maxQueryRequestBytes: simulationConfig.maxQueryRequestBytes,
+      maxQueryResponseBytes: simulationConfig.maxQueryResponseBytes,
     }),
   )
   const responses = await Promise.all(simulations)

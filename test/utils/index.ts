@@ -1,6 +1,8 @@
 import { startLocalFunctionsTestnet } from '../../src'
 import { FunctionsClientExampleSource } from '../../src/v1_contract_sources'
 
+import path from 'path'
+
 import { Wallet, providers, ContractFactory, utils } from 'ethers'
 
 import type { GetFunds } from '../../src'
@@ -25,7 +27,7 @@ export const setupLocalTestnet = async (
   getFunds: GetFunds
 }> => {
   const localFunctionsTestnet = await startLocalFunctionsTestnet(
-    { test: 'hello world' },
+    path.join(__dirname, 'testSimulationConfig.ts'),
     {
       logging: {
         debug: false,

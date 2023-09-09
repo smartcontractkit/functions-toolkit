@@ -548,13 +548,25 @@ The `localFunctionsTestnet` function takes the following values as arguments.
 
 ```
 const localFunctionsTestnet = await startLocalFunctionsTestnet(
-  secrets?: Record<string, string>, // Secrets which can be accessed by the JavaScript code during request execution
+  simulationConfigPath?: string // Absolute path to config file which exports simulation config parameters
   options?: ServerOptions, // Ganache server options
   port?: number, // Defaults to 8545
 )
 ```
 
-Observe that `localFunctionsTestnet` takes in a secrets object as an optional argument. This is because the local testnet does not have the ability to access or decrypt encrypted secrets provided within the request transaction. Instead, you can provide secrets as an argument here which can be accessed by the JavaScript code during request executions. Secrets specified as an argument to `localFunctionsTestnet` will be made accessible within the JavaScript code regardless of the `secretsLocation` or `encryptedSecretsReference` values sent in the request transaction.
+Observe that `localFunctionsTestnet` takes in a `simulationConfigPath` string as an optional argument. The primary reason for this is because the local testnet does not have the ability to access or decrypt encrypted secrets provided within request transactions. Instead, you can export an object named `secrets` from a TypeScript or JavaScript file and provide the absolute path to that file as the `simulationConfigPath` argument. When the JavaScript code is executed during the request, secrets specified in that file will be made accessible within the JavaScript code regardless of the `secretsLocation` or `encryptedSecretsReference` values sent in the request transaction. This config file can also contain other simulation config parameters. An example of this config file is shown below.
+
+```
+export const secrets: { test: 'hello world' } // `secrets` object which can be accessed by the JavaScript code during request execution (can only contain string values)
+export const maxOnChainResponseBytes = 256 // Maximum size of the returned value in bytes (defaults to 256)
+export const maxExecutionTimeMs = 10000 // Maximum execution duration (defaults to 10_000ms)
+export const maxMemoryUsageMb = 128 // Maximum RAM usage (defaults to 128mb)
+export const numAllowedQueries = 5 // Maximum number of HTTP requests (defaults to 5)
+export const maxQueryDurationMs = 9000// Maximum duration of each HTTP request (defaults to 9_000ms)
+export const maxQueryUrlLength = 2048 // Maximum HTTP request URL length (defaults to 2048)
+export const maxQueryRequestBytes = 2048 // Maximum size of outgoing HTTP request payload (defaults to 2048 == 2 KB)
+export const maxQueryResponseBytes = 2097152 // Maximum size of incoming HTTP response payload (defaults to 2_097_152 == 2 MB)
+```
 
 `localFunctionsTestnet` returns a promise which resolves to the following type.
 
