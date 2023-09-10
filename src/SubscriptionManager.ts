@@ -472,7 +472,7 @@ export class SubscriptionManager {
     donId,
     subscriptionId,
     callbackGasLimit,
-    gasPriceGwei,
+    gasPriceWei,
   }: EstimateCostConfig): Promise<BigInt> {
     if (typeof donId !== 'string') {
       throw Error('donId has invalid type')
@@ -488,8 +488,8 @@ export class SubscriptionManager {
       throw Error('Invalid callbackGasLimit')
     }
 
-    if (typeof gasPriceGwei !== 'bigint' || gasPriceGwei <= 0) {
-      throw Error('Invalid gasPriceGwei')
+    if (typeof gasPriceWei !== 'bigint' || gasPriceWei <= 0) {
+      throw Error('Invalid gasPriceWei')
     }
 
     let functionsCoordinatorAddress: string
@@ -520,7 +520,7 @@ export class SubscriptionManager {
         subscriptionId,
         [],
         callbackGasLimit,
-        gasPriceGwei,
+        gasPriceWei,
       )
       return BigInt(estimatedCostInJuels.toString())
     } catch (error) {
