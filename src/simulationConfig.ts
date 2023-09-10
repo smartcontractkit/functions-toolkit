@@ -10,6 +10,8 @@ export const simulatedRouterConfig = {
   handleOracleFulfillmentSelector: '0x0ca76175', // handleOracleFulfillment(bytes32 requestId, bytes memory response, bytes memory err)
   gasForCallExactCheck: 5000,
   maxCallbackGasLimits: [300_000, 500_000, 1_000_000],
+  subscriptionDepositMinimumRequests: 0,
+  subscriptionDepositJuels: 0,
 }
 
 export const simulatedCoordinatorConfig = {
