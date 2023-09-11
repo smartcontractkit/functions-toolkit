@@ -1,5 +1,17 @@
 # @chainlink/functions-toolkit
 
+## 0.1.0
+
+### Minor Changes
+
+- [#8](https://github.com/smartcontractkit/functions-toolkit/pull/8) [`451710d`](https://github.com/smartcontractkit/functions-toolkit/commit/451710d6d80a70218f0f7e793a2677f6815b7139) Thanks [@KuphJr](https://github.com/KuphJr)! - Updated to latest Functions contracts
+
+- [#4](https://github.com/smartcontractkit/functions-toolkit/pull/4) [`e31d1c6`](https://github.com/smartcontractkit/functions-toolkit/commit/e31d1c6e82d7ff0e7128aea0dc024e572c7a6050) Thanks [@KuphJr](https://github.com/KuphJr)! - Added localFunctionsTestnet
+
+### Patch Changes
+
+- [#3](https://github.com/smartcontractkit/functions-toolkit/pull/3) [`40d6a83`](https://github.com/smartcontractkit/functions-toolkit/commit/40d6a831ee7726d25c43d8041ff6f33ed3c385b9) Thanks [@KuphJr](https://github.com/KuphJr)! - Renamed storageSlotId to slotId for SecretsManager.uploadEncryptedSecretsToDON()
+
 ## 0.0.3
 
 ### Patch Changes
