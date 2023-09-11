@@ -12,7 +12,7 @@ import {
   simulatedLinkEthPrice,
   callReportGasLimit,
   simulatedSecretsKeys,
-  simulatedTransmitters,
+  DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES,
   numberOfSimulatedNodeExecutions,
 } from './simulationConfig'
 import {
@@ -170,22 +170,33 @@ const simulateDONExecution = async (
   const simulationConfig = simulationConfigPath ? require(simulationConfigPath) : {}
 
   // Perform the simulation numberOfSimulatedNodeExecution times
-  const simulations = [...Array(numberOfSimulatedNodeExecutions)].map(() =>
-    simulateScript({
-      source: requestData.source,
-      secrets: simulationConfig.secrets, // Secrets are taken from simulationConfig, not request data included in transaction
-      args: requestData.args,
-      bytesArgs: requestData.bytesArgs,
-      maxOnChainResponseBytes: simulationConfig.maxOnChainResponseBytes,
-      maxExecutionTimeMs: simulationConfig.maxExecutionTimeMs,
-      maxMemoryUsageMb: simulationConfig.maxMemoryUsageMb,
-      numAllowedQueries: simulationConfig.numAllowedQueries,
-      maxQueryDurationMs: simulationConfig.maxQueryDurationMs,
-      maxQueryUrlLength: simulationConfig.maxQueryUrlLength,
-      maxQueryRequestBytes: simulationConfig.maxQueryRequestBytes,
-      maxQueryResponseBytes: simulationConfig.maxQueryResponseBytes,
-    }),
-  )
+  const simulations = [...Array(numberOfSimulatedNodeExecutions)].map(async () => {
+    try {
+      return await simulateScript({
+        source: requestData.source,
+        secrets: simulationConfig.secrets, // Secrets are taken from simulationConfig, not request data included in transaction
+        args: requestData.args,
+        bytesArgs: requestData.bytesArgs,
+        maxOnChainResponseBytes: simulationConfig.maxOnChainResponseBytes,
+        maxExecutionTimeMs: simulationConfig.maxExecutionTimeMs,
+        maxMemoryUsageMb: simulationConfig.maxMemoryUsageMb,
+        numAllowedQueries: simulationConfig.numAllowedQueries,
+        maxQueryDurationMs: simulationConfig.maxQueryDurationMs,
+        maxQueryUrlLength: simulationConfig.maxQueryUrlLength,
+        maxQueryRequestBytes: simulationConfig.maxQueryRequestBytes,
+        maxQueryResponseBytes: simulationConfig.maxQueryResponseBytes,
+      })
+    } catch (err) {
+      const errorString = (err as Error).message.slice(
+        0,
+        simulationConfig.maxOnChainResponseBytes ?? DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES,
+      )
+      return {
+        errorString,
+        capturedTerminalOutput: '',
+      }
+    }
+  })
   const responses = await Promise.all(simulations)
 
   const successfulResponses = responses.filter(response => response.errorString === undefined)
