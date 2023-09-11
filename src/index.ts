@@ -3,7 +3,7 @@ const oldLog = console.log
 console.log = (...args: any[]) => {
   if (typeof args[0] === 'string') {
     const msg = args.length > 0 ? args[0] : ''
-    if (msg.includes('Duplicate definition of Transfer')) {
+    if (msg.includes('Duplicate definition of Transfer') || msg.includes('secp256k1 unavailable, reverting to browser version')) {
       return
     }
   }
