@@ -1083,7 +1083,7 @@ describe('Functions toolkit classes', () => {
         const reqTx = await exampleClient.sendRequest(
           req,
           subscriptionId,
-          utils.formatBytes32String('coordinator1'),
+          utils.formatBytes32String('local-functions-testnet'),
         )
         const reqReceipt = await reqTx.wait()
 
