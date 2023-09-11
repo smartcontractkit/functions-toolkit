@@ -43,9 +43,9 @@ export const startLocalFunctionsTestnet = async (
 
   server.listen(port, 'localhost', (err: Error | null) => {
     if (err) {
-      throw Error(`Error starting Ganache server:\n${err}`)
+      throw Error(`Error starting local Functions testnet server:\n${err}`)
     }
-    console.log(`Ganache server started on port ${port}`)
+    console.log(`Local Functions testnet server started on port ${port}`)
   })
 
   const accounts = server.provider.getInitialAccounts()
