@@ -5,7 +5,7 @@ import {
   ResponseListener,
   ReturnType,
 } from '../../src'
-import { setupLocalTestnet } from '../utils'
+import { setupLocalTestnetFixture } from '../utils'
 
 import { utils } from 'ethers'
 
@@ -22,7 +22,7 @@ describe('Local Functions Testnet', () => {
   let getFunds: GetFunds
 
   beforeAll(async () => {
-    const testSetup = await setupLocalTestnet(8003)
+    const testSetup = await setupLocalTestnetFixture(8003)
     linkTokenAddress = testSetup.linkTokenAddress
     functionsRouterAddress = testSetup.functionsRouterAddress
     exampleClient = testSetup.exampleConsumer
@@ -77,7 +77,7 @@ describe('Local Functions Testnet', () => {
       utils.formatBytes32String(simulatedDonId),
     )
 
-    const req = await reqTx.wait(1)
+    const req = await reqTx.wait()
     const requestId = req.events[0].topics[1]
     const response = await functionsListener.listenForResponse(requestId)
 
@@ -116,7 +116,7 @@ describe('Local Functions Testnet', () => {
         codeLocation: 0,
         secretsLocation: 1,
         language: 0,
-        source: 'return Functions.encodeUint256(Math.floor(Math.random() * 1_000_000_000))',
+        source: 'return Functions.encodeUint256(Math.floor((Math.random() + 0.1) * 1_000_000_000))',
         encryptedSecretsReference: '0xabcd',
         requestSignature: [],
         args: ['hello', 'world'],
@@ -126,7 +126,7 @@ describe('Local Functions Testnet', () => {
       utils.formatBytes32String(simulatedDonId),
     )
 
-    const req = await reqTx.wait(1)
+    const req = await reqTx.wait()
     const requestId = req.events[0].topics[1]
     const response = await functionsListener.listenForResponse(requestId)
 
@@ -164,7 +164,7 @@ describe('Local Functions Testnet', () => {
         codeLocation: 0,
         secretsLocation: 1,
         language: 0,
-        source: 'throw Error(`${Math.floor(Math.random() * 100)}`)',
+        source: 'throw Error(`${Math.floor((Math.random() + 0.1) * 100)}`)',
         encryptedSecretsReference: '0xabcd',
         requestSignature: [],
         args: ['hello', 'world'],
@@ -174,7 +174,7 @@ describe('Local Functions Testnet', () => {
       utils.formatBytes32String(simulatedDonId),
     )
 
-    const req = await reqTx.wait(1)
+    const req = await reqTx.wait()
     const requestId = req.events[0].topics[1]
     const response = await functionsListener.listenForResponse(requestId)
 

@@ -6,7 +6,7 @@ import {
   ResponseListener,
   simulatedDonId,
 } from '../../src'
-import { setupLocalTestnet } from '../utils'
+import { setupLocalTestnetFixture } from '../utils'
 
 import { Contract, Wallet, utils } from 'ethers'
 
@@ -18,7 +18,7 @@ describe('Functions toolkit classes', () => {
   let allowlistedUser_A: Wallet
 
   beforeAll(async () => {
-    const testSetup = await setupLocalTestnet(8002)
+    const testSetup = await setupLocalTestnetFixture(8002)
     linkTokenAddress = testSetup.linkTokenAddress
     functionsRouterAddress = testSetup.functionsRouterAddress
     exampleClient = testSetup.exampleConsumer
@@ -72,7 +72,7 @@ describe('Functions toolkit classes', () => {
         utils.formatBytes32String(simulatedDonId),
       )
 
-      const succReq = await succReqTx.wait(1)
+      const succReq = await succReqTx.wait()
       const succRequestId = succReq.events[0].topics[1]
 
       const succResponse = await functionsListener.listenForResponse(succRequestId)

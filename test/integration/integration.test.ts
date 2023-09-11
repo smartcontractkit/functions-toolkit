@@ -7,7 +7,7 @@ import {
   simulatedSecretsKeys,
 } from '../../src'
 import { mockOffchainSecretsEndpoints, mockGatewayUrl } from './apiFixture'
-import { setupLocalTestnet } from '../utils'
+import { setupLocalTestnetFixture } from '../utils'
 
 import { BigNumber, Contract, Wallet, utils } from 'ethers'
 
@@ -25,7 +25,7 @@ describe('Functions toolkit classes', () => {
   let subFunder_A: Wallet
 
   beforeAll(async () => {
-    const testSetup = await setupLocalTestnet(8001)
+    const testSetup = await setupLocalTestnetFixture(8001)
     donId = testSetup.donId
     linkTokenContract = testSetup.linkTokenContract
     linkTokenAddress = testSetup.linkTokenAddress

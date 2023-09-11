@@ -126,7 +126,11 @@ export const simulateScript = async ({
 
   const { code, signal } = await simulationComplete
 
-  fs.rmSync(scriptPath)
+  try {
+    fs.rmSync(scriptPath)
+  } catch {
+    // The temp file may have already been deleted
+  }
 
   let capturedTerminalOutput: string
   let parsedOutput: SandboxResult = {}

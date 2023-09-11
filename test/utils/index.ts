@@ -10,7 +10,7 @@ import type { GetFunds } from '../../src'
 import type { Contract } from 'ethers'
 import type { Server } from 'ganache'
 
-export const setupLocalTestnet = async (
+export const setupLocalTestnetFixture = async (
   port: number,
 ): Promise<{
   donId: string

@@ -144,7 +144,7 @@ const handleOracleRequest = async (
   admin: Wallet,
   simulationConfigPath?: string,
 ) => {
-  const requestData = await buildRequestDataObject(requestEventData.data)
+  const requestData = await buildRequestObject(requestEventData.data)
   const response = await simulateDONExecution(requestData, simulationConfigPath)
 
   const errorHexstring = response.errorString
@@ -284,34 +284,37 @@ const encodeReport = (
   return encodedReport
 }
 
-const buildRequestDataObject = async (requestData: string): Promise<FunctionsRequestParams> => {
-  const decodedRequestData = await cbor.decodeAll(Buffer.from(requestData.slice(2), 'hex'))
+const buildRequestObject = async (
+  requestDataHexString: string,
+): Promise<FunctionsRequestParams> => {
+  const decodedRequestData = await cbor.decodeAll(Buffer.from(requestDataHexString.slice(2), 'hex'))
 
   const requestDataObject = {} as FunctionsRequestParams
-
+  // The decoded request data is an array of alternating keys and values, therefore we can iterate over it in steps of 2
   for (let i = 0; i < decodedRequestData.length - 1; i += 2) {
-    const elem = decodedRequestData[i]
-    switch (elem) {
+    const requestDataKey = decodedRequestData[i]
+    const requestDataValue = decodedRequestData[i + 1]
+    switch (requestDataKey) {
       case 'codeLocation':
-        requestDataObject.codeLocation = decodedRequestData[i + 1]
+        requestDataObject.codeLocation = requestDataValue
         break
       case 'secretsLocation':
         // Unused as secrets provided as an argument to startLocalFunctionsTestnet() are used instead
         break
       case 'language':
-        requestDataObject.codeLanguage = decodedRequestData[i + 1]
+        requestDataObject.codeLanguage = requestDataValue
         break
       case 'source':
-        requestDataObject.source = decodedRequestData[i + 1]
+        requestDataObject.source = requestDataValue
         break
       case 'secrets':
         // Unused as secrets provided as an argument to startLocalFunctionsTestnet() are used instead
         break
       case 'args':
-        requestDataObject.args = decodedRequestData[i + 1]
+        requestDataObject.args = requestDataValue
         break
       case 'bytesArgs':
-        requestDataObject.bytesArgs = decodedRequestData[i + 1].map((bytesArg: Buffer) => {
+        requestDataObject.bytesArgs = requestDataValue.map((bytesArg: Buffer) => {
           return '0x' + bytesArg.toString('hex')
         })
         break
