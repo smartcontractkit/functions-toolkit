@@ -17,7 +17,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency --no-optional
 
       - name: Run Prettier check
         run: npx prettier --check .

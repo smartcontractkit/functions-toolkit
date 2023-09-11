@@ -1,4 +1,3 @@
-// This file is copied from https://github.com/smartcontractkit/universal-adapter-sandbox/blob/main/src/Functions.ts
 import axios from 'axios'
 import type { AxiosResponse, AxiosError } from 'axios'
 import { safePow } from './safePow'

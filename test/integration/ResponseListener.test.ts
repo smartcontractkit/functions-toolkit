@@ -4,10 +4,9 @@ import {
   FunctionsResponse,
   SubscriptionManager,
   ResponseListener,
-  startLocalFunctionsTestnet,
   simulatedDonId,
 } from '../../src'
-import { createTestWallets } from '../utils'
+import { setupLocalTestnetFixture } from '../utils'
 
 import { Contract, Wallet, utils } from 'ethers'
 
@@ -16,28 +15,15 @@ describe('Functions toolkit classes', () => {
   let functionsRouterAddress: string
   let exampleClient: Contract
   let close: () => Promise<void>
-
   let allowlistedUser_A: Wallet
 
   beforeAll(async () => {
-    const port = 9501
-    const localFunctionsTestnet = await startLocalFunctionsTestnet(port)
-
-    linkTokenAddress = localFunctionsTestnet.linkToken.address
-    functionsRouterAddress = localFunctionsTestnet.router.address
-    exampleClient = localFunctionsTestnet.exampleClient
-    close = localFunctionsTestnet.close
-
-    const [admin, walletA, walletB, walletC, _] = createTestWallets(
-      localFunctionsTestnet.server,
-      port,
-    )
-    allowlistedUser_A = walletA
-
-    await localFunctionsTestnet.getFunds(allowlistedUser_A.address, {
-      ethAmount: 0,
-      linkAmount: 100,
-    })
+    const testSetup = await setupLocalTestnetFixture(8002)
+    linkTokenAddress = testSetup.linkTokenAddress
+    functionsRouterAddress = testSetup.functionsRouterAddress
+    exampleClient = testSetup.exampleConsumer
+    close = testSetup.close
+    allowlistedUser_A = testSetup.user_A
   })
 
   afterAll(async () => {
@@ -86,7 +72,7 @@ describe('Functions toolkit classes', () => {
         utils.formatBytes32String(simulatedDonId),
       )
 
-      const succReq = await succReqTx.wait(1)
+      const succReq = await succReqTx.wait()
       const succRequestId = succReq.events[0].topics[1]
 
       const succResponse = await functionsListener.listenForResponse(succRequestId)

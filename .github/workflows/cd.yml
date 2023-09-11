@@ -27,7 +27,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Run npm ci
-        run: npm ci
+        run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency --no-optional
 
       - name: Setup project
         run: npm run build

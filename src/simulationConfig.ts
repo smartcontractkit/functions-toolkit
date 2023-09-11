@@ -33,6 +33,8 @@ export const simulatedAllowListConfig = {
 
 export const callReportGasLimit = 5_000_000
 
+export const numberOfSimulatedNodeExecutions = 4
+
 export const simulatedWallets = {
   node0: {
     address: '0xAe24F6e7e046a0C764DF51F333dE5e2fE360AC72',

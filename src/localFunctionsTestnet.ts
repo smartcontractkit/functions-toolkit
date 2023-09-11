@@ -13,6 +13,7 @@ import {
   callReportGasLimit,
   simulatedSecretsKeys,
   simulatedTransmitters,
+  numberOfSimulatedNodeExecutions,
 } from './simulationConfig'
 import {
   LinkTokenSource,
@@ -20,56 +21,25 @@ import {
   FunctionsRouterSource,
   FunctionsCoordinatorTestHelperSource,
   TermsOfServiceAllowListSource,
-  FunctionsClientExampleSource,
 } from './v1_contract_sources'
 
-import type { Server, Ethereum } from 'ganache'
+import type { ServerOptions } from 'ganache'
 
-import type { FunctionsRequestParams, RequestCommitment } from './types'
-
-export interface RequestEventData {
-  requestId: string
-  requestingContract: string
-  requestInitiator: string
-  subscriptionId: any
-  subscriptionOwner: string
-  data: string
-  dataVersion: number
-  flags: string
-  callbackGasLimit: number
-  commitment: RequestCommitment
-}
-
-interface FunctionsContracts {
-  linkToken: Contract
-  router: Contract
-  mockCoordinator: Contract
-  exampleClient: Contract
-}
+import type {
+  FunctionsRequestParams,
+  RequestCommitment,
+  LocalFunctionsTestnet,
+  GetFunds,
+  FunctionsContracts,
+  RequestEventData,
+} from './types'
 
 export const startLocalFunctionsTestnet = async (
+  simulationConfigPath?: string,
+  options?: ServerOptions,
   port = 8545,
-): Promise<
-  {
-    server: Server
-    adminWallet: {
-      address: string
-      privateKey: string
-    }
-    getFunds: (
-      address: string,
-      { ethAmount, linkAmount }: { ethAmount: number; linkAmount: number },
-    ) => Promise<void>
-    close: () => Promise<void>
-  } & FunctionsContracts
-> => {
-  const server = Ganache.server({
-    logging: {
-      debug: false,
-      verbose: false,
-      quiet: true,
-    },
-  })
+): Promise<LocalFunctionsTestnet> => {
+  const server = Ganache.server(options)
 
   server.listen(port, 'localhost', (err: Error | null) => {
     if (err) {
@@ -87,7 +57,7 @@ export const startLocalFunctionsTestnet = async (
 
   const contracts = await deployFunctionsOracle(admin)
 
-  contracts.mockCoordinator.on(
+  contracts.functionsMockCoordinatorContract.on(
     'OracleRequest',
     (
       requestId,
@@ -113,29 +83,46 @@ export const startLocalFunctionsTestnet = async (
         callbackGasLimit,
         commitment,
       }
-      handleOracleRequest(requestEvent, contracts.mockCoordinator, admin)
+      handleOracleRequest(
+        requestEvent,
+        contracts.functionsMockCoordinatorContract,
+        admin,
+        simulationConfigPath,
+      )
     },
   )
 
-  const getFunds = async (
-    address: string,
-    { ethAmount, linkAmount }: { ethAmount: number; linkAmount: number },
-  ): Promise<void> => {
-    const weiAmount = utils.parseEther(ethAmount.toString())
-    const juelsAmount = utils.parseEther(linkAmount.toString())
-
+  const getFunds: GetFunds = async (address, { weiAmount, juelsAmount }) => {
+    if (!juelsAmount) {
+      juelsAmount = BigInt(0)
+    }
+    if (!weiAmount) {
+      weiAmount = BigInt(0)
+    }
+    if (typeof weiAmount !== 'string' && typeof weiAmount !== 'bigint') {
+      throw Error(`weiAmount must be a BigInt or string, got ${typeof weiAmount}`)
+    }
+    if (typeof juelsAmount !== 'string' && typeof juelsAmount !== 'bigint') {
+      throw Error(`juelsAmount must be a BigInt or string, got ${typeof juelsAmount}`)
+    }
+    weiAmount = BigInt(weiAmount)
+    juelsAmount = BigInt(juelsAmount)
     const ethTx = await admin.sendTransaction({
       to: address,
-      value: weiAmount,
+      value: weiAmount.toString(),
     })
-    const linkTx = await contracts.linkToken.connect(admin).transfer(address, juelsAmount)
+    const linkTx = await contracts.linkTokenContract.connect(admin).transfer(address, juelsAmount)
     await ethTx.wait(1)
     await linkTx.wait(1)
-    console.log(`Sent ${ethAmount} ETH and ${linkAmount} LINK to ${address}`)
+    console.log(
+      `Sent ${utils.formatEther(weiAmount.toString())} ETH and ${utils.formatEther(
+        juelsAmount.toString(),
+      )} LINK to ${address}`,
+    )
   }
 
   const close = async (): Promise<void> => {
-    contracts.mockCoordinator.removeAllListeners('OracleRequest')
+    contracts.functionsMockCoordinatorContract.removeAllListeners('OracleRequest')
     await server.close()
   }
 
@@ -155,14 +142,11 @@ const handleOracleRequest = async (
   requestEventData: RequestEventData,
   mockCoordinator: Contract,
   admin: Wallet,
+  simulationConfigPath?: string,
 ) => {
-  const requestData = await constructRequestDataObject(requestEventData.data)
-  const response = await simulateScript({
-    source: requestData.source,
-    secrets: {}, // TODO: Decrypt secrets
-    args: requestData.args,
-    // TODO: Support bytes args
-  })
+  const requestData = await buildRequestObject(requestEventData.data)
+  const response = await simulateDONExecution(requestData, simulationConfigPath)
+
   const errorHexstring = response.errorString
     ? '0x' + Buffer.from(response.errorString.toString()).toString('hex')
     : undefined
@@ -177,6 +161,86 @@ const handleOracleRequest = async (
     .connect(admin)
     .callReport(encodedReport, { gasLimit: callReportGasLimit })
   await reportTx.wait(1)
+}
+
+const simulateDONExecution = async (
+  requestData: FunctionsRequestParams,
+  simulationConfigPath?: string,
+): Promise<{ responseBytesHexstring?: string; errorString?: string }> => {
+  const simulationConfig = simulationConfigPath ? require(simulationConfigPath) : {}
+
+  // Perform the simulation numberOfSimulatedNodeExecution times
+  const simulations = [...Array(numberOfSimulatedNodeExecutions)].map(() =>
+    simulateScript({
+      source: requestData.source,
+      secrets: simulationConfig.secrets, // Secrets are taken from simulationConfig, not request data included in transaction
+      args: requestData.args,
+      bytesArgs: requestData.bytesArgs,
+      maxOnChainResponseBytes: simulationConfig.maxOnChainResponseBytes,
+      maxExecutionTimeMs: simulationConfig.maxExecutionTimeMs,
+      maxMemoryUsageMb: simulationConfig.maxMemoryUsageMb,
+      numAllowedQueries: simulationConfig.numAllowedQueries,
+      maxQueryDurationMs: simulationConfig.maxQueryDurationMs,
+      maxQueryUrlLength: simulationConfig.maxQueryUrlLength,
+      maxQueryRequestBytes: simulationConfig.maxQueryRequestBytes,
+      maxQueryResponseBytes: simulationConfig.maxQueryResponseBytes,
+    }),
+  )
+  const responses = await Promise.all(simulations)
+
+  const successfulResponses = responses.filter(response => response.errorString === undefined)
+  const errorResponses = responses.filter(response => response.errorString !== undefined)
+
+  if (successfulResponses.length > errorResponses.length) {
+    return {
+      responseBytesHexstring: aggregateMedian(
+        successfulResponses.map(response => response.responseBytesHexstring!),
+      ),
+    }
+  } else {
+    return {
+      errorString: aggregateModeString(errorResponses.map(response => response.errorString!)),
+    }
+  }
+}
+
+const aggregateMedian = (responses: string[]): string => {
+  const bufResponses = responses.map(response => Buffer.from(response.slice(2), 'hex'))
+
+  bufResponses.sort((a, b) => {
+    if (a.length !== b.length) {
+      return a.length - b.length
+    }
+    for (let i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) {
+        return a[i] - b[i]
+      }
+    }
+    return 0
+  })
+
+  return '0x' + bufResponses[Math.floor((bufResponses.length - 1) / 2)].toString('hex')
+}
+
+const aggregateModeString = (items: string[]): string => {
+  const counts = new Map<string, number>()
+
+  for (const str of items) {
+    const existingCount = counts.get(str) || 0
+    counts.set(str, existingCount + 1)
+  }
+
+  let modeString = items[0]
+  let maxCount = counts.get(modeString) || 0
+
+  for (const [str, count] of counts.entries()) {
+    if (count > maxCount) {
+      maxCount = count
+      modeString = str
+    }
+  }
+
+  return modeString
 }
 
 const encodeReport = (
@@ -220,37 +284,42 @@ const encodeReport = (
   return encodedReport
 }
 
-const constructRequestDataObject = async (requestData: string): Promise<FunctionsRequestParams> => {
-  const decodedRequestData = await cbor.decodeAll(Buffer.from(requestData.slice(2), 'hex'))
-  const requestDataObject = {} as FunctionsRequestParams
+const buildRequestObject = async (
+  requestDataHexString: string,
+): Promise<FunctionsRequestParams> => {
+  const decodedRequestData = await cbor.decodeAll(Buffer.from(requestDataHexString.slice(2), 'hex'))
 
+  const requestDataObject = {} as FunctionsRequestParams
+  // The decoded request data is an array of alternating keys and values, therefore we can iterate over it in steps of 2
   for (let i = 0; i < decodedRequestData.length - 1; i += 2) {
-    const elem = decodedRequestData[i]
-    // TODO: support encrypted secrets & bytesArgs
-    switch (elem) {
+    const requestDataKey = decodedRequestData[i]
+    const requestDataValue = decodedRequestData[i + 1]
+    switch (requestDataKey) {
       case 'codeLocation':
-        requestDataObject.codeLocation = decodedRequestData[i + 1]
+        requestDataObject.codeLocation = requestDataValue
         break
-      // case 'secretsLocation':
-      //   requestDataObject.secretsLocation = decodedRequestData[i + 1]
-      //   break
+      case 'secretsLocation':
+        // Unused as secrets provided as an argument to startLocalFunctionsTestnet() are used instead
+        break
       case 'language':
-        requestDataObject.codeLanguage = decodedRequestData[i + 1]
+        requestDataObject.codeLanguage = requestDataValue
         break
       case 'source':
-        requestDataObject.source = decodedRequestData[i + 1]
+        requestDataObject.source = requestDataValue
         break
-      // case 'encryptedSecretsReference':
-      //   requestDataObject.encryptedSecretsReference = decodedRequestData[i + 1]
-      //   break
+      case 'secrets':
+        // Unused as secrets provided as an argument to startLocalFunctionsTestnet() are used instead
+        break
       case 'args':
-        requestDataObject.args = decodedRequestData[i + 1]
+        requestDataObject.args = requestDataValue
         break
-      // case 'bytesArgs':
-      //   requestDataObject.bytesArgs = decodedRequestData[i + 1]
-      //   break
-      // default:
-      //   throw Error(`Invalid request data key ${elem}`)
+      case 'bytesArgs':
+        requestDataObject.bytesArgs = requestDataValue.map((bytesArg: Buffer) => {
+          return '0x' + bytesArg.toString('hex')
+        })
+        break
+      default:
+      // Ignore unknown keys
     }
   }
 
@@ -299,13 +368,6 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   )
   const allowlist = await allowlistFactory.connect(deployer).deploy(simulatedAllowListConfig)
 
-  const exampleClientFactory = new ContractFactory(
-    FunctionsClientExampleSource.abi,
-    FunctionsClientExampleSource.bytecode,
-    deployer,
-  )
-  const exampleClient = await exampleClientFactory.connect(deployer).deploy(router.address)
-
   const setAllowListIdTx = await router.setAllowListId(
     utils.formatBytes32String(simulatedAllowListId),
   )
@@ -329,5 +391,10 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
       '0x' + Buffer.from(simulatedSecretsKeys.thresholdKeys.publicKey).toString('hex'),
     )
 
-  return { linkToken, router, mockCoordinator, exampleClient }
+  return {
+    donId: simulatedDonId,
+    linkTokenContract: linkToken,
+    functionsRouterContract: router,
+    functionsMockCoordinatorContract: mockCoordinator,
+  }
 }

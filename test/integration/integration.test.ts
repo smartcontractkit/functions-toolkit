@@ -2,13 +2,12 @@ import EthCrypto from 'eth-crypto'
 import {
   SubscriptionManager,
   SecretsManager,
-  startLocalFunctionsTestnet,
   RequestCommitment,
   simulatedDonId,
   simulatedSecretsKeys,
 } from '../../src'
 import { mockOffchainSecretsEndpoints, mockGatewayUrl } from './apiFixture'
-import { createTestWallets } from '../utils'
+import { setupLocalTestnetFixture } from '../utils'
 
 import { BigNumber, Contract, Wallet, utils } from 'ethers'
 
@@ -21,36 +20,23 @@ describe('Functions toolkit classes', () => {
   let exampleClient: Contract
   let consumerAddress: string
   let close: () => Promise<void>
-
   let allowlistedUser_A: Wallet
   let allowlistedUser_B_NoLINK: Wallet
-  // let unallowlistedUser: Wallet
   let subFunder_A: Wallet
 
   beforeAll(async () => {
-    const localFunctionsTestnet = await startLocalFunctionsTestnet()
-
-    linkTokenContract = localFunctionsTestnet.linkToken
-    linkTokenAddress = localFunctionsTestnet.linkToken.address
-    functionsRouterAddress = localFunctionsTestnet.router.address
-    functionsCoordinator = localFunctionsTestnet.mockCoordinator
-    exampleClient = localFunctionsTestnet.exampleClient
-    consumerAddress = localFunctionsTestnet.exampleClient.address
-    close = localFunctionsTestnet.close
-
-    const [admin, walletA, walletB, walletC, _] = createTestWallets(localFunctionsTestnet.server)
-    allowlistedUser_A = walletA
-    allowlistedUser_B_NoLINK = walletB
-    subFunder_A = walletC
-
-    await localFunctionsTestnet.getFunds(allowlistedUser_A.address, {
-      ethAmount: 0,
-      linkAmount: 100,
-    })
-    await localFunctionsTestnet.getFunds(subFunder_A.address, {
-      ethAmount: 0,
-      linkAmount: 100,
-    })
+    const testSetup = await setupLocalTestnetFixture(8001)
+    donId = testSetup.donId
+    linkTokenContract = testSetup.linkTokenContract
+    linkTokenAddress = testSetup.linkTokenAddress
+    functionsCoordinator = testSetup.functionsCoordinator
+    functionsRouterAddress = testSetup.functionsRouterAddress
+    exampleClient = testSetup.exampleConsumer
+    consumerAddress = testSetup.exampleConsumerAddress
+    close = testSetup.close
+    allowlistedUser_A = testSetup.user_A
+    allowlistedUser_B_NoLINK = testSetup.user_B_NoLINK
+    subFunder_A = testSetup.subFunder
   })
 
   afterAll(async () => {

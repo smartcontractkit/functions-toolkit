@@ -44,6 +44,7 @@ The typical subscriptions-related operations are
   - [Functions Response Listener](#functions-response-listener)
   - [Functions Utilities](#functions-utilities)
     - [Local Functions Simulator](#local-functions-simulator)
+    - [Local Functions Testnet](#local-functions-testnet)
     - [Decoding Response Bytes](#decoding-response-bytes)
     - [Storing Encrypted Secrets in Gists](#storing-encrypted-secrets-in-gists)
     - [Building Functions Request CBOR Bytes](#building-functions-request-cbor-bytes)
@@ -535,7 +536,60 @@ const result = await simulateScript({
 }
 ```
 
+**_NOTE:_** When running `simulateScript`, depending on your security settings, you may get a popup asking if you would like to accept incoming network connections. You can safely ignore this popup and it should disappear when the simulation is complete.
+
 **_NOTE:_** The `simulateScript` function is a debugging tool and hence is not a perfect representation of the actual Chainlink oracle execution environment. Therefore, it is important to make a Functions request on a supported testnet blockchain before mainnet usage.
+
+### Local Functions Testnet
+
+For debugging smart contracts and the end-to-end request flow on your local machine, you can use the `localFunctionsTestnet` function. This creates a local testnet RPC node with a mock Chainlink Functions contracts. You can then deploy your own Functions consumer contract to this local network, create and manage subscriptions, and send requests. Request processing will simulate the behavior of an actual DON where the request is executed 4 times and the discrete median response is transmitted back to the consumer contract. (Note that Functions uses the following calculation to select the discrete median response: `const medianResponse = responses[responses.length - 1) / 2]`).
+
+The `localFunctionsTestnet` function takes the following values as arguments.
+
+```
+const localFunctionsTestnet = await startLocalFunctionsTestnet(
+  simulationConfigPath?: string // Absolute path to config file which exports simulation config parameters
+  options?: ServerOptions, // Ganache server options
+  port?: number, // Defaults to 8545
+)
+```
+
+Observe that `localFunctionsTestnet` takes in a `simulationConfigPath` string as an optional argument. The primary reason for this is because the local testnet does not have the ability to access or decrypt encrypted secrets provided within request transactions. Instead, you can export an object named `secrets` from a TypeScript or JavaScript file and provide the absolute path to that file as the `simulationConfigPath` argument. When the JavaScript code is executed during the request, secrets specified in that file will be made accessible within the JavaScript code regardless of the `secretsLocation` or `encryptedSecretsReference` values sent in the request transaction. This config file can also contain other simulation config parameters. An example of this config file is shown below.
+
+```
+export const secrets: { test: 'hello world' } // `secrets` object which can be accessed by the JavaScript code during request execution (can only contain string values)
+export const maxOnChainResponseBytes = 256 // Maximum size of the returned value in bytes (defaults to 256)
+export const maxExecutionTimeMs = 10000 // Maximum execution duration (defaults to 10_000ms)
+export const maxMemoryUsageMb = 128 // Maximum RAM usage (defaults to 128mb)
+export const numAllowedQueries = 5 // Maximum number of HTTP requests (defaults to 5)
+export const maxQueryDurationMs = 9000// Maximum duration of each HTTP request (defaults to 9_000ms)
+export const maxQueryUrlLength = 2048 // Maximum HTTP request URL length (defaults to 2048)
+export const maxQueryRequestBytes = 2048 // Maximum size of outgoing HTTP request payload (defaults to 2048 == 2 KB)
+export const maxQueryResponseBytes = 2097152 // Maximum size of incoming HTTP response payload (defaults to 2_097_152 == 2 MB)
+```
+
+`localFunctionsTestnet` returns a promise which resolves to the following type.
+
+```
+{
+  server: Server // Ganache server
+  adminWallet: { address: string, privateKey: string } // Funded admin wallet
+  getFunds: (address: string, { weiAmount, juelsAmount }: { weiAmount?: BigInt | string; juelsAmount?: BigInt | string }) => Promise<void> // Method which can be called to send funds to any address
+  close: () => Promise<void> // Method to close the server
+  donId: string // DON ID for simulated DON
+  // The following values are all Ethers.js contract types: https://docs.ethers.org/v5/api/contract/contract/
+  linkTokenContract: Contract // Mock LINK token contract
+  functionsRouterContract: Contract // Mock FunctionsRouter contract
+}
+```
+
+Now you can connect to the local Functions testnet RPC node with your preferred blockchain tooling, deploy a FunctionsConsumer contract, instantiate and initialize the`SubscriptionManager`, create, add the consumer contract and fund the subscription, send requests, and use the `ResponseListener` to listen for responses all on your machine.
+
+**_NOTE:_** When simulating request executions, depending on your security settings, you may get multiple popups asking if you would like to accept incoming network connections. You can safely ignore these popups and they should disappear when the executions are complete.
+
+**_NOTE:_** Cost estimates and other configuration values may differ significantly from actual values on live testnet or mainnet chains.
+
+**_NOTE:_** The `localFunctionsTestnet` function is a debugging tool and hence is not a perfect representation of the actual Chainlink oracle execution environment. Therefore, it is important to make a Functions request on a supported testnet blockchain before mainnet usage.
 
 ### Decoding Response Bytes
 
