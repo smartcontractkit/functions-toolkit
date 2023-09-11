@@ -1694,13 +1694,11 @@ describe('Functions toolkit classes', () => {
           async () =>
             await sm.uploadEncryptedSecretsToDON({
               encryptedSecretsHexstring: '0xaaaa',
-              gatewayUrls: ['https://dongateway.com/uploadSuccess1', 'https://dongateway.com/fail'],
+              gatewayUrls: ['https://dongateway.com/fail', 'https://dongateway.com/fail'],
               slotId: 0,
               minutesUntilExpiration: 10,
             }),
-        ).rejects.toThrow(
-          /Error encountered when attempting to send request to DON gateway URL #2 of 2/,
-        )
+        ).rejects.toThrow(/Failed to send request to any of the DON gateway URLs/)
       })
     })
 
@@ -1716,93 +1714,41 @@ describe('Functions toolkit classes', () => {
           'https://dongateway.com/listSuccess2',
         ])
 
-        const expectedGatewayResponses = [
-          {
-            gatewayUrl: 'https://dongateway.com/listSuccess1',
-            nodeResponses: [
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                  {
-                    slot_id: 1,
-                    version: 1,
-                    expiration: 200_000,
-                  },
-                ],
-              },
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                  {
-                    slot_id: 1,
-                    version: 1,
-                    expiration: 200_000,
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            gatewayUrl: 'https://dongateway.com/listSuccess2',
-            nodeResponses: [
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                  {
-                    slot_id: 1,
-                    version: 1,
-                    expiration: 200_000,
-                  },
-                ],
-              },
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                  {
-                    slot_id: 1,
-                    version: 1,
-                    expiration: 200_000,
-                  },
-                ],
-              },
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                  {
-                    slot_id: 1,
-                    version: 1,
-                    expiration: 200_000,
-                  },
-                ],
-              },
-            ],
-          },
-        ]
+        const expectedGatewayResponses = {
+          gatewayUrl: 'https://dongateway.com/listSuccess1',
+          nodeResponses: [
+            {
+              success: true,
+              rows: [
+                {
+                  slot_id: 0,
+                  version: 0,
+                  expiration: 100_000,
+                },
+                {
+                  slot_id: 1,
+                  version: 1,
+                  expiration: 200_000,
+                },
+              ],
+            },
+            {
+              success: true,
+              rows: [
+                {
+                  slot_id: 0,
+                  version: 0,
+                  expiration: 100_000,
+                },
+                {
+                  slot_id: 1,
+                  version: 1,
+                  expiration: 200_000,
+                },
+              ],
+            },
+          ],
+        }
 
         expect(result).toEqual({ result: expectedGatewayResponses })
       })
@@ -1817,19 +1763,17 @@ describe('Functions toolkit classes', () => {
           'https://dongateway.com/listFailAll',
         ])
 
-        const expectedGatewayResponses = [
-          {
-            gatewayUrl: 'https://dongateway.com/listFailAll',
-            nodeResponses: [
-              {
-                success: false,
-              },
-            ],
-          },
-        ]
+        const expectedGatewayResponse = {
+          gatewayUrl: 'https://dongateway.com/listFailAll',
+          nodeResponses: [
+            {
+              success: false,
+            },
+          ],
+        }
 
         expect(result).toEqual({
-          result: expectedGatewayResponses,
+          result: expectedGatewayResponse,
           error: 'Error: All nodes returned a failure response',
         })
       })
@@ -1842,26 +1786,24 @@ describe('Functions toolkit classes', () => {
 
         const result = await sm.listDONHostedEncryptedSecrets(['https://dongateway.com/listFail1'])
 
-        const expectedGatewayResponses = [
-          {
-            gatewayUrl: 'https://dongateway.com/listFail1',
-            nodeResponses: [
-              {
-                success: true,
-                rows: [
-                  { slot_id: 0, version: 0, expiration: 100000 },
-                  { slot_id: 1, version: 1, expiration: 200000 },
-                ],
-              },
-              {
-                success: false,
-              },
-            ],
-          },
-        ]
+        const expectedGatewayResponse = {
+          gatewayUrl: 'https://dongateway.com/listFail1',
+          nodeResponses: [
+            {
+              success: true,
+              rows: [
+                { slot_id: 0, version: 0, expiration: 100000 },
+                { slot_id: 1, version: 1, expiration: 200000 },
+              ],
+            },
+            {
+              success: false,
+            },
+          ],
+        }
 
         expect(result).toEqual({
-          result: expectedGatewayResponses,
+          result: expectedGatewayResponse,
           error:
             'Error: One or more nodes failed to respond to the request with a success confirmation',
         })
@@ -1877,41 +1819,39 @@ describe('Functions toolkit classes', () => {
           'https://dongateway.com/listDifferentRowCounts',
         ])
 
-        const expectedGatewayResponses = [
-          {
-            gatewayUrl: 'https://dongateway.com/listDifferentRowCounts',
-            nodeResponses: [
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                  {
-                    slot_id: 1,
-                    version: 1,
-                    expiration: 200_000,
-                  },
-                ],
-              },
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                ],
-              },
-            ],
-          },
-        ]
+        const expectedGatewayResponse = {
+          gatewayUrl: 'https://dongateway.com/listDifferentRowCounts',
+          nodeResponses: [
+            {
+              success: true,
+              rows: [
+                {
+                  slot_id: 0,
+                  version: 0,
+                  expiration: 100_000,
+                },
+                {
+                  slot_id: 1,
+                  version: 1,
+                  expiration: 200_000,
+                },
+              ],
+            },
+            {
+              success: true,
+              rows: [
+                {
+                  slot_id: 0,
+                  version: 0,
+                  expiration: 100_000,
+                },
+              ],
+            },
+          ],
+        }
 
         expect(result).toEqual({
-          result: expectedGatewayResponses,
+          result: expectedGatewayResponse,
           error: 'Error: One or more nodes responded with a different number of secrets entries',
         })
       })
@@ -1926,36 +1866,34 @@ describe('Functions toolkit classes', () => {
           'https://dongateway.com/listDifferentRows',
         ])
 
-        const expectedGatewayResponses = [
-          {
-            gatewayUrl: 'https://dongateway.com/listDifferentRows',
-            nodeResponses: [
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 1,
-                    version: 1,
-                    expiration: 200_000,
-                  },
-                ],
-              },
-              {
-                success: true,
-                rows: [
-                  {
-                    slot_id: 0,
-                    version: 0,
-                    expiration: 100_000,
-                  },
-                ],
-              },
-            ],
-          },
-        ]
+        const expectedGatewayResponse = {
+          gatewayUrl: 'https://dongateway.com/listDifferentRows',
+          nodeResponses: [
+            {
+              success: true,
+              rows: [
+                {
+                  slot_id: 1,
+                  version: 1,
+                  expiration: 200_000,
+                },
+              ],
+            },
+            {
+              success: true,
+              rows: [
+                {
+                  slot_id: 0,
+                  version: 0,
+                  expiration: 100_000,
+                },
+              ],
+            },
+          ],
+        }
 
         expect(result).toEqual({
-          result: expectedGatewayResponses,
+          result: expectedGatewayResponse,
           error: 'Error: One or more nodes responded with different secrets entries',
         })
       })
@@ -1971,7 +1909,7 @@ describe('Functions toolkit classes', () => {
             await sm.listDONHostedEncryptedSecrets([
               'https://dongateway.com/unexpectedGatewayResponse',
             ]),
-        ).rejects.toThrow(/Unexpected response data from DON gateway/)
+        ).rejects.toThrow(/Failed to send request to any of the DON gateway URLs/)
       })
 
       it('Throws error for when 0 nodes provide a response to the gateway', async () => {
@@ -1983,7 +1921,7 @@ describe('Functions toolkit classes', () => {
         await expect(
           async () =>
             await sm.listDONHostedEncryptedSecrets(['https://dongateway.com/0NodeResponses']),
-        ).rejects.toThrow(/No nodes responded to gateway request/)
+        ).rejects.toThrow(/Failed to send request to any of the DON gateway URLs/)
       })
     })
   })
