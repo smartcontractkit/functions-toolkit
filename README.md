@@ -234,7 +234,7 @@ const estimatedCostInJuels: BigInt = await subscriptionManager.estimateFunctions
   donId, // ID of the DON to which the Functions request will be sent
   subscriptionId, // Subscription ID
   callbackGasLimit, // Total gas used by the consumer contract's callback
-  gasPriceGwei, // Gas price in gWei
+  gasPriceWei, // Gas price in wei
 })
 ```
 

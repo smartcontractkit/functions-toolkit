@@ -84,7 +84,7 @@ export type EstimateCostConfig = {
   donId: string
   subscriptionId: BigInt | number | string
   callbackGasLimit: number
-  gasPriceGwei: BigInt
+  gasPriceWei: BigInt
 }
 
 export type SubscriptionInfo = {

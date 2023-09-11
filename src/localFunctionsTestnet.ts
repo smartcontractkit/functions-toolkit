@@ -19,7 +19,7 @@ import {
   LinkTokenSource,
   MockV3AggregatorSource,
   FunctionsRouterSource,
-  MockFunctionsCoordinatorSource,
+  FunctionsCoordinatorTestHelperSource,
   TermsOfServiceAllowListSource,
 } from './v1_contract_sources'
 
@@ -157,13 +157,9 @@ const handleOracleRequest = async (
     errorHexstring,
   )
 
-  const transmitters31AddressArray = Array(31).fill('0x0000000000000000000000000000000000000000')
-  simulatedTransmitters.forEach((transmitter, i) => {
-    transmitters31AddressArray[i] = transmitter
-  })
   const reportTx = await mockCoordinator
     .connect(admin)
-    .callReport(encodedReport, transmitters31AddressArray, { gasLimit: callReportGasLimit })
+    .callReport(encodedReport, { gasLimit: callReportGasLimit })
   await reportTx.wait(1)
 }
 
@@ -354,8 +350,8 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     .deploy(linkToken.address, simulatedRouterConfig)
 
   const mockCoordinatorFactory = new ContractFactory(
-    MockFunctionsCoordinatorSource.abi,
-    MockFunctionsCoordinatorSource.bytecode,
+    FunctionsCoordinatorTestHelperSource.abi,
+    FunctionsCoordinatorTestHelperSource.bytecode,
     deployer,
   )
   const mockCoordinator = await mockCoordinatorFactory
@@ -391,7 +387,6 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     .setThresholdPublicKey(
       '0x' + Buffer.from(simulatedSecretsKeys.thresholdKeys.publicKey).toString('hex'),
     )
-  await mockCoordinator.connect(deployer).setTransmitters(simulatedTransmitters)
 
   return {
     donId: simulatedDonId,
