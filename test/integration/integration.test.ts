@@ -1212,11 +1212,11 @@ describe('Functions toolkit classes', () => {
         const estimatedCostInJuels = await subscriptionManager.estimateFunctionsRequestCost({
           subscriptionId,
           callbackGasLimit: 300_000,
-          gasPriceGwei: 1n,
+          gasPriceWei: 100000000000n, // 100 gWei
           donId,
         })
 
-        expect(estimatedCostInJuels.toString()).toBe(BigInt('389230000').toString())
+        expect(estimatedCostInJuels.toString()).toBe(BigInt('38923000000000000000').toString())
       })
 
       it('Throws an error for missing donId', async () => {
@@ -1235,7 +1235,7 @@ describe('Functions toolkit classes', () => {
             donId: undefined,
             subscriptionId,
             callbackGasLimit: 300_000,
-            gasPriceGwei: 1n,
+            gasPriceWei: 100000000000n,
           })
         }).rejects.toThrowError(/donId has invalid type/)
       })
@@ -1253,7 +1253,7 @@ describe('Functions toolkit classes', () => {
             donId,
             subscriptionId: 0,
             callbackGasLimit: 300_000,
-            gasPriceGwei: 1n,
+            gasPriceWei: 100000000000n,
           })
         }).rejects.toThrowError(/Error fetching information for subscription ID/)
       })
@@ -1274,12 +1274,12 @@ describe('Functions toolkit classes', () => {
             donId,
             subscriptionId,
             callbackGasLimit: -1,
-            gasPriceGwei: 1n,
+            gasPriceWei: 100000000000n,
           })
         }).rejects.toThrowError(/Invalid callbackGasLimit/)
       })
 
-      it('Throws an error for invalid gasPriceGwei', async () => {
+      it('Throws an error for invalid gasPriceWei', async () => {
         const subscriptionManager = new SubscriptionManager({
           signer: allowlistedUser_A,
           linkTokenAddress,
@@ -1295,9 +1295,9 @@ describe('Functions toolkit classes', () => {
             donId,
             subscriptionId,
             callbackGasLimit: 300_000,
-            gasPriceGwei: -1n,
+            gasPriceWei: -1n,
           })
-        }).rejects.toThrowError(/Invalid gasPriceGwei/)
+        }).rejects.toThrowError(/Invalid gasPriceWei/)
       })
 
       it('Throws an error for incorrect donId', async () => {
@@ -1316,7 +1316,7 @@ describe('Functions toolkit classes', () => {
             donId: 'wrong',
             subscriptionId,
             callbackGasLimit: 300_000,
-            gasPriceGwei: 1n,
+            gasPriceWei: 100000000000n,
           })
         }).rejects.toThrowError(
           /Error encountered when attempting to fetch the FunctionsCoordinator address/,
