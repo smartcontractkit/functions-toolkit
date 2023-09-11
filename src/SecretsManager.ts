@@ -235,24 +235,21 @@ export class SecretsManager {
       signature: storageSignatureBase64,
     }
 
-    const gatewayResponses = await this.sendMessageToGateways({
+    const gatewayResponse = await this.sendMessageToGateways({
       gatewayUrls,
       method: 'secrets_set',
       don_id: this.donId!,
       payload,
     })
 
-    let totalNodeResponses = 0
+    let totalNodeResponses = gatewayResponse.nodeResponses.length
     let totalErrorCount = 0
-    for (const gatewayResponse of gatewayResponses) {
-      totalNodeResponses += gatewayResponse.nodeResponses.length
-      for (const nodeResponse of gatewayResponse.nodeResponses) {
-        if (!nodeResponse.success) {
-          console.log(
-            `WARNING: Node connected to gateway URL ${gatewayResponse.gatewayUrl} failed to store the encrypted secrets:\n${nodeResponse}`,
-          )
-          totalErrorCount++
-        }
+    for (const nodeResponse of gatewayResponse.nodeResponses) {
+      if (!nodeResponse.success) {
+        console.log(
+          `WARNING: Node connected to gateway URL ${gatewayResponse.gatewayUrl} failed to store the encrypted secrets:\n${nodeResponse}`,
+        )
+        totalErrorCount++
       }
     }
 
@@ -283,8 +280,8 @@ export class SecretsManager {
 
   private async sendMessageToGateways(
     gatewayRpcMessageConfig: GatewayMessageConfig,
-  ): Promise<GatewayResponse[]> {
-    const gatewayResponses: GatewayResponse[] = []
+  ): Promise<GatewayResponse> {
+    let gatewayResponse: GatewayResponse | undefined
     let i = 0
     for (const url of gatewayRpcMessageConfig.gatewayUrls) {
       i++
@@ -296,22 +293,32 @@ export class SecretsManager {
         if (!response.data?.result?.body?.payload?.success) {
           throw Error(`Gateway response indicated failure:\n${JSON.stringify(response.data)}`)
         }
-        const gatewayResponse = this.extractNodeResponses(response)
-        gatewayResponses.push({
+        const nodeResponses = this.extractNodeResponses(response)
+        gatewayResponse = {
           gatewayUrl: url,
-          nodeResponses: gatewayResponse,
-        })
+          nodeResponses,
+        }
+        break // Break after first successful message is sent to a gateway
       } catch (e) {
         const error = e as any
         const errorResponseData = error?.response?.data
-        throw Error(
+        console.log(
           `Error encountered when attempting to send request to DON gateway URL #${i} of ${
             gatewayRpcMessageConfig.gatewayUrls.length
           }\n${url}:\n${errorResponseData ? JSON.stringify(errorResponseData) : error}`,
         )
       }
     }
-    return gatewayResponses
+
+    if (!gatewayResponse) {
+      throw Error(
+        `Failed to send request to any of the DON gateway URLs:\n${JSON.stringify(
+          gatewayRpcMessageConfig.gatewayUrls,
+        )}`,
+      )
+    }
+
+    return gatewayResponse
   }
 
   private async createGatewayMessage({
@@ -402,21 +409,21 @@ export class SecretsManager {
 
   public async listDONHostedEncryptedSecrets(
     gatewayUrls: string[],
-  ): Promise<{ result: GatewayResponse[]; error?: string }> {
+  ): Promise<{ result: GatewayResponse; error?: string }> {
     this.isInitialized()
     this.validateGatewayUrls(gatewayUrls)
 
-    const gatewayResponses = await this.sendMessageToGateways({
+    const gatewayResponse = await this.sendMessageToGateways({
       gatewayUrls,
       method: 'secrets_list',
       don_id: this.donId!,
     })
 
     try {
-      this.verifyDONHostedSecrets(gatewayResponses)
-      return { result: gatewayResponses }
+      this.verifyDONHostedSecrets([gatewayResponse])
+      return { result: gatewayResponse }
     } catch (e) {
-      return { result: gatewayResponses, error: e?.toString() }
+      return { result: gatewayResponse, error: e?.toString() }
     }
   }
 
