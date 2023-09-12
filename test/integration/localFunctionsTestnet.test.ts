@@ -1,3 +1,4 @@
+import cbor from 'cbor'
 import {
   SubscriptionManager,
   decodeResult,
@@ -130,6 +131,55 @@ describe('Local Functions Testnet', () => {
 
     const responseString = decodeResult(response.responseBytesHexstring, ReturnType.string)
     expect(responseString).toBe('hello world hello world0x12340x5678')
+  })
+
+  it('Successfully handles a request that has incorrect types', async () => {
+    const subscriptionManager = new SubscriptionManager({
+      signer: allowlistedUser_A,
+      linkTokenAddress,
+      functionsRouterAddress,
+    })
+    await subscriptionManager.initialize()
+
+    const subscriptionId = await subscriptionManager.createSubscription()
+    await subscriptionManager.fundSubscription({
+      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      subscriptionId,
+    })
+    await subscriptionManager.addConsumer({
+      subscriptionId,
+      consumerAddress: exampleClient.address,
+      txOptions: {
+        confirmations: 1,
+      },
+    })
+
+    const functionsListener = new ResponseListener({
+      provider: allowlistedUser_A.provider,
+      functionsRouterAddress,
+    })
+
+    const encodedRequestBytes =
+      '0x' +
+      cbor
+        .encodeCanonical({
+          codeLocation: Location.Inline,
+          codeLanguage: CodeLanguage.JavaScript,
+          source: 1234,
+        })
+        .toString('hex')
+
+    const reqTx = await exampleClient.sendEncodedRequest(
+      encodedRequestBytes,
+      subscriptionId,
+      100_000,
+    )
+
+    const req = await reqTx.wait()
+    const requestId = req.events[0].topics[1]
+    const response = await functionsListener.listenForResponse(requestId)
+
+    expect(response.errorString).toBe('source param is missing or invalid')
   })
 
   it('Successfully handles invalid request data', async () => {
