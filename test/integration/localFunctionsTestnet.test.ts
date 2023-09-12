@@ -1,9 +1,11 @@
 import {
   SubscriptionManager,
-  simulatedDonId,
   decodeResult,
   ResponseListener,
   ReturnType,
+  buildRequestCBOR,
+  Location,
+  CodeLanguage,
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
@@ -62,19 +64,13 @@ describe('Local Functions Testnet', () => {
     })
 
     const reqTx = await exampleClient.sendRequest(
-      {
-        codeLocation: 0,
-        secretsLocation: 1,
-        language: 0,
-        source:
-          'return Functions.encodeString(secrets.test + " " + args[0] + " " + args[1] + bytesArgs[0] + bytesArgs[1])',
-        encryptedSecretsReference: '0xabcd',
-        requestSignature: [],
-        args: ['hello', 'world'],
-        bytesArgs: ['0x1234', '0x5678'],
-      },
+      'return Functions.encodeString(secrets.test + " " + args[0] + " " + args[1] + bytesArgs[0] + bytesArgs[1])',
+      1,
+      '0xabcd',
+      ['hello', 'world'],
+      ['0x1234', '0x5678'],
       subscriptionId,
-      utils.formatBytes32String(simulatedDonId),
+      100_000,
     )
 
     const req = await reqTx.wait()
@@ -83,6 +79,92 @@ describe('Local Functions Testnet', () => {
 
     const responseString = decodeResult(response.responseBytesHexstring, ReturnType.string)
     expect(responseString).toBe('hello world hello world0x12340x5678')
+  })
+
+  it('Successfully handles a request that was encoded off-chain', async () => {
+    const subscriptionManager = new SubscriptionManager({
+      signer: allowlistedUser_A,
+      linkTokenAddress,
+      functionsRouterAddress,
+    })
+    await subscriptionManager.initialize()
+
+    const subscriptionId = await subscriptionManager.createSubscription()
+    await subscriptionManager.fundSubscription({
+      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      subscriptionId,
+    })
+    await subscriptionManager.addConsumer({
+      subscriptionId,
+      consumerAddress: exampleClient.address,
+      txOptions: {
+        confirmations: 1,
+      },
+    })
+
+    const functionsListener = new ResponseListener({
+      provider: allowlistedUser_A.provider,
+      functionsRouterAddress,
+    })
+
+    const encodedRequestBytes = buildRequestCBOR({
+      source:
+        'return Functions.encodeString(secrets.test + " " + args[0] + " " + args[1] + bytesArgs[0] + bytesArgs[1])',
+      codeLanguage: CodeLanguage.JavaScript,
+      codeLocation: Location.Inline,
+      args: ['hello', 'world'],
+      bytesArgs: ['0x1234', '0x5678'],
+      secretsLocation: Location.Remote,
+      encryptedSecretsReference: '0xabcd',
+    })
+
+    const reqTx = await exampleClient.sendEncodedRequest(
+      encodedRequestBytes,
+      subscriptionId,
+      100_000,
+    )
+
+    const req = await reqTx.wait()
+    const requestId = req.events[0].topics[1]
+    const response = await functionsListener.listenForResponse(requestId)
+
+    const responseString = decodeResult(response.responseBytesHexstring, ReturnType.string)
+    expect(responseString).toBe('hello world hello world0x12340x5678')
+  })
+
+  it('Successfully handles invalid request data', async () => {
+    const subscriptionManager = new SubscriptionManager({
+      signer: allowlistedUser_A,
+      linkTokenAddress,
+      functionsRouterAddress,
+    })
+    await subscriptionManager.initialize()
+
+    const subscriptionId = await subscriptionManager.createSubscription()
+    await subscriptionManager.fundSubscription({
+      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      subscriptionId,
+    })
+    await subscriptionManager.addConsumer({
+      subscriptionId,
+      consumerAddress: exampleClient.address,
+      txOptions: {
+        confirmations: 1,
+      },
+    })
+
+    const functionsListener = new ResponseListener({
+      provider: allowlistedUser_A.provider,
+      functionsRouterAddress,
+    })
+
+    const reqTx = await exampleClient.sendEncodedRequest('0xabcd', subscriptionId, 100_000)
+
+    const req = await reqTx.wait()
+    const requestId = req.events[0].topics[1]
+    const response = await functionsListener.listenForResponse(requestId)
+
+    expect(response.errorString).toBe('CBOR parsing error')
   })
 
   it('Successfully aggregates a random number', async () => {
@@ -112,18 +194,13 @@ describe('Local Functions Testnet', () => {
     })
 
     const reqTx = await exampleClient.sendRequest(
-      {
-        codeLocation: 0,
-        secretsLocation: 1,
-        language: 0,
-        source: 'return Functions.encodeUint256(Math.floor((Math.random() + 0.1) * 1_000_000_000))',
-        encryptedSecretsReference: '0xabcd',
-        requestSignature: [],
-        args: ['hello', 'world'],
-        bytesArgs: ['0x1234', '0x5678'],
-      },
+      'return Functions.encodeUint256(Math.floor((Math.random() + 0.1) * 1_000_000_000))',
+      1,
+      '0xabcd',
+      ['hello', 'world'],
+      ['0x1234', '0x5678'],
       subscriptionId,
-      utils.formatBytes32String(simulatedDonId),
+      100_000,
     )
 
     const req = await reqTx.wait()
@@ -160,18 +237,13 @@ describe('Local Functions Testnet', () => {
     })
 
     const reqTx = await exampleClient.sendRequest(
-      {
-        codeLocation: 0,
-        secretsLocation: 1,
-        language: 0,
-        source: 'throw Error(`${Math.floor((Math.random() + 0.1) * 100)}`)',
-        encryptedSecretsReference: '0xabcd',
-        requestSignature: [],
-        args: ['hello', 'world'],
-        bytesArgs: ['0x1234', '0x5678'],
-      },
+      'throw Error(`${Math.floor((Math.random() + 0.1) * 100)}`)',
+      1,
+      '0xabcd',
+      ['hello', 'world'],
+      ['0x1234', '0x5678'],
       subscriptionId,
-      utils.formatBytes32String(simulatedDonId),
+      100_000,
     )
 
     const req = await reqTx.wait()

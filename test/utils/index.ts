@@ -1,5 +1,5 @@
 import { startLocalFunctionsTestnet } from '../../src'
-import { FunctionsClientExampleSource } from '../../src/v1_contract_sources'
+import { ExampleFunctionsConsumerSource } from './contracts/FunctionsConsumerSource'
 
 import path from 'path'
 
@@ -41,13 +41,16 @@ export const setupLocalTestnetFixture = async (
   const provider = new providers.JsonRpcProvider(`http://localhost:${port}/`)
   const admin = new Wallet(localFunctionsTestnet.adminWallet.privateKey, provider)
   const functionsTestConsumerContractFactory = new ContractFactory(
-    FunctionsClientExampleSource.abi,
-    FunctionsClientExampleSource.bytecode,
+    ExampleFunctionsConsumerSource.abi,
+    ExampleFunctionsConsumerSource.bytecode,
     admin,
   )
   const exampleConsumer = await functionsTestConsumerContractFactory
     .connect(admin)
-    .deploy(localFunctionsTestnet.functionsRouterContract.address)
+    .deploy(
+      localFunctionsTestnet.functionsRouterContract.address,
+      utils.formatBytes32String(localFunctionsTestnet.donId),
+    )
 
   const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(
     localFunctionsTestnet.server,

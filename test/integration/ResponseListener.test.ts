@@ -58,18 +58,13 @@ describe('Functions toolkit classes', () => {
       })
 
       const succReqTx = await exampleClient.sendRequest(
-        {
-          codeLocation: 0,
-          secretsLocation: 1,
-          language: 0,
-          source: 'return Functions.encodeUint256(1)',
-          encryptedSecretsReference: [],
-          requestSignature: [],
-          args: [],
-          bytesArgs: [],
-        },
+        'return Functions.encodeUint256(1)',
+        1,
+        [],
+        [],
+        [],
         subscriptionId,
-        utils.formatBytes32String(simulatedDonId),
+        100_000,
       )
 
       const succReq = await succReqTx.wait()
@@ -86,18 +81,13 @@ describe('Functions toolkit classes', () => {
       expect(succResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
 
       const errReqTx = await exampleClient.sendRequest(
-        {
-          codeLocation: 0,
-          secretsLocation: 1,
-          language: 0,
-          source: 'return Functions.encodeUint256(1',
-          encryptedSecretsReference: [],
-          requestSignature: [],
-          args: [],
-          bytesArgs: [],
-        },
+        'return Functions.encodeUint256(1',
+        1,
+        [],
+        [],
+        [],
         subscriptionId,
-        utils.formatBytes32String(simulatedDonId),
+        100_000,
       )
 
       const errReq = await errReqTx.wait(1)
@@ -152,18 +142,13 @@ describe('Functions toolkit classes', () => {
       functionsListener.listenForResponses(subscriptionId, responseCallback)
 
       await exampleClient.sendRequest(
-        {
-          codeLocation: 0,
-          secretsLocation: 1,
-          language: 0,
-          source: 'return Functions.encodeUint256(1)',
-          encryptedSecretsReference: [],
-          requestSignature: [],
-          args: [],
-          bytesArgs: [],
-        },
+        'return Functions.encodeUint256(1)',
+        1,
+        [],
+        [],
+        [],
         subscriptionId,
-        utils.formatBytes32String(simulatedDonId),
+        100_000,
       )
 
       await waitForResponse

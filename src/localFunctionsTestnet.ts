@@ -144,8 +144,7 @@ const handleOracleRequest = async (
   admin: Wallet,
   simulationConfigPath?: string,
 ) => {
-  const requestData = await buildRequestObject(requestEventData.data)
-  const response = await simulateDONExecution(requestData, simulationConfigPath)
+  const response = await simulateDONExecution(requestEventData, simulationConfigPath)
 
   const errorHexstring = response.errorString
     ? '0x' + Buffer.from(response.errorString.toString()).toString('hex')
@@ -164,9 +163,18 @@ const handleOracleRequest = async (
 }
 
 const simulateDONExecution = async (
-  requestData: FunctionsRequestParams,
+  requestEventData: RequestEventData,
   simulationConfigPath?: string,
 ): Promise<{ responseBytesHexstring?: string; errorString?: string }> => {
+  let requestData: FunctionsRequestParams
+  try {
+    requestData = await buildRequestObject(requestEventData.data)
+  } catch {
+    return {
+      errorString: 'CBOR parsing error',
+    }
+  }
+
   const simulationConfig = simulationConfigPath ? require(simulationConfigPath) : {}
 
   // Perform the simulation numberOfSimulatedNodeExecution times
@@ -300,6 +308,15 @@ const buildRequestObject = async (
 ): Promise<FunctionsRequestParams> => {
   const decodedRequestData = await cbor.decodeAll(Buffer.from(requestDataHexString.slice(2), 'hex'))
 
+  if (typeof decodedRequestData[0] === 'object') {
+    if (decodedRequestData[0].bytesArgs) {
+      decodedRequestData[0].bytesArgs = decodedRequestData[0].bytesArgs?.map((bytesArg: Buffer) => {
+        return '0x' + bytesArg?.toString('hex')
+      })
+    }
+    decodedRequestData[0].secrets = undefined
+    return decodedRequestData[0] as FunctionsRequestParams
+  }
   const requestDataObject = {} as FunctionsRequestParams
   // The decoded request data is an array of alternating keys and values, therefore we can iterate over it in steps of 2
   for (let i = 0; i < decodedRequestData.length - 1; i += 2) {
@@ -325,8 +342,8 @@ const buildRequestObject = async (
         requestDataObject.args = requestDataValue
         break
       case 'bytesArgs':
-        requestDataObject.bytesArgs = requestDataValue.map((bytesArg: Buffer) => {
-          return '0x' + bytesArg.toString('hex')
+        requestDataObject.bytesArgs = requestDataValue?.map((bytesArg: Buffer) => {
+          return '0x' + bytesArg?.toString('hex')
         })
         break
       default:

@@ -1069,21 +1069,14 @@ describe('Functions toolkit classes', () => {
           },
         })
 
-        const req = {
-          codeLocation: 0,
-          secretsLocation: 1,
-          language: 0,
-          source: 'return Functions.encodeUint256(1)',
-          encryptedSecretsReference: [],
-          requestSignature: [],
-          args: [],
-          bytesArgs: [],
-        }
-
         const reqTx = await exampleClient.sendRequest(
-          req,
+          'return Functions.encodeUint256(1)',
+          1,
+          [],
+          [],
+          [],
           subscriptionId,
-          utils.formatBytes32String('local-functions-testnet'),
+          100_000,
         )
         const reqReceipt = await reqTx.wait()
 
