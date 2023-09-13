@@ -15,6 +15,12 @@ describe('decodeResult', () => {
       label: 'decodes uint256',
     },
     {
+      result: '0x0000000000000000000000000000000000000000000000000000000000000064',
+      expectedDataType: ReturnType.int256,
+      decodedResult: BigInt(100),
+      label: 'decodes signed (positive) integer',
+    },
+    {
       result: '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0b5f13',
       expectedDataType: ReturnType.int256,
       decodedResult: BigInt(-16031981),
@@ -27,7 +33,7 @@ describe('decodeResult', () => {
       label: 'decodes bytes',
     },
   ])('$label', ({ result, expectedDataType, decodedResult }) => {
-    expect(decodeResult(result, expectedDataType)).toBe(decodedResult)
+    expect(decodeResult(result, expectedDataType).toString()).toBe(decodedResult.toString())
   })
 
   it('throws error if expectedDataType is invalid', () => {

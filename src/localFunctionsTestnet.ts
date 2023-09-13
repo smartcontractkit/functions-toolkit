@@ -12,7 +12,7 @@ import {
   simulatedLinkEthPrice,
   callReportGasLimit,
   simulatedSecretsKeys,
-  simulatedTransmitters,
+  DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES,
   numberOfSimulatedNodeExecutions,
 } from './simulationConfig'
 import {
@@ -43,9 +43,9 @@ export const startLocalFunctionsTestnet = async (
 
   server.listen(port, 'localhost', (err: Error | null) => {
     if (err) {
-      throw Error(`Error starting Ganache server:\n${err}`)
+      throw Error(`Error starting local Functions testnet server:\n${err}`)
     }
-    console.log(`Ganache server started on port ${port}`)
+    console.log(`Local Functions testnet server started on port ${port}`)
   })
 
   const accounts = server.provider.getInitialAccounts()
@@ -144,8 +144,7 @@ const handleOracleRequest = async (
   admin: Wallet,
   simulationConfigPath?: string,
 ) => {
-  const requestData = await buildRequestObject(requestEventData.data)
-  const response = await simulateDONExecution(requestData, simulationConfigPath)
+  const response = await simulateDONExecution(requestEventData, simulationConfigPath)
 
   const errorHexstring = response.errorString
     ? '0x' + Buffer.from(response.errorString.toString()).toString('hex')
@@ -164,28 +163,48 @@ const handleOracleRequest = async (
 }
 
 const simulateDONExecution = async (
-  requestData: FunctionsRequestParams,
+  requestEventData: RequestEventData,
   simulationConfigPath?: string,
 ): Promise<{ responseBytesHexstring?: string; errorString?: string }> => {
+  let requestData: FunctionsRequestParams
+  try {
+    requestData = await buildRequestObject(requestEventData.data)
+  } catch {
+    return {
+      errorString: 'CBOR parsing error',
+    }
+  }
+
   const simulationConfig = simulationConfigPath ? require(simulationConfigPath) : {}
 
   // Perform the simulation numberOfSimulatedNodeExecution times
-  const simulations = [...Array(numberOfSimulatedNodeExecutions)].map(() =>
-    simulateScript({
-      source: requestData.source,
-      secrets: simulationConfig.secrets, // Secrets are taken from simulationConfig, not request data included in transaction
-      args: requestData.args,
-      bytesArgs: requestData.bytesArgs,
-      maxOnChainResponseBytes: simulationConfig.maxOnChainResponseBytes,
-      maxExecutionTimeMs: simulationConfig.maxExecutionTimeMs,
-      maxMemoryUsageMb: simulationConfig.maxMemoryUsageMb,
-      numAllowedQueries: simulationConfig.numAllowedQueries,
-      maxQueryDurationMs: simulationConfig.maxQueryDurationMs,
-      maxQueryUrlLength: simulationConfig.maxQueryUrlLength,
-      maxQueryRequestBytes: simulationConfig.maxQueryRequestBytes,
-      maxQueryResponseBytes: simulationConfig.maxQueryResponseBytes,
-    }),
-  )
+  const simulations = [...Array(numberOfSimulatedNodeExecutions)].map(async () => {
+    try {
+      return await simulateScript({
+        source: requestData.source,
+        secrets: simulationConfig.secrets, // Secrets are taken from simulationConfig, not request data included in transaction
+        args: requestData.args,
+        bytesArgs: requestData.bytesArgs,
+        maxOnChainResponseBytes: simulationConfig.maxOnChainResponseBytes,
+        maxExecutionTimeMs: simulationConfig.maxExecutionTimeMs,
+        maxMemoryUsageMb: simulationConfig.maxMemoryUsageMb,
+        numAllowedQueries: simulationConfig.numAllowedQueries,
+        maxQueryDurationMs: simulationConfig.maxQueryDurationMs,
+        maxQueryUrlLength: simulationConfig.maxQueryUrlLength,
+        maxQueryRequestBytes: simulationConfig.maxQueryRequestBytes,
+        maxQueryResponseBytes: simulationConfig.maxQueryResponseBytes,
+      })
+    } catch (err) {
+      const errorString = (err as Error).message.slice(
+        0,
+        simulationConfig.maxOnChainResponseBytes ?? DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES,
+      )
+      return {
+        errorString,
+        capturedTerminalOutput: '',
+      }
+    }
+  })
   const responses = await Promise.all(simulations)
 
   const successfulResponses = responses.filter(response => response.errorString === undefined)
@@ -289,6 +308,15 @@ const buildRequestObject = async (
 ): Promise<FunctionsRequestParams> => {
   const decodedRequestData = await cbor.decodeAll(Buffer.from(requestDataHexString.slice(2), 'hex'))
 
+  if (typeof decodedRequestData[0] === 'object') {
+    if (decodedRequestData[0].bytesArgs) {
+      decodedRequestData[0].bytesArgs = decodedRequestData[0].bytesArgs?.map((bytesArg: Buffer) => {
+        return '0x' + bytesArg?.toString('hex')
+      })
+    }
+    decodedRequestData[0].secrets = undefined
+    return decodedRequestData[0] as FunctionsRequestParams
+  }
   const requestDataObject = {} as FunctionsRequestParams
   // The decoded request data is an array of alternating keys and values, therefore we can iterate over it in steps of 2
   for (let i = 0; i < decodedRequestData.length - 1; i += 2) {
@@ -314,8 +342,8 @@ const buildRequestObject = async (
         requestDataObject.args = requestDataValue
         break
       case 'bytesArgs':
-        requestDataObject.bytesArgs = requestDataValue.map((bytesArg: Buffer) => {
-          return '0x' + bytesArg.toString('hex')
+        requestDataObject.bytesArgs = requestDataValue?.map((bytesArg: Buffer) => {
+          return '0x' + bytesArg?.toString('hex')
         })
         break
       default:

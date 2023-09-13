@@ -1,4 +1,3 @@
-export * from './FunctionsClientExample'
 export * from './FunctionsCoordinator'
 export * from './FunctionsRouter'
 export * from './LinkToken'

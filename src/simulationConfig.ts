@@ -1,8 +1,8 @@
 export const simulatedLinkEthPrice = BigInt('1000000000000000')
 
-export const simulatedDonId = 'coordinator1'
+export const simulatedDonId = 'local-functions-testnet'
 
-export const simulatedAllowListId = 'allowlist1'
+export const simulatedAllowListId = 'allowlist'
 
 export const simulatedRouterConfig = {
   maxConsumersPerSubscription: 100,
