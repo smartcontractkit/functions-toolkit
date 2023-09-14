@@ -208,10 +208,10 @@ export class SecretsManager {
     if (
       !Number.isInteger(minutesUntilExpiration) ||
       minutesUntilExpiration < 5 ||
-      minutesUntilExpiration > 100800
+      minutesUntilExpiration > 2880
     ) {
       throw Error(
-        'minutesUntilExpiration must be an integer of at least 5 and less than 100800 (1 week)',
+        'minutesUntilExpiration must be an integer of at least 5 and less than 2880 (48 hours)',
       )
     }
 
