@@ -419,13 +419,14 @@ First encrypt the secrets with [`encryptSecrets()`](#encrypting-secrets) and the
 
 You can also use the [gist uploader utility function](#storing-encrypted-secrets-in-gists) to upload the encrypted secrets string to a JSON file in a Github Gist.
 
-However you'd need to pass the URLs to your Functions Consumer contract so that the DON can retrieve the secrets.
 
-**Note:** ⚠️ As an additional layer of security, the URLs must also encrypted with the DON Public key before being included in an on-chain transaction. This is to prevent directly exposing the URL to anyone except DON members. You can build the encrypted URLs with:
+**Note:** ⚠️ As an additional layer of security, the URLs pointing to your JSON file must also encrypted with the DON Public key before being included in an on-chain transaction. This is to prevent directly exposing the URL to anyone except DON members. You can build the encrypted URLs with:
 
-> const encryptedURLs: string = await encryptSecretsUrls(secretsUrls: string[])
+> const encryptedSecretsReference: string = await encryptSecretsUrls(secretsUrls: string[])
 
 The argument `secretsUrls` is an array of URLs and `encryptSecretsUrls()` returns the URLs as an encrypted, space-separated string of all the URLs you supply in the array.
+
+The encrypted URLs `encryptedSecretsReference` can then  be passed to your the Functions Client as one of the parameters for building the Functions Request.
 
 ## Functions Response Listener
 
