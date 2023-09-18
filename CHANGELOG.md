@@ -1,5 +1,21 @@
 # @chainlink/functions-toolkit
 
+## 0.2.1
+
+### Patch Changes
+
+- [#11](https://github.com/smartcontractkit/functions-toolkit/pull/11) [`bdc680e`](https://github.com/smartcontractkit/functions-toolkit/commit/bdc680e9b112cf6fc5397a9b062d4578e2c0db49) Thanks [@KuphJr](https://github.com/KuphJr)! - Added maximum expiration for DON hosted secrets
+
+## 0.2.0
+
+### Minor Changes
+
+- [#9](https://github.com/smartcontractkit/functions-toolkit/pull/9) [`7ad428a`](https://github.com/smartcontractkit/functions-toolkit/commit/7ad428a5cd49651642bfa33dc6896011e687bae2) Thanks [@KuphJr](https://github.com/KuphJr)! - Changed DON ID for localFunctionsTestnet from coordinator1 to local-functions-testnet
+
+### Patch Changes
+
+- [#9](https://github.com/smartcontractkit/functions-toolkit/pull/9) [`407b39f`](https://github.com/smartcontractkit/functions-toolkit/commit/407b39f4eeeff300f28a5e85bf550de9351f52af) Thanks [@KuphJr](https://github.com/KuphJr)! - Fixed CBOR parsing & error handling in localFunctionsTestnet
+
 ## 0.1.0
 
 ### Minor Changes
