@@ -405,7 +405,7 @@ const secretsEntriesForGateway = await secretsManager.listDONHostedEncryptedSecr
 `buildDONHostedEncryptedSecretsReference()` can be used to construct the hex string which represents the `encryptedSecretsReference` bytes used to reference the DON hosted encrypted secrets when making an on-chain Functions request. To use DON hosted encrypted secrets in an on-chain request, also ensure that `secretsLocation` is set to `Location.DONHosted` (ie: `2`).
 
 ```
-const encryptedSecretsReference: string = buildDONHostedEncryptedSecretsReference({
+const encryptedSecretsReference: string = secretsManager.buildDONHostedEncryptedSecretsReference({
   slotId: number,
   version: number
 })
