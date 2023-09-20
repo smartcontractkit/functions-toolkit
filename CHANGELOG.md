@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.2.2
+
+### Patch Changes
+
+- [#17](https://github.com/smartcontractkit/functions-toolkit/pull/17) [`6e98aa6`](https://github.com/smartcontractkit/functions-toolkit/commit/6e98aa638bb1b6ee11a787e2dc15ca5739d02bb8) Thanks [@KuphJr](https://github.com/KuphJr)! - Removed maximum expiration check for DON hosted secrets
+
 ## 0.2.1
 
 ### Patch Changes
