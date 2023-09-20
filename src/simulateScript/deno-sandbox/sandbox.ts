@@ -452,8 +452,6 @@ try {
   }) as () => Promise<unknown>
   const result = await userScript()
 
-  __2___.close()
-
   if (!(result instanceof ArrayBuffer) && !(result instanceof Uint8Array)) {
     throw Error('returned value not an ArrayBuffer or Uint8Array')
   }
@@ -495,4 +493,6 @@ try {
         },
       }),
   )
+} finally {
+  __2___.close()
 }

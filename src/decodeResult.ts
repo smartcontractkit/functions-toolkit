@@ -6,7 +6,7 @@ export const decodeResult = (
   resultHexstring: string,
   expectedReturnType: ReturnType,
 ): DecodedResult => {
-  if (!isValidHexadecimal(resultHexstring)) {
+  if (!isValidHexadecimal(resultHexstring) && resultHexstring.slice(0, 2) !== '0x') {
     throw Error(`'${resultHexstring}' is not a valid hexadecimal string`)
   }
   expectedReturnType = expectedReturnType.toLowerCase() as ReturnType
@@ -29,6 +29,9 @@ export const decodeResult = (
           `'${resultHexstring}' has '${resultHexBits}' bits which is too large for uint256`,
         )
       }
+      if (resultHexstring === '0x') {
+        return BigInt(0)
+      }
       decodedOutput = BigInt('0x' + resultHexstring.slice(2).slice(-64))
       break
     case ReturnType.int256:
@@ -37,9 +40,15 @@ export const decodeResult = (
           `'${resultHexstring}' has '${resultHexBits}' bits which is too large for int256`,
         )
       }
+      if (resultHexstring === '0x') {
+        return BigInt(0)
+      }
       decodedOutput = signedInt256toBigInt('0x' + resultHexstring.slice(2).slice(-64))
       break
     case ReturnType.string:
+      if (resultHexstring === '0x') {
+        return ''
+      }
       decodedOutput = Buffer.from(resultHexstring.slice(2), 'hex').toString()
       break
     case ReturnType.bytes:
