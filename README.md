@@ -8,7 +8,7 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 
 # Prerequisites
 
-Install Node.js version `18.18.0` or higher *and* Deno version `1.36.0` or higher.
+Install Node.js version `18.18.0` or higher _and_ Deno version `1.36.0` or higher.
 
 # How to use this package
 
