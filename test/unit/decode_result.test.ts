@@ -3,6 +3,24 @@ import { decodeResult, ReturnType } from '../../src/index'
 describe('decodeResult', () => {
   it.each([
     {
+      result: '0x',
+      expectedDataType: ReturnType.string,
+      decodedResult: '',
+      label: 'decodes empty string',
+    },
+    {
+      result: '0x',
+      expectedDataType: ReturnType.uint256,
+      decodedResult: BigInt(0),
+      label: 'decodes empty uint256',
+    },
+    {
+      result: '0x',
+      expectedDataType: ReturnType.int256,
+      decodedResult: BigInt(0),
+      label: 'decodes empty int256',
+    },
+    {
       result: '0x48656c6c6f2c20576f726c6421',
       expectedDataType: ReturnType.string,
       decodedResult: 'Hello, World!',

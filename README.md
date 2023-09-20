@@ -6,6 +6,10 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 
 > :warning: Chainlink Functions requires signing a terms of service agreement before creating a billing subscription. See this [getting started](https://docs.chain.link/chainlink-functions/getting-started) section in the docs.
 
+# Prerequisites
+
+Install Node.js version `18.18.0` or higher *and* Deno version `1.36.0` or higher.
+
 # How to use this package
 
 The following classes expose functionality one would expect from their name.
@@ -23,6 +27,7 @@ The `SubscriptionManager` class is used to manage the Chainlink billing [subscri
 
 The typical subscriptions-related operations are
 
+- [Prerequisites](#prerequisites)
 - [How to use this package](#how-to-use-this-package)
   - [Functions Billing Subscription Management](#functions-billing-subscription-management)
     - [Subscription Initialization](#subscription-initialization)
