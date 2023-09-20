@@ -8,7 +8,8 @@ describe('simulateScript', () => {
   describe('successful simulation', () => {
     it('simulates script', async () => {
       const result = await simulateScript({
-        source: `console.log('start'); return Functions.encodeString(args[0] + bytesArgs[0] + secrets.key);`,
+        source: `const crypto = require("crypto")
+        console.log('start'); return Functions.encodeString(args[0] + bytesArgs[0] + secrets.key);`,
         args: ['MockArg'],
         bytesArgs: ['0x1234'],
         secrets: {
