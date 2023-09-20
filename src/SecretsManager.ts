@@ -205,14 +205,8 @@ export class SecretsManager {
       throw Error('slotId must be a integer of at least 0')
     }
 
-    if (
-      !Number.isInteger(minutesUntilExpiration) ||
-      minutesUntilExpiration < 5 ||
-      minutesUntilExpiration > 2880
-    ) {
-      throw Error(
-        'minutesUntilExpiration must be an integer of at least 5 and less than 2880 (48 hours)',
-      )
+    if (!Number.isInteger(minutesUntilExpiration) || minutesUntilExpiration < 5) {
+      throw Error('minutesUntilExpiration must be an integer of at least 5')
     }
 
     const encryptedSecretsBase64 = Buffer.from(encryptedSecretsHexstring.slice(2), 'hex').toString(
