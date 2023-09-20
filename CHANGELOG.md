@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.2.3
+
+### Patch Changes
+
+- [#19](https://github.com/smartcontractkit/functions-toolkit/pull/19) [`86b822c`](https://github.com/smartcontractkit/functions-toolkit/commit/86b822c16f3f93ea4916f36e6067ce060500ae6c) Thanks [@KuphJr](https://github.com/KuphJr)! - Support `0x` in decodeResult, fixed simulator shutdown when error is encountered, added explicitly supported versions to README
+
 ## 0.2.2
 
 ### Patch Changes
