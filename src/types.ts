@@ -37,7 +37,7 @@ export type ThresholdPublicKey = {
   HArray: string[]
 }
 
-export type FetchRequestCommitmentConfig = {
+export type RequestCommitmentFetchConfig = {
   requestId: string
   provider: providers.JsonRpcProvider
   functionsRouterAddress: string

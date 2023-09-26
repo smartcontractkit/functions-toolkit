@@ -2,7 +2,7 @@ import { Contract, utils } from 'ethers'
 
 import { FunctionsRouterSource, FunctionsCoordinatorSource } from './v1_contract_sources'
 
-import type { FetchRequestCommitmentConfig, RequestCommitment } from './types'
+import type { RequestCommitmentFetchConfig, RequestCommitment } from './types'
 
 export const fetchRequestCommitment = async ({
   requestId,
@@ -11,7 +11,7 @@ export const fetchRequestCommitment = async ({
   donId,
   toBlock = 'latest',
   pastBlocksToSearch = 1000,
-}: FetchRequestCommitmentConfig): Promise<RequestCommitment> => {
+}: RequestCommitmentFetchConfig): Promise<RequestCommitment> => {
   let fromBlock: number
   const latestBlock = await provider.getBlockNumber()
   if (toBlock === 'latest') {

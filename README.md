@@ -195,25 +195,11 @@ type SubscriptionInfo = {
 
 ### Timing out requests
 
-In certain circumstances, such as when the cost of request fulfillment exceeds the amount that was allocated when the request was initiated, pending requests (requests that have not been fulfilled) will be expired and you may need to manually time those requests out. This is because when a request is "in-flight", your LINK tokens that pay for that computation get locked up for the duration of the request's lifecycle. Calling `timeoutRequest()` unlocks those funds and effectively 'cancels' that pending request.
+In certain circumstances, such as when the cost of fulfillment exceeds the amount that was allocated when the request was initiated, pending requests may become expired and must be manually timed out. This is because, when a request is "in-flight", your LINK tokens that pay for that computation get locked up for the duration of the request's lifecycle. Calling `timeoutRequest()` unlocks those funds in the event a request expires without fulfillment.
 
-Note that you cannot time out requests until they have expired meaning that more than 300 seconds have past since the request transaction was confirmed without a fulfillment.
+Note that you cannot time out requests until they have "expired". A request becomes "expired" if it has not been fulfilled within 300 seconds after the request transaction was confirmed on-chain.
 
-In order to time out a request, you must first fetch the complete request commitment. This can be achieved using `fetchRequestCommitment`.
-
-```
-const provider: ethers.providers.JsonRpcProvider = new ethers.providers.JsonRpcProvider('http://YOUR_RPC_URL.com/')
-const requestCommitment: RequestCommitment = await fetchRequestCommitment({
-  requestId: '0xYOUR_REQUEST_ID',
-  provider,
-  functionsRouterAddress: '0xFUNCTIONS_ROUTER_ADDRESS'
-  donId: 'DON_ID_FOR_NETWORK',
-  toBlock: 100_000, // Optional value for ending block range to search (defaults to latest block)
-  pastBlocksToSearch: 2000, // Optional value for the number of blocks to search before the toBlock (defaults to 1000)
-})
-```
-
-The `RequestCommitment` type refers to the data for the in-flight requests. Note that when timing out a request, all this data must exactly match the request commitment that was emitted on-chain by the `OracleRequest` event when the request was initiated.
+In order to time out a request, you must first fetch the request commitment which contains the request data that was emitted by the request transaction. This can be achieved using `fetchRequestCommitment` which returns a promise that resolves to a `RequestCommitment` object.
 
 ```
 type RequestCommitment = {
@@ -231,6 +217,20 @@ type RequestCommitment = {
 }
 ```
 
+Here is an example of using `fetchRequestCommitment`.
+
+```
+const provider: ethers.providers.JsonRpcProvider = new ethers.providers.JsonRpcProvider('http://YOUR_RPC_URL.com/')
+const requestCommitment: RequestCommitment = await fetchRequestCommitment({
+  requestId: '0xYOUR_REQUEST_ID',
+  provider,
+  functionsRouterAddress: '0xFUNCTIONS_ROUTER_ADDRESS'
+  donId: 'DON_ID_FOR_NETWORK',
+  toBlock: 100_000, // Optional value for ending block in range to search (defaults to latest block)
+  pastBlocksToSearch: 2000, // Optional value for the number of blocks to search before the toBlock (defaults to 1000)
+})
+```
+
 Now you can time out the request.
 
 ```
@@ -238,15 +238,6 @@ const timeoutRequestConfig: SubTimeoutConfig = {
   requestCommitments: [ requestCommitment ],
 }
 const timeoutReceipt: TransactionReceipt | void = await timeoutRequests(timeoutReqConfig)
-```
-
-The `SubTimeoutConfig` referred to above has the following shape:
-
-```
-{
-  requestCommitments: RequestCommitment[]
-  txOptions?: TransactionOptions
-}
 ```
 
 ### Estimating request costs
