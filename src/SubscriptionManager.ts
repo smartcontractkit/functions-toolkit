@@ -464,7 +464,9 @@ export class SubscriptionManager {
         : await this.functionsRouter.timeoutRequests(requestCommitments)
       return timeoutTx.wait(txOptions?.confirmations)
     } catch (error) {
-      throw Error(`Failed to timeout requests:\n${error}`)
+      throw Error(
+        `Failed to timeout requests. Ensure commitments are correct, requests have not been fulfilled and were sent more than 5 minutes ago:\n${error}`,
+      )
     }
   }
 
