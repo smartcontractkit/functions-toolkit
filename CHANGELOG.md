@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.2.4
+
+### Patch Changes
+
+- [#26](https://github.com/smartcontractkit/functions-toolkit/pull/26) [`daac368`](https://github.com/smartcontractkit/functions-toolkit/commit/daac368e8d05c574262cb6f946c77f629cd216ea) Thanks [@KuphJr](https://github.com/KuphJr)! - Added commitment fetching
+
 ## 0.2.3
 
 ### Patch Changes
