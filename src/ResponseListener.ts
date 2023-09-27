@@ -59,14 +59,18 @@ export class ResponseListener {
   }
 
   public listenForResponses(
-    subscriptionId: number,
+    subscriptionId: number | string,
     callback: (functionsResponse: FunctionsResponse) => any,
   ) {
+    if (typeof subscriptionId === 'string') {
+      subscriptionId = Number(subscriptionId)
+    }
+    
     this.functionsRouter.on(
       'RequestProcessed',
       (
         requestId: string,
-        _subscriptionId: BigNumber,
+        _subscriptionId: BigNumber ,
         totalCostJuels: BigNumber,
         _,
         resultCode: number,
