@@ -65,12 +65,12 @@ export class ResponseListener {
     if (typeof subscriptionId === 'string') {
       subscriptionId = Number(subscriptionId)
     }
-    
+
     this.functionsRouter.on(
       'RequestProcessed',
       (
         requestId: string,
-        _subscriptionId: BigNumber ,
+        _subscriptionId: BigNumber,
         totalCostJuels: BigNumber,
         _,
         resultCode: number,

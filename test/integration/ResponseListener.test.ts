@@ -138,7 +138,7 @@ describe('Functions toolkit classes', () => {
         functionsResponse = response
         responseEventEmitter.emit('response')
       }
-      
+
       const subIdString = subscriptionId.toString()
       functionsListener.listenForResponses(subIdString, responseCallback)
 
