@@ -1,4 +1,4 @@
-import { Contract, utils } from 'ethers'
+import { Contract } from 'ethers'
 
 import { FunctionsRouterSource } from './v1_contract_sources'
 
