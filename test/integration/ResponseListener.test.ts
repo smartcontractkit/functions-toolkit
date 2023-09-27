@@ -4,7 +4,6 @@ import {
   FunctionsResponse,
   SubscriptionManager,
   ResponseListener,
-  simulatedDonId,
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
