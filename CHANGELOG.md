@@ -1,5 +1,13 @@
 # @chainlink/functions-toolkit
 
+## 0.2.5
+
+### Patch Changes
+
+- [#30](https://github.com/smartcontractkit/functions-toolkit/pull/30) [`c1f6d2d`](https://github.com/smartcontractkit/functions-toolkit/commit/c1f6d2d7b2c7d8d879b94962ee521381d1f99ac8) Thanks [@KuphJr](https://github.com/KuphJr)! - README improvements
+
+- [#28](https://github.com/smartcontractkit/functions-toolkit/pull/28) [`646749b`](https://github.com/smartcontractkit/functions-toolkit/commit/646749bcabc8b9a971187d359db48e3b1a38ba18) Thanks [@KuphJr](https://github.com/KuphJr)! - Improve log msg for timeouts
+
 ## 0.2.4
 
 ### Patch Changes
