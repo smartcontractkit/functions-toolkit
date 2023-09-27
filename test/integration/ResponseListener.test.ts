@@ -138,7 +138,8 @@ describe('Functions toolkit classes', () => {
         responseEventEmitter.emit('response')
       }
 
-      functionsListener.listenForResponses(subscriptionId, responseCallback)
+      const subIdString = subscriptionId.toString()
+      functionsListener.listenForResponses(subIdString, responseCallback)
 
       await exampleClient.sendRequest(
         'return Functions.encodeUint256(1)',
