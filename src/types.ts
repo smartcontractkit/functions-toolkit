@@ -152,7 +152,7 @@ export type GatewayMessage = {
   }
 }
 
-type EncryptedSecretsEntry = {
+export type EncryptedSecretsEntry = {
   slot_id: number
   version: number
   expiration: number

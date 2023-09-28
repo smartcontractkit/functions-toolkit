@@ -13,6 +13,10 @@
     "noImplicitAny": true,
     "skipLibCheck": true
   },
+  "typedocOptions": {
+    "entryPoints": ["src/index.ts"],
+    "out": "docs"
+  },
   "include": ["src/**/*", "src/**/*.json", "test/**/*", "test/**/*.json"],
   "exclude": ["dist", "src/simulateScript/deno-sandbox/**/*.ts"]
 }
