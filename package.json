@@ -7,9 +7,7 @@
   "scripts": {
     "build": "rimraf dist && tsc -P tsconfig.build.json && cpy src/simulateScript/deno-sandbox/**/* dist/simulateScript/deno-sandbox",
     "build:browser": "webpack && browserify dist/simulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/simulateScript.bundle.js",
-    "test": "jest",
-    "test:unit": "jest --testPathPattern=unit",
-    "test:integration": "jest --testPathPattern=integration",
+    "test": "jest --coverage",
     "test:package": "jest --config jest.config.package.js",
     "lint": "prettier --check . && tsc --noEmit",
     "lint:fix": "npx prettier -w ."

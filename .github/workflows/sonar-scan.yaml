@@ -1,0 +1,72 @@
+name: SonarQube Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  wait_for_workflows:
+    name: Wait for workflows
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
+
+      - name: Wait for workflows
+        uses: smartcontractkit/chainlink-github-actions/utils/wait-for-workflows@main
+        with:
+          max-timeout: "900"
+          polling-interval: "30"
+          exclude-workflow-names: "Integration Tests, Package Artifact Tests"
+          exclude-workflow-ids: ""
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          DEBUG: "true"
+
+  sonarqube:
+    name: SonarQube Scan
+    needs: [wait_for_workflows]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # fetches all history for all tags and branches to provide more metadata for sonar reports
+
+      - name: Download unit-tests report
+        uses: dawidd6/action-download-artifact@v2.28.0
+        with:
+          workflow: unit-test.yaml
+          workflow_conclusion: ""
+          name: unit-tests-coverage
+          if_no_artifact_found: warn
+
+      - name: Set SonarQube Report Paths
+        if: always()
+        id: sonarqube_report_paths
+        shell: bash
+        run: |
+          echo "sonarqube_coverage_report_paths=$(find -type f -name 'lcov.info' -printf "%p,")" >> $GITHUB_OUTPUT
+          echo "sonarqube_eslint_report_paths=$(find -type f -name 'eslint-report.json' -printf "%p")" >> $GITHUB_OUTPUT
+
+      # TODO: uncomment when ESLint report is available
+      # - name: Update ESLint report symlinks
+      #   continue-on-error: true
+      #   run: sed -i 's+/home/runner/work/universal-adapter-sandbox/universal-adapter-sandbox/+/github/workspace/+g' ${{ steps.sonarqube_report_paths.outputs.sonarqube_eslint_report_paths }}
+
+      - name: SonarQube Scan
+        if: always()
+        uses: sonarsource/sonarqube-scan-action@v2.0.1
+        with:
+          args: >
+            -Dsonar.javascript.lcov.reportPaths=${{ steps.sonarqube_report_paths.outputs.sonarqube_coverage_report_paths }}
+            -Dsonar.eslint.reportPaths=${{ steps.sonarqube_report_paths.outputs.sonarqube_eslint_report_paths }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
