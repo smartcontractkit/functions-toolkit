@@ -9,8 +9,10 @@
     "build:browser": "webpack && browserify dist/simulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/simulateScript.bundle.js",
     "test": "jest --coverage",
     "test:package": "jest --config jest.config.package.js",
-    "lint": "prettier --check . && tsc --noEmit",
-    "lint:fix": "npx prettier -w ."
+    "prettier:check": "prettier --check . && tsc --noEmit",
+    "prettier:fix": "npx prettier -w .",
+    "lint:fix": "eslint --fix",
+    "lint:check": "eslint \"/src/**/*.ts\" --max-warnings=0 -f json -o eslint-report.json"
   },
   "repository": {
     "type": "git",
@@ -40,6 +42,9 @@
     "@types/jest": "^29.5.1",
     "@types/node": "^18.16.3",
     "@types/prettier": "^2.7.2",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "eslint": "^8.51.0",
     "babel-loader": "9.1.2",
     "browserify": "17.0.0",
     "cpy-cli": "^5.0.0",
