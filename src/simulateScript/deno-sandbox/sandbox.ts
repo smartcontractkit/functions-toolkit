@@ -1,5 +1,6 @@
 // secrets, args & bytesArgs are made available to the user's script
 // deno-lint-ignore no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const [secrets, args, bytesArgs] = [
   JSON.parse(atob(Deno.args[0])),
   JSON.parse(atob(Deno.args[1])),
@@ -157,6 +158,7 @@ const __2___ = (() => {
       const reader = stream.getReader()
       const chunks: Uint8Array[] = []
       let totalLength = 0
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value } = await reader.read()
         if (value) {
@@ -293,6 +295,7 @@ interface ErrorResponse {
 
 // Functions library for use by user's script
 // deno-lint-ignore no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Functions = {
   makeHttpRequest: async ({
     url,
