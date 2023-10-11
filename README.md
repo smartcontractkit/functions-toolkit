@@ -41,7 +41,7 @@ Chainlink Functions requires signing a terms of service agreement before creatin
 
 ## Functions Billing Subscription Management
 
-The `SubscriptionManager` class is used to manage the Chainlink billing [subscription](https://docs.chain.link/chainlink-functions/resources/concepts#subscriptions) used to pay for Functions requests.
+The `SubscriptionManager` class is used to manage the Chainlink billing [subscription](https://docs.chain.link/chainlink-functions/resources/subscriptions) used to pay for Functions requests.
 
 ### Subscription Initialization
 
