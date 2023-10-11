@@ -6,3 +6,5 @@ node_modules
 coverage.json
 .DS_Store
 dist
+
+*report.json

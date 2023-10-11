@@ -22,7 +22,7 @@ jobs:
         with:
           max-timeout: "900"
           polling-interval: "30"
-          exclude-workflow-names: "Integration Tests, Package Artifact Tests"
+          exclude-workflow-names: "Package Artifact Tests"
           exclude-workflow-ids: ""
           github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
@@ -63,10 +63,9 @@ jobs:
           echo "sonarqube_coverage_report_paths=$(find -type f -name 'lcov.info' -printf "%p,")" >> $GITHUB_OUTPUT
           echo "sonarqube_eslint_report_paths=$(find -type f -name 'eslint-report.json' -printf "%p")" >> $GITHUB_OUTPUT
 
-      # TODO: uncomment when ESLint report is available
-      # - name: Update ESLint report symlinks
-      #   continue-on-error: true
-      #   run: sed -i 's+/home/runner/work/universal-adapter-sandbox/universal-adapter-sandbox/+/github/workspace/+g' ${{ steps.sonarqube_report_paths.outputs.sonarqube_eslint_report_paths }}
+      - name: Update ESLint report symlinks
+        continue-on-error: true
+        run: sed -i 's+/home/runner/work/functions-toolkit/functions-toolkit/+/github/workspace/+g' ${{ steps.sonarqube_report_paths.outputs.sonarqube_eslint_report_paths }}
 
       - name: SonarQube Scan
         if: always()

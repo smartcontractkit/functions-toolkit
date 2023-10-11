@@ -23,7 +23,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run ESLint
-        run: yarn lint:check
+        run: yarn lint:check -f json -o eslint-report.json
 
       - name: Upload ESLint report
         if: always()

@@ -2,6 +2,8 @@ import { ReturnType } from './types'
 
 export type DecodedResult = BigInt | string
 
+var unused = "unused"
+
 export const decodeResult = (
   resultHexstring: string,
   expectedReturnType: ReturnType,

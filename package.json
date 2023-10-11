@@ -11,8 +11,8 @@
     "test:package": "jest --config jest.config.package.js",
     "prettier:check": "prettier --check . && tsc --noEmit",
     "prettier:fix": "npx prettier -w .",
-    "lint:fix": "eslint --fix",
-    "lint:check": "eslint \"/src/**/*.ts\" --max-warnings=0 -f json -o eslint-report.json"
+    "lint:fix": "eslint . --fix",
+    "lint:check": "eslint --ext js,jsx,ts,tsx ."
   },
   "repository": {
     "type": "git",
