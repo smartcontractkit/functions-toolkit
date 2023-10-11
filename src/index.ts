@@ -1,5 +1,6 @@
 const oldLog = console.log
 // Suppress "Duplicate definition of Transfer" warning message
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 console.log = (...args: any[]) => {
   if (typeof args[0] === 'string') {
     const msg = args.length > 0 ? args[0] : ''

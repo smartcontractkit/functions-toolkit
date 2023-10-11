@@ -13,8 +13,10 @@ export enum CodeLanguage {
 
 export enum ReturnType {
   uint = 'uint256',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   uint256 = 'uint256',
   int = 'int256',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   int256 = 'int256',
   string = 'string',
   bytes = 'bytes',
@@ -57,30 +59,30 @@ export type SubCreateConfig = {
 }
 
 export type SubConsumerConfig = {
-  subscriptionId: BigInt | number | string
+  subscriptionId: bigint | number | string
   consumerAddress: string
   txOptions?: TransactionOptions
 }
 
 export type SubFundConfig = {
-  juelsAmount: BigInt | string
-  subscriptionId: BigInt | number | string
+  juelsAmount: bigint | string
+  subscriptionId: bigint | number | string
   txOptions?: TransactionOptions
 }
 
 export type SubCancelConfig = {
-  subscriptionId: BigInt | number | string
+  subscriptionId: bigint | number | string
   refundAddress?: string
   txOptions?: TransactionOptions
 }
 export type SubTransferConfig = {
-  subscriptionId: BigInt | number | string
+  subscriptionId: bigint | number | string
   newOwner: string
   txOptions?: TransactionOptions
 }
 
 export type SubTransferAcceptConfig = {
-  subscriptionId: BigInt | number | string
+  subscriptionId: bigint | number | string
   txOptions?: TransactionOptions
 }
 
@@ -91,15 +93,15 @@ export type SubTimeoutConfig = {
 
 export type EstimateCostConfig = {
   donId: string
-  subscriptionId: BigInt | number | string
+  subscriptionId: bigint | number | string
   callbackGasLimit: number
-  gasPriceWei: BigInt
+  gasPriceWei: bigint
 }
 
 export type SubscriptionInfo = {
-  balance: BigInt
+  balance: bigint
   owner: string
-  blockedBalance: BigInt
+  blockedBalance: bigint
   proposedOwner: string
   consumers: string[]
   flags: string
@@ -108,15 +110,15 @@ export type SubscriptionInfo = {
 export type RequestCommitment = {
   requestId: string
   coordinator: string
-  estimatedTotalCostJuels: BigInt
+  estimatedTotalCostJuels: bigint
   client: string
   subscriptionId: number
-  callbackGasLimit: BigInt
-  adminFee: BigInt
-  donFee: BigInt
-  gasOverheadBeforeCallback: BigInt
-  gasOverheadAfterCallback: BigInt
-  timeoutTimestamp: BigInt
+  callbackGasLimit: bigint
+  adminFee: bigint
+  donFee: bigint
+  gasOverheadBeforeCallback: bigint
+  gasOverheadAfterCallback: bigint
+  timeoutTimestamp: bigint
 }
 
 export type DONStoragePayload = {
@@ -181,7 +183,7 @@ export enum FulfillmentCode {
 export type FunctionsResponse = {
   requestId: string // Request ID of the fulfilled request represented as a bytes32 hex string
   subscriptionId: number // Subscription ID billed for request
-  totalCostInJuels: BigInt // Actual cost of request in Juels (1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK)
+  totalCostInJuels: bigint // Actual cost of request in Juels (1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK)
   responseBytesHexstring: string // Response bytes sent to client contract represented as a hex string ("0x" if no response)
   errorString: string // Error bytes sent to client contract interpreted as a UTF-8 string ("" if no error)
   returnDataBytesHexstring: string // Data returned by consumer contract's handleOracleFulfillment method represented as a hex string
@@ -213,7 +215,7 @@ export interface RequestEventData {
   requestId: string
   requestingContract: string
   requestInitiator: string
-  subscriptionId: any
+  subscriptionId: number
   subscriptionOwner: string
   data: string
   dataVersion: number
@@ -231,7 +233,7 @@ export interface FunctionsContracts {
 
 export type GetFunds = (
   address: string,
-  { weiAmount, juelsAmount }: { weiAmount?: BigInt | string; juelsAmount?: BigInt | string },
+  { weiAmount, juelsAmount }: { weiAmount?: bigint | string; juelsAmount?: bigint | string },
 ) => Promise<void>
 
 export type LocalFunctionsTestnet = {

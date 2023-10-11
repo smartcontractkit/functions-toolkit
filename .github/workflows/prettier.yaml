@@ -1,10 +1,10 @@
-name: Prettier Check
+name: Lint Check
 
 on:
   pull_request:
 
 jobs:
-  prettier:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,4 +20,7 @@ jobs:
         run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency --no-optional
 
       - name: Run Prettier check
-        run: npx prettier --check .
+        run: npm run prettier:check
+
+      - name: Run lint check
+        run: npm run lint:check

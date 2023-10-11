@@ -60,6 +60,7 @@ export class ResponseListener {
 
   public listenForResponses(
     subscriptionId: number | string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     callback: (functionsResponse: FunctionsResponse) => any,
   ) {
     if (typeof subscriptionId === 'string') {
