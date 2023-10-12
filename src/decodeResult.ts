@@ -21,7 +21,6 @@ export const decodeResult = (
 
   const resultHexBits = resultHexstring.slice(2).length * 4
   let decodedOutput
-
   switch (expectedReturnType) {
     case ReturnType.uint256:
       if (resultHexBits > 256) {
