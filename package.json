@@ -11,8 +11,9 @@
     "test:unit": "jest --testPathPattern=unit",
     "test:integration": "jest --testPathPattern=integration",
     "test:package": "jest --config jest.config.package.js",
-    "lint:check": "eslint 'src/**/*.{ts,tsx}'",
-    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "lint:check": "eslint '{src,test}/**/*.ts'",
+    "lint:fix": "eslint '{src,test}/**/*.ts' --fix",
+    "lint:ci": "eslint '{src,test}/**/*.ts' --max-warnings=0 -f json -o eslint-report.json",
     "prettier:check": "prettier --check . && tsc --noEmit",
     "prettier:fix": "npx prettier -w ."
   },

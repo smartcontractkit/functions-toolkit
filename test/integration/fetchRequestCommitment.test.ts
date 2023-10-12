@@ -1,4 +1,4 @@
-import { fetchRequestCommitment, RequestCommitment, SubscriptionManager } from '../../src'
+import { fetchRequestCommitment, SubscriptionManager } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
 import { Contract, Wallet, utils, providers } from 'ethers'
@@ -7,7 +7,6 @@ describe('fetchRequestCommitment', () => {
   let donId: string
   let linkTokenAddress: string
   let functionsRouterAddress: string
-  let functionsCoordinatorAddress: string
   let exampleClient: Contract
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
@@ -17,7 +16,6 @@ describe('fetchRequestCommitment', () => {
     donId = testSetup.donId
     linkTokenAddress = testSetup.linkTokenAddress
     functionsRouterAddress = testSetup.functionsRouterAddress
-    functionsCoordinatorAddress = testSetup.functionsCoordinator.address
     exampleClient = testSetup.exampleConsumer
     close = testSetup.close
     allowlistedUser_A = testSetup.user_A
