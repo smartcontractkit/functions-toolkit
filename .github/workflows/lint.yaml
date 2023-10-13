@@ -1,26 +1,28 @@
 name: Lint Check
-
 on:
   pull_request:
-
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 18
-
       - name: Install dependencies
         run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency --no-optional
 
-      - name: Run Prettier check
-        run: npm run prettier:check
-
       - name: Run lint check
-        run: npm run lint:check
+        run: npm run lint:ci
+
+      - name: Upload ESLint report
+        if: always()
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        with:
+          name: eslint-report
+          path: ./eslint-report.json
+
+      - name: Run Prettier
+        run: npm run prettier:check
