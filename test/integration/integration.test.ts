@@ -173,7 +173,7 @@ describe('Functions toolkit classes', () => {
 
         const subscriptionId = await subscriptionManager.createSubscription()
 
-        const addTx = await subscriptionManager.addConsumer({
+        await subscriptionManager.addConsumer({
           subscriptionId,
           consumerAddress,
           txOptions: {
@@ -197,7 +197,7 @@ describe('Functions toolkit classes', () => {
 
         const subscriptionIdBigInt = await subscriptionManager.createSubscription()
         const subscriptionId = subscriptionIdBigInt.toString()
-        const addConsumerTxReceipt = await subscriptionManager.addConsumer({
+        await subscriptionManager.addConsumer({
           subscriptionId,
           consumerAddress,
         })
@@ -279,7 +279,7 @@ describe('Functions toolkit classes', () => {
         await subscriptionManager_B.initialize()
 
         const unOwnedSubId = await subscriptionManager_A.createSubscription()
-        const _ = await subscriptionManager_B.createSubscription()
+        await subscriptionManager_B.createSubscription()
 
         await expect(async () => {
           await subscriptionManager_B.addConsumer({ subscriptionId: unOwnedSubId, consumerAddress })
@@ -1393,6 +1393,7 @@ describe('Functions toolkit classes', () => {
         const sm = new SecretsManager({ signer: allowlistedUser_A, functionsRouterAddress, donId })
         expect(() =>
           sm.buildDONHostedEncryptedSecretsReference({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             slotId: 'invalid' as any,
             version: 1,
           }),
@@ -1418,6 +1419,7 @@ describe('Functions toolkit classes', () => {
         expect(() =>
           sm.buildDONHostedEncryptedSecretsReference({
             slotId: 1,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             version: 'invalid' as any,
           }),
         ).toThrow('Invalid version')

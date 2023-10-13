@@ -57,7 +57,8 @@ describe('decodeResult', () => {
   it('throws error if expectedDataType is invalid', () => {
     // @ts-ignore
     expect(() => decodeResult('0x123ABC', 'invalid')).toThrow(
-      /not valid. Must be one of the following/,
+      // eslint-disable-next-line no-regex-spaces
+      /not valid.  Must be one of the following/,
     )
   })
   it('throws  with invalid hex', () => {

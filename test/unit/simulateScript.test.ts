@@ -239,6 +239,7 @@ describe('simulateScript', () => {
   describe('validation errors', () => {
     it('should throw error for invalid source', async () => {
       const result = simulateScript({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         source: 123 as any,
       })
 
@@ -248,6 +249,7 @@ describe('simulateScript', () => {
     it('should throw error for invalid secrets', async () => {
       const result = simulateScript({
         source: `return`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         secrets: { bad: 1 } as any,
       })
 
@@ -257,6 +259,7 @@ describe('simulateScript', () => {
     it('should throw error for invalid args', async () => {
       const result = simulateScript({
         source: `return`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         args: 123 as any,
       })
 
@@ -266,6 +269,7 @@ describe('simulateScript', () => {
     it('should throw error when an element of args is not a string', async () => {
       const result = simulateScript({
         source: `return`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         args: [123] as any,
       })
 
@@ -275,6 +279,7 @@ describe('simulateScript', () => {
     it('should throw error for invalid bytesArgs', async () => {
       const result = simulateScript({
         source: `return`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         bytesArgs: 123 as any,
       })
 
@@ -284,6 +289,7 @@ describe('simulateScript', () => {
     it('should throw error when an element of bytesArgs is not a hex string', async () => {
       const result = simulateScript({
         source: `return`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         bytesArgs: ['invalid'] as any,
       })
 

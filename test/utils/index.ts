@@ -52,6 +52,7 @@ export const setupLocalTestnetFixture = async (
       utils.formatBytes32String(localFunctionsTestnet.donId),
     )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(
     localFunctionsTestnet.server,
     port,
