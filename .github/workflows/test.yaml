@@ -32,7 +32,7 @@ jobs:
       - name: Run unit tests
         run: npm run test:ci
 
-      - name: Upload unit-test coverage report
+      - name: Upload test coverage report
         if: always()
         uses: actions/upload-artifact@v3.1.3
         with:

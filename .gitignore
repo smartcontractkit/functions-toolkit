@@ -1,5 +1,7 @@
+# Local dev modules
 node_modules
 .DS_Store
+.vscode/
 dist
 
 # Reports

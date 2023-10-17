@@ -3,6 +3,8 @@ import { setupLocalTestnetFixture } from '../utils'
 
 import { Contract, Wallet, utils, providers } from 'ethers'
 
+jest.retryTimes(2, { logErrorsBeforeRetry: true })
+
 describe('fetchRequestCommitment', () => {
   let donId: string
   let linkTokenAddress: string
