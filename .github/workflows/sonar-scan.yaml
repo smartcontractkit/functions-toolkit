@@ -50,7 +50,7 @@ jobs:
       - name: Download tests report
         uses: dawidd6/action-download-artifact@v2.28.0
         with:
-          workflow: unit-test.yaml
+          workflow: test.yaml
           workflow_conclusion: ''
           name: unit-tests-coverage
           if_no_artifact_found: warn
