@@ -1,6 +1,6 @@
 import { ReturnType } from './types'
 
-export type DecodedResult = BigInt | string
+export type DecodedResult = bigint | string
 
 export const decodeResult = (
   resultHexstring: string,
@@ -19,9 +19,8 @@ export const decodeResult = (
     )
   }
 
-  let resultHexBits = resultHexstring.slice(2).length * 4
+  const resultHexBits = resultHexstring.slice(2).length * 4
   let decodedOutput
-
   switch (expectedReturnType) {
     case ReturnType.uint256:
       if (resultHexBits > 256) {
@@ -71,6 +70,6 @@ const signedInt256toBigInt = (hex: string) => {
 }
 
 const isValidHexadecimal = (str: string): boolean => {
-  var regex = /^0x[0-9a-fA-F]+$/
+  const regex = /^0x[0-9a-fA-F]+$/
   return regex.test(str)
 }

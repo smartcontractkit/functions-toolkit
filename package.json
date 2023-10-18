@@ -8,11 +8,13 @@
     "build": "rimraf dist && tsc -P tsconfig.build.json && cpy src/simulateScript/deno-sandbox/**/* dist/simulateScript/deno-sandbox",
     "build:browser": "webpack && browserify dist/simulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/simulateScript.bundle.js",
     "test": "jest",
-    "test:unit": "jest --testPathPattern=unit",
-    "test:integration": "jest --testPathPattern=integration",
+    "test:ci": "jest --silent --coverage --ci",
     "test:package": "jest --config jest.config.package.js",
-    "lint": "prettier --check . && tsc --noEmit",
-    "lint:fix": "npx prettier -w ."
+    "lint:check": "eslint '{src,test}/**/*.ts'",
+    "lint:fix": "eslint '{src,test}/**/*.ts' --fix",
+    "lint:ci": "eslint '{src,test}/**/*.ts' --max-warnings=0 -f json -o eslint-report.json",
+    "prettier:check": "prettier --check . && tsc --noEmit",
+    "prettier:fix": "npx prettier -w ."
   },
   "repository": {
     "type": "git",
@@ -40,6 +42,9 @@
     "@types/node": "^18.16.3",
     "@types/prettier": "^2.7.2",
     "cpy-cli": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "eslint": "^8.51.0",
     "jest": "^29.5.0",
     "nock": "^13.3.1",
     "prettier": "^2.8.8",

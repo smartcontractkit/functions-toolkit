@@ -22,6 +22,7 @@ describe('buildRequestCBOR', () => {
         codeLocation: 'invalid',
         codeLanguage: 0,
         source: 'test',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any),
     ).toThrow('Invalid codeLocation')
 
@@ -40,6 +41,7 @@ describe('buildRequestCBOR', () => {
         codeLocation: 0,
         codeLanguage: 'invalid',
         source: 'test',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any),
     ).toThrow('Invalid codeLanguage')
 
@@ -48,6 +50,7 @@ describe('buildRequestCBOR', () => {
         codeLocation: 0,
         codeLanguage: 1,
         source: 'test',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any),
     ).toThrow('Invalid codeLanguage')
   })
@@ -57,6 +60,7 @@ describe('buildRequestCBOR', () => {
       buildRequestCBOR({
         codeLocation: 0,
         codeLanguage: 0,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         source: 123 as any,
       }),
     ).toThrow('Invalid source')
@@ -82,6 +86,7 @@ describe('buildRequestCBOR', () => {
         source: 'test',
         encryptedSecretsReference: '0xabcdef',
         secretsLocation: 3,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any),
     ).toThrow('Invalid secretsLocation')
   })
@@ -92,6 +97,7 @@ describe('buildRequestCBOR', () => {
         codeLocation: 0,
         codeLanguage: 0,
         source: 'test',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         args: [123 as any],
       }),
     ).toThrow('Invalid args')
@@ -101,6 +107,7 @@ describe('buildRequestCBOR', () => {
         codeLocation: 0,
         codeLanguage: 0,
         source: 'test',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         args: ['valid', 123 as any],
       }),
     ).toThrow('Invalid args')

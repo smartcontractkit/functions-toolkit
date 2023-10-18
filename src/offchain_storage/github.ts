@@ -79,7 +79,7 @@ export const deleteGist = async (githubApiToken: string, gistURL: string) => {
     throw Error('Github Gist URL is required')
   }
 
-  const matchArr = gistURL.match(/gist\.github\.com\/[^\/]+\/([a-zA-Z0-9]+)/)
+  const matchArr = gistURL.match(/gist\.github\.com\/[^/]+\/([a-zA-Z0-9]+)/)
 
   if (!matchArr || !matchArr[1]) {
     throw Error('Invalid Gist URL')
@@ -90,6 +90,7 @@ export const deleteGist = async (githubApiToken: string, gistURL: string) => {
   try {
     await axios.delete(`https://api.github.com/gists/${gistId}`, { headers })
     return true
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     throw Error(`Error deleting Gist ${gistURL} : ${error}`)
   }

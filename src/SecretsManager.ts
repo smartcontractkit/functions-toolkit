@@ -242,7 +242,6 @@ export class SecretsManager {
       payload,
     })
 
-    let totalNodeResponses = gatewayResponse.nodeResponses.length
     let totalErrorCount = 0
     for (const nodeResponse of gatewayResponse.nodeResponses) {
       if (!nodeResponse.success) {
@@ -253,7 +252,7 @@ export class SecretsManager {
       }
     }
 
-    if (totalErrorCount === totalNodeResponses) {
+    if (totalErrorCount === gatewayResponse.nodeResponses.length) {
       throw Error('All nodes failed to store the encrypted secrets')
     }
 
@@ -300,6 +299,7 @@ export class SecretsManager {
         }
         break // Break after first successful message is sent to a gateway
       } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const error = e as any
         const errorResponseData = error?.response?.data
         console.log(
@@ -395,6 +395,7 @@ export class SecretsManager {
       throw Error(`No nodes responded to gateway request`)
     }
     const responses = gatewayResponse.data.result.body.payload.node_responses
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const nodeResponses: NodeResponse[] = responses.map((r: any) => {
       const nodeResponse: NodeResponse = {
         success: r.body.payload.success,

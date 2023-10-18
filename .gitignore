@@ -1,8 +1,10 @@
+# Local dev modules
 node_modules
-/test/hardhat/node_modules
-/test/hardhat/build
-/test/hardhat/.openzeppelin
+.DS_Store
+.vscode/
+dist
+
+# Reports
 /coverage
 coverage.json
-.DS_Store
-dist
+*report.json

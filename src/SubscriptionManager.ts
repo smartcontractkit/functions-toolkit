@@ -246,7 +246,7 @@ export class SubscriptionManager {
   }
 
   public async getSubscriptionInfo(
-    subscriptionId: BigInt | number | string,
+    subscriptionId: bigint | number | string,
   ): Promise<SubscriptionInfo> {
     this.isInitialized()
 
@@ -475,7 +475,7 @@ export class SubscriptionManager {
     subscriptionId,
     callbackGasLimit,
     gasPriceWei,
-  }: EstimateCostConfig): Promise<BigInt> {
+  }: EstimateCostConfig): Promise<bigint> {
     if (typeof donId !== 'string') {
       throw Error('donId has invalid type')
     }
