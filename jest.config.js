@@ -6,7 +6,7 @@ module.exports = {
   testTimeout: 5 * 60 * 1000,
 
   coverageReporters: ['html', 'lcov'],
-  collectCoverageFrom: ['src/**/*.ts', '!src/test/*.ts', '!src/simulateScript/deno-sandbox/*.ts'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/simulateScript/deno-sandbox/*.ts'],
   coverageThreshold: {
     global: {
       branches: 95,

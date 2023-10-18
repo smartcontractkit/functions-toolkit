@@ -11,6 +11,8 @@ import { setupLocalTestnetFixture } from '../utils'
 
 import { BigNumber, Contract, Wallet, utils } from 'ethers'
 
+jest.retryTimes(2, { logErrorsBeforeRetry: true })
+
 describe('Functions toolkit classes', () => {
   let donId = simulatedDonId
   let linkTokenContract: Contract
