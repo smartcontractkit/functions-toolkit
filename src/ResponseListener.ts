@@ -8,6 +8,7 @@ import { FulfillmentCode, type FunctionsResponse } from './types'
 
 export class ResponseListener {
   private functionsRouter: Contract
+  private provider: providers.Provider
 
   constructor({
     provider,
@@ -16,6 +17,7 @@ export class ResponseListener {
     provider: providers.Provider
     functionsRouterAddress: string
   }) {
+    this.provider = provider
     this.functionsRouter = new Contract(functionsRouterAddress, FunctionsRouterSource.abi, provider)
   }
 
@@ -55,7 +57,45 @@ export class ResponseListener {
       )
     })
 
-    return await responsePromise
+    return responsePromise
+  }
+
+  public async listenForResponseFromTransaction(
+    txHash: string,
+    timeout = 3000000,
+    confirmations = 2,
+    checkInterval = 2000,
+  ): Promise<FunctionsResponse> {
+    return new Promise<FunctionsResponse>((resolve, reject) => {
+      ;(async () => {
+        let requestID = ''
+        // eslint-disable-next-line
+        let checkTimeout: NodeJS.Timeout
+        const expirationTimeout = setTimeout(() => {
+          reject('Response not received within timeout period')
+        }, timeout)
+
+        const check = async () => {
+          const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeout)
+          const updatedID = receipt.logs[0].topics[1]
+          if (updatedID !== requestID) {
+            requestID = updatedID
+            const response = await this.listenForResponse(receipt.logs[0].topics[1], timeout)
+            if (updatedID === requestID) {
+              // Resolve only if the ID hasn't changed in the meantime
+              clearTimeout(expirationTimeout)
+              clearInterval(checkTimeout)
+              resolve(response)
+            }
+          }
+        }
+
+        // Check periodically if the transaction has been re-orged and requestID changed
+        checkTimeout = setInterval(check, checkInterval)
+
+        check()
+      })()
+    })
   }
 
   public listenForResponses(

@@ -449,9 +449,27 @@ provider,
 functionsRouterAddress,
 })
 
-To listen for the response to a single Functions request by request ID, use the the `listenForResponse()` method. Optionally, you can provide a custom timeout after which the listener will throw an error indicating that the time limit was exceeded. If no timeout is provided, the default timeout is 300 seconds.
+To listen for a response to a single Functions request, use the `listenForResponseFromTransaction()` method.
+Optionally, you can provide:
+- timeout after which the listener will throw an error indicating that the time limit was exceeded (default 5 minutes) 
+- number of block confirmations (default 2)
+- frequency of checking if the request is already included on-chain (or if it got moved after a chain re-org) (default 2 seconds)
 
-**Note:** Listening for multiple responses simultaneously is not supported by the `listenForResponse()` method and will lead to undefined behavior.
+```
+const response: FunctionsResponse = await responseListener.listenForResponseFromTransaction(
+  txHash: string,
+  timeout?: number,
+  confirmations?: number,
+  checkInterval?: number,
+)
+```
+
+Alternatively, to listen using a request ID, use the `listenForResponse()` method.
+
+**Notes:** 
+1. Request ID can change during a chain re-org so it's less reliable than a request transaction hash.
+2. If the methods are called after the response is already on chain, it won't be returned correctly.
+3. Listening for multiple responses simultaneously is not supported by the above methods and will lead to undefined behavior.
 
 ```
 const response: FunctionsResponse = await responseListener.listenForResponse(
@@ -478,13 +496,9 @@ The possible fulfillment codes are shown below.
 
 ```
 {
-  FULFILLED = 0, // Indicates that calling the consumer contract's handleOracleFulfill method was successful
+  FULFILLED = 0, // Indicates that a Function was executed and calling the consumer contract's handleOracleFulfill method was successful
   USER_CALLBACK_ERROR = 1, // Indicates that the consumer contract's handleOracleFulfill method reverted
-  INVALID_REQUEST_ID = 2, // Internal error
-  COST_EXCEEDS_COMMITMENT = 3, // Indicates that the request was not fulfilled because the cost of fulfillment is higher than the estimated cost due to an increase in gas prices
-  INSUFFICIENT_GAS_PROVIDED = 4, // Internal error
-  SUBSCRIPTION_BALANCE_INVARIANT_VIOLATION, // Internal error
-  INVALID_COMMITMENT = 6, // Internal error
+  // all other codes indicate internal errors
 }
 ```
 
