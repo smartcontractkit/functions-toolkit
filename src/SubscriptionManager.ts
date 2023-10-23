@@ -202,7 +202,7 @@ export class SubscriptionManager {
     }
 
     if (juelsAmountBN.lte(0)) {
-      throw Error(`Juels funding amount must be greater than 0`)
+      throw Error('Juels funding amount must be greater than 0')
     }
 
     try {
@@ -507,7 +507,7 @@ export class SubscriptionManager {
       await this.functionsRouter.isValidCallbackGasLimit(subscriptionId, callbackGasLimit)
     } catch (error) {
       throw Error(
-        `Invalid callbackGasLimit. Ensure the callbackGasLimit is less than the max limit for your subscription tier.\n`,
+        'Invalid callbackGasLimit. Ensure the callbackGasLimit is less than the max limit for your subscription tier.\n',
       )
     }
 

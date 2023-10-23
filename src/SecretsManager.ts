@@ -392,7 +392,7 @@ export class SecretsManager {
       )
     }
     if (gatewayResponse.data?.result?.body?.payload?.node_responses.length < 1) {
-      throw Error(`No nodes responded to gateway request`)
+      throw Error('No nodes responded to gateway request')
     }
     const responses = gatewayResponse.data.result.body.payload.node_responses
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

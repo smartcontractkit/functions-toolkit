@@ -8,7 +8,8 @@ describe('simulateScript', () => {
   describe('successful simulation', () => {
     it('simulates script', async () => {
       const result = await simulateScript({
-        source: `console.log('start'); return Functions.encodeString(args[0] + bytesArgs[0] + secrets.key);`,
+        source:
+          "console.log('start'); return Functions.encodeString(args[0] + bytesArgs[0] + secrets.key);",
         args: ['MockArg'],
         bytesArgs: ['0x1234'],
         secrets: {
@@ -17,7 +18,7 @@ describe('simulateScript', () => {
       })
 
       const expected = {
-        capturedTerminalOutput: `start\n`,
+        capturedTerminalOutput: 'start\n',
         responseBytesHexstring: '0x4d6f636b4172673078313233344d6f636b536563726574',
       }
 
@@ -69,7 +70,7 @@ describe('simulateScript', () => {
 
     it('should handle script with type error', async () => {
       const result = await simulateScript({
-        source: `const myString: string = 123; return Functions.encodeUint256(myString);`,
+        source: 'const myString: string = 123; return Functions.encodeUint256(myString);',
       })
 
       const expected = {
@@ -104,7 +105,7 @@ describe('simulateScript', () => {
     })
     it('should handle when response size is exceeded', async () => {
       const result = await simulateScript({
-        source: `console.log('start'); return Functions.encodeString('0123456789012');`,
+        source: "console.log('start'); return Functions.encodeString('0123456789012');",
         maxOnChainResponseBytes: 10,
       })
 
@@ -118,7 +119,7 @@ describe('simulateScript', () => {
 
     it('should handle when script throws error', async () => {
       const result = await simulateScript({
-        source: `throw new Error('test');`,
+        source: "throw new Error('test');",
       })
 
       const expected = {
@@ -131,7 +132,7 @@ describe('simulateScript', () => {
 
     it('should handle when script throws string', async () => {
       const result = await simulateScript({
-        source: `throw 'test';`,
+        source: "throw 'test';",
       })
 
       const expected = {
@@ -144,7 +145,7 @@ describe('simulateScript', () => {
 
     it('should handle when script throws unsupported value', async () => {
       const result = await simulateScript({
-        source: `throw 123;`,
+        source: 'throw 123;',
       })
 
       const expected = {
@@ -157,7 +158,7 @@ describe('simulateScript', () => {
 
     it('should capture syntax error', async () => {
       const result = await simulateScript({
-        source: `console.log('start'); return Functions.encodeString(`,
+        source: "console.log('start'); return Functions.encodeString(",
       })
 
       expect(result.capturedTerminalOutput).toContain(
@@ -168,7 +169,7 @@ describe('simulateScript', () => {
 
     it('should capture incorrect return value', async () => {
       const result = await simulateScript({
-        source: `return 'invalid'`,
+        source: "return 'invalid'",
       })
 
       const expected = {
@@ -181,7 +182,7 @@ describe('simulateScript', () => {
 
     it('should handle when no value is returned', async () => {
       const result = await simulateScript({
-        source: `return`,
+        source: 'return',
       })
 
       const expected = {
@@ -194,7 +195,7 @@ describe('simulateScript', () => {
 
     it('should capture timeout error', async () => {
       const result = await simulateScript({
-        source: `while (true) {}`,
+        source: 'while (true) {}',
         maxExecutionTimeMs: 100,
       })
 
@@ -208,7 +209,7 @@ describe('simulateScript', () => {
 
     it('should capture import error', async () => {
       const result = await simulateScript({
-        source: `const http = await import("https://deno.land/std/http/mod.ts");`,
+        source: 'const http = await import("https://deno.land/std/http/mod.ts");',
         maxExecutionTimeMs: 100,
       })
 
@@ -223,7 +224,7 @@ describe('simulateScript', () => {
 
     it('should capture permissions error', async () => {
       const result = await simulateScript({
-        source: `Deno.openSync('test.txt')`,
+        source: "Deno.openSync('test.txt')",
         maxExecutionTimeMs: 100,
       })
 
@@ -248,7 +249,7 @@ describe('simulateScript', () => {
 
     it('should throw error for invalid secrets', async () => {
       const result = simulateScript({
-        source: `return`,
+        source: 'return',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         secrets: { bad: 1 } as any,
       })
@@ -258,7 +259,7 @@ describe('simulateScript', () => {
 
     it('should throw error for invalid args', async () => {
       const result = simulateScript({
-        source: `return`,
+        source: 'return',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         args: 123 as any,
       })
@@ -268,7 +269,7 @@ describe('simulateScript', () => {
 
     it('should throw error when an element of args is not a string', async () => {
       const result = simulateScript({
-        source: `return`,
+        source: 'return',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         args: [123] as any,
       })
@@ -278,7 +279,7 @@ describe('simulateScript', () => {
 
     it('should throw error for invalid bytesArgs', async () => {
       const result = simulateScript({
-        source: `return`,
+        source: 'return',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         bytesArgs: 123 as any,
       })
@@ -288,7 +289,7 @@ describe('simulateScript', () => {
 
     it('should throw error when an element of bytesArgs is not a hex string', async () => {
       const result = simulateScript({
-        source: `return`,
+        source: 'return',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         bytesArgs: ['invalid'] as any,
       })

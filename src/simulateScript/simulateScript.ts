@@ -171,7 +171,7 @@ export const simulateScript = async ({
   }
 
   if (code !== 0) {
-    simulationResult.errorString = `syntax error, RAM exceeded, or other error`
+    simulationResult.errorString = 'syntax error, RAM exceeded, or other error'
     return simulationResult
   }
 
