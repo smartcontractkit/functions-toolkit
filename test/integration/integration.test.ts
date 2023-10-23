@@ -483,9 +483,8 @@ describe('Functions toolkit classes', () => {
           juelsAmount,
         })
 
-        const { balance, owner, consumers } = await subscriptionManager.getSubscriptionInfo(
-          subscriptionId,
-        )
+        const { balance, owner, consumers } =
+          await subscriptionManager.getSubscriptionInfo(subscriptionId)
 
         expect(balance.toString()).toBe(juelsAmount.toString())
         expect(owner.toString()).toBe(allowlistedUser_A.address)
@@ -528,9 +527,8 @@ describe('Functions toolkit classes', () => {
           juelsAmount,
         })
 
-        const { balance, owner, consumers } = await subscriptionManager.getSubscriptionInfo(
-          subscriptionId,
-        )
+        const { balance, owner, consumers } =
+          await subscriptionManager.getSubscriptionInfo(subscriptionId)
 
         expect(balance.toString()).toBe(juelsAmount)
         expect(owner.toString()).toBe(allowlistedUser_A.address)
@@ -563,9 +561,8 @@ describe('Functions toolkit classes', () => {
           txOptions: { overrides: { gasLimit } },
         })
 
-        const { balance, owner, consumers } = await subscriptionManager.getSubscriptionInfo(
-          subscriptionId,
-        )
+        const { balance, owner, consumers } =
+          await subscriptionManager.getSubscriptionInfo(subscriptionId)
 
         expect(balance.toString()).toBe(juelsAmount)
         expect(owner.toString()).toBe(subOwner.address)

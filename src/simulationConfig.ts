@@ -69,12 +69,17 @@ export const simulatedSecretsKeys: {
   }
 } = {
   thresholdKeys: {
-    publicKey: `{"Group":"P256","G_bar":"BLCl28PjjGt8JyL/p6AHToD6265gEBfl12mBiCVZShSPHVwvx5GwJ0QMqpQ7yPZEM8E6U015XFHvsDuq8X/S/c8=","H":"BEDshIeMEgr2kjNdjkG12M0A9P0uwg5Hl7jbKjbIcweHi07tu8rITgMZ9dTfqLhtFu+cRwwZaLLZdhqdg1JyLYY=","HArray":["BCj9afGghnfy3Nubj7onMPkApbF9r4GbLvSSi1wrQ1uMwRYMr6DCt5RCm95vKx75JPuOFdKBkBTOpX4p5Dtt0l0=","BJCmC0+jkl/WTK8sfb6ulQjBWTZnQEasPRVdCIYv94RkZWfVk6CbFS2Dv9C090He4UaYBaOGGyw7HGAtqKUqX1Y=","BPPnFxrq+9VI8Bb6KUBJalt/EZdU+G/l4iyosvB5bulwWDxJ26mw3hJZtZfjUcJPGIajabNFOa+5pVBd6Y3oGB8=","BJ1tWD2RhKB/uQEJ1x54mBddAW0KoFghplSswp/F3BYksyZIRIhEiLDsNgw3NfhmQh2OR6Vgv4APqAt9+RKxzzk="]}`,
+    publicKey:
+      '{"Group":"P256","G_bar":"BLCl28PjjGt8JyL/p6AHToD6265gEBfl12mBiCVZShSPHVwvx5GwJ0QMqpQ7yPZEM8E6U015XFHvsDuq8X/S/c8=","H":"BEDshIeMEgr2kjNdjkG12M0A9P0uwg5Hl7jbKjbIcweHi07tu8rITgMZ9dTfqLhtFu+cRwwZaLLZdhqdg1JyLYY=","HArray":["BCj9afGghnfy3Nubj7onMPkApbF9r4GbLvSSi1wrQ1uMwRYMr6DCt5RCm95vKx75JPuOFdKBkBTOpX4p5Dtt0l0=","BJCmC0+jkl/WTK8sfb6ulQjBWTZnQEasPRVdCIYv94RkZWfVk6CbFS2Dv9C090He4UaYBaOGGyw7HGAtqKUqX1Y=","BPPnFxrq+9VI8Bb6KUBJalt/EZdU+G/l4iyosvB5bulwWDxJ26mw3hJZtZfjUcJPGIajabNFOa+5pVBd6Y3oGB8=","BJ1tWD2RhKB/uQEJ1x54mBddAW0KoFghplSswp/F3BYksyZIRIhEiLDsNgw3NfhmQh2OR6Vgv4APqAt9+RKxzzk="]}',
     privateKeyShares: {
-      '0xAe24F6e7e046a0C764DF51F333dE5e2fE360AC72': `{"Group":"P256","Index":0,"V":"XuDZcsMc5ebjgbHx+zQ/Hhbwn24MgJ5oBL+ORQGqM8c="}`,
-      '0x37d7bf16f6fd8c37b766Fa87e047c68c51dfdf4a': `{"Group":"P256","Index":1,"V":"x3UbVxPoPQvRTL6ILjuBSGep3UUPY2q7j6LjHR2tU2A="}`,
-      '0x6e7EF53D9811B70834902D2D9137DaD2720eAC47': `{"Group":"P256","Index":2,"V":"MAldPGSzlC+/F8seYULDcvt8IG5rLpiKJsxtMj1NTag="}`,
-      '0xBe83eA9868AE964f8C46EFa0fea798EbE16441c5': `{"Group":"P256","Index":3,"V":"mJ2fILV+61Ss4te0lEoFnUw1XkVuEWTdsa/CCllQbUE="}`,
+      '0xAe24F6e7e046a0C764DF51F333dE5e2fE360AC72':
+        '{"Group":"P256","Index":0,"V":"XuDZcsMc5ebjgbHx+zQ/Hhbwn24MgJ5oBL+ORQGqM8c="}',
+      '0x37d7bf16f6fd8c37b766Fa87e047c68c51dfdf4a':
+        '{"Group":"P256","Index":1,"V":"x3UbVxPoPQvRTL6ILjuBSGep3UUPY2q7j6LjHR2tU2A="}',
+      '0x6e7EF53D9811B70834902D2D9137DaD2720eAC47':
+        '{"Group":"P256","Index":2,"V":"MAldPGSzlC+/F8seYULDcvt8IG5rLpiKJsxtMj1NTag="}',
+      '0xBe83eA9868AE964f8C46EFa0fea798EbE16441c5':
+        '{"Group":"P256","Index":3,"V":"mJ2fILV+61Ss4te0lEoFnUw1XkVuEWTdsa/CCllQbUE="}',
     },
   },
   donKey: {
