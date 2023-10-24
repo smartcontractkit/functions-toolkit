@@ -32,6 +32,7 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
     - [Decoding Response Bytes](#decoding-response-bytes)
     - [Storing Encrypted Secrets in Gists](#storing-encrypted-secrets-in-gists)
     - [Building Functions Request CBOR Bytes](#building-functions-request-cbor-bytes)
+  - [Browser use](#browser-use)
 
 # Prerequisites
 
@@ -680,3 +681,7 @@ const functionsRequestBytesHexString: string = buildRequestCBOR({
   bytesArgs?: string[] // Array of bytes arguments, represented as hex strings
 })
 ```
+
+
+## Browser use
+This package can also be used in most modern web browsers. You can import the package in your front-end application, and call the APIs as you would in a back end NodeJs/Deno environment.  
