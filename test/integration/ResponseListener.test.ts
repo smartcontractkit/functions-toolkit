@@ -101,6 +101,78 @@ describe('Functions toolkit classes', () => {
       expect(errResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
     })
 
+    it('Successfully waits for single response from transaction hash', async () => {
+      const subscriptionManager = new SubscriptionManager({
+        signer: allowlistedUser_A,
+        linkTokenAddress,
+        functionsRouterAddress,
+      })
+      await subscriptionManager.initialize()
+
+      const subscriptionId = await subscriptionManager.createSubscription()
+      await subscriptionManager.fundSubscription({
+        juelsAmount: utils.parseUnits('1', 'ether').toString(),
+        subscriptionId,
+      })
+      await subscriptionManager.addConsumer({
+        subscriptionId,
+        consumerAddress: exampleClient.address,
+        txOptions: {
+          confirmations: 1,
+        },
+      })
+
+      const functionsListener = new ResponseListener({
+        provider: allowlistedUser_A.provider,
+        functionsRouterAddress,
+      })
+
+      const succReqTx = await exampleClient.sendRequest(
+        'return Functions.encodeUint256(1)',
+        1,
+        [],
+        [],
+        [],
+        subscriptionId,
+        100_000,
+      )
+
+      const succReq = await succReqTx.wait()
+      const succResponse = await functionsListener.listenForResponseFromTransaction(
+        succReq.transactionHash,
+        1000000,
+        0,
+      )
+
+      expect(succResponse.responseBytesHexstring).toBe(
+        '0x0000000000000000000000000000000000000000000000000000000000000001',
+      )
+      expect(succResponse.errorString).toBe('')
+      expect(succResponse.returnDataBytesHexstring).toBe('0x')
+      expect(succResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
+
+      const errReqTx = await exampleClient.sendRequest(
+        'return Functions.encodeUint256(1',
+        1,
+        [],
+        [],
+        [],
+        subscriptionId,
+        100_000,
+      )
+
+      const errReq = await errReqTx.wait(1)
+      const errRequestId = errReq.events[0].topics[1]
+
+      const errResponse = await functionsListener.listenForResponse(errRequestId)
+
+      expect(errResponse.requestId).toBe(errRequestId)
+      expect(errResponse.responseBytesHexstring).toBe('0x')
+      expect(errResponse.errorString).toBe('syntax error, RAM exceeded, or other error')
+      expect(errResponse.returnDataBytesHexstring).toBe('0x')
+      expect(errResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
+    })
+
     it('Successfully listens for responses', async () => {
       const subscriptionManager = new SubscriptionManager({
         signer: allowlistedUser_A,
