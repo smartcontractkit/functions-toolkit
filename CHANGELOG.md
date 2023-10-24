@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.2.6
+
+### Patch Changes
+
+- [#36](https://github.com/smartcontractkit/functions-toolkit/pull/36) [`6026203`](https://github.com/smartcontractkit/functions-toolkit/commit/6026203593e6cf7239e51b6b2f14df4bfdc3a0f2) Thanks [@bolekk](https://github.com/bolekk)! - Added ResponseListener.listenForResponseFromTransaction() method to handle listening for responses if the request was reorged and the requestId changed
+
 ## 0.2.5
 
 ### Patch Changes
