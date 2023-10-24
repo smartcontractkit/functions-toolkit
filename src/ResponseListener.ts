@@ -68,8 +68,8 @@ export class ResponseListener {
   ): Promise<FunctionsResponse> {
     return new Promise<FunctionsResponse>((resolve, reject) => {
       ;(async () => {
-        let requestID = ''
-        // eslint-disable-next-line
+        let requestID: string
+        // eslint-disable-next-line prefer-const
         let checkTimeout: NodeJS.Timeout
         const expirationTimeout = setTimeout(() => {
           reject('Response not received within timeout period')
