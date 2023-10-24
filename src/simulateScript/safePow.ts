@@ -41,7 +41,7 @@ const isOdd = (value: bigint): boolean => value % BigInt(2) === BigInt(1)
  * - `Math.pow`, which doesn't currently support BigInts.
  * - `**` operator which might get transpiled to Math.pow by browser VM or build tools like swc.
  *
- * Method supports integer numbes and bigints.
+ * Method supports integer numbers and bigints.
  */
 export const safePow = (base: bigint | number, exponent: bigint | number): bigint => {
   let result = BigInt(1)
