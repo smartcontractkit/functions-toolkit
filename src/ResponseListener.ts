@@ -68,7 +68,7 @@ export class ResponseListener {
   ): Promise<FunctionsResponse> {
     return new Promise<FunctionsResponse>((resolve, reject) => {
       ;(async () => {
-        let requestID: string
+        let requestId: string
         // eslint-disable-next-line prefer-const
         let checkTimeout: NodeJS.Timeout
         const expirationTimeout = setTimeout(() => {
@@ -77,11 +77,11 @@ export class ResponseListener {
 
         const check = async () => {
           const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeout)
-          const updatedID = receipt.logs[0].topics[1]
-          if (updatedID !== requestID) {
-            requestID = updatedID
-            const response = await this.listenForResponse(receipt.logs[0].topics[1], timeout)
-            if (updatedID === requestID) {
+          const updatedId = receipt.logs[0].topics[1]
+          if (updatedId !== requestId) {
+            requestId = updatedId
+            const response = await this.listenForResponse(requestId, timeout)
+            if (updatedId === requestId) {
               // Resolve only if the ID hasn't changed in the meantime
               clearTimeout(expirationTimeout)
               clearInterval(checkTimeout)
