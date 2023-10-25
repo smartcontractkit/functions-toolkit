@@ -184,7 +184,7 @@ export type FunctionsResponse = {
   requestId: string // Request ID of the fulfilled request represented as a bytes32 hex string
   subscriptionId: number // Subscription ID billed for request
   totalCostInJuels: bigint // Actual cost of request in Juels (1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK)
-  responseBytesHexstring: string // Response bytes sent to client contract represented as a hex string ("0x" if no response)
+  responseBytesHexstring: string // Response sent to client contract represented as a hex string ("0x" if no response)
   errorString: string // Error bytes sent to client contract interpreted as a UTF-8 string ("" if no error)
   returnDataBytesHexstring: string // Data returned by consumer contract's handleOracleFulfillment method represented as a hex string
   fulfillmentCode: FulfillmentCode // Indicates whether the request was fulfilled successfully or not
