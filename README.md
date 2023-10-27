@@ -476,6 +476,7 @@ const response: FunctionsResponse = await responseListener.listenForResponseFrom
   returnDataBytesHexstring: string // Data returned by consumer contract's handleOracleFulfillment method represented as a hex string
   fulfillmentCode: FulfillmentCode // Indicates whether the request was fulfilled successfully or not
 }
+```
 
 Alternatively, to listen using a request ID, use the `listenForResponse()` method.
 
