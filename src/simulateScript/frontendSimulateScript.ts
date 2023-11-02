@@ -1,5 +1,6 @@
 import vm from 'vm'
 import { FunctionsModule } from './Functions'
+import { safeRequire } from './frontendAllowedModules'
 
 type Hexstring = `0x${string}`
 
@@ -15,7 +16,6 @@ interface SimulationParams {
 const DEFAULT_MAX_HTTP_REQUESTS = 5
 const DEFAULT_MAX_RESPONSE_BYTES = 256
 const DEFAULT_MAX_EXECUTION_DURATION_MS = 10_000
-const ALLOWED_MODULES = ['buffer', 'crypto', 'querystring', 'string_decoder', 'url', 'util']
 const allowedGlobalObjectsAndFunctions = {
   Buffer,
   URL,
@@ -66,12 +66,7 @@ export const simulateScript = async ({
     args,
     secrets,
     Functions,
-    require: (module: string): void => {
-      if (!ALLOWED_MODULES.includes(module)) {
-        throw Error(`Import of module ${module} not allowed`)
-      }
-      return require(module)
-    },
+    require: safeRequire,
     eval: () => {
       throw Error('eval not allowed')
     },
