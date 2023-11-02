@@ -1,4 +1,4 @@
-import { safeRequire } from './frontendAllowedModules'
+import { safeRequire, AllowedModules } from './frontendAllowedModules'
 
 describe('safeRequire', () => {
   it('allows importing buffer', () => {
@@ -11,7 +11,7 @@ describe('safeRequire', () => {
   })
 
   it('prevents importing non-allowed built-in modules', () => {
-    expect(() => safeRequire('child_process' as any)).not.toThrow()
-    expect(() => safeRequire('dns' as any)).not.toThrow()
+    expect(() => safeRequire('child_process' as AllowedModules)).not.toThrow()
+    expect(() => safeRequire('dns' as AllowedModules)).not.toThrow()
   })
 })

@@ -1,4 +1,4 @@
-type AllowedModules = 'buffer' | 'crypto' | 'querystring' | 'string_decoder' | 'url' | 'util'
+export type AllowedModules = 'buffer' | 'crypto' | 'querystring' | 'string_decoder' | 'url' | 'util'
 
 const exhaustiveCheck = (module: never): never => {
   throw Error(`Import of module ${module} not allowed`)
