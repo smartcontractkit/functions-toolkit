@@ -5,8 +5,8 @@
   "description": "An NPM package with collection of functions that can be used for working with Chainlink Functions.",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "rimraf dist && tsc -P tsconfig.build.json && cpy src/simulateScript/deno-sandbox/**/* dist/simulateScript/deno-sandbox && npm run build:browser",
-    "build:browser": "webpack && browserify dist/frontendSimulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/simulateScript.bundle.js",
+    "build": "rimraf dist && tsc -P tsconfig.build.json && cpy src/simulateScript/deno-sandbox/**/* dist/simulateScript/deno-sandbox && yarn build:browser",
+    "build:browser": "webpack && browserify dist/frontendSimulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/frontendSimulateScript.bundle.js",
     "test": "jest",
     "test:ci": "jest --silent --ci --coverage",
     "test:package": "jest --config jest.config.package.js",
