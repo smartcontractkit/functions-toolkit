@@ -6,6 +6,7 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 
 # Table of Contents
 
+- [functions-toolkit](#functions-toolkit)
 - [Table of Contents](#table-of-contents)
 - [Prerequisites](#prerequisites)
   - [Functions Billing Subscription Management](#functions-billing-subscription-management)
@@ -570,6 +571,17 @@ const result = await simulateScript({
   errorString?: string // Error message that would be returned on-chain (either errorString or responseBytesHexstring will be defined)
   capturedTerminalOutput: string // stdout or stderr terminal output captured during simulated execution. Print this to view console.log messages.
 }
+```
+
+Any 3rd party imports used in the JavaScript source code are loaded asynchronously at runtime. Therefore, to use 3rd party imports in the source code that is executed by the `simulateScript` function, you must use the async `import` function as shown in the examples below.
+
+```
+const { format } = await import("npm:date-fns");
+return Functions.encodeString(format(new Date(), "yyyy-MM-dd"));
+```
+```
+const { escape } = await import("https://deno.land/std/regexp/mod.ts");
+return Functions.encodeString(escape("$hello*world?"));
 ```
 
 **_NOTE:_** When running `simulateScript`, depending on your security settings, you may get a popup asking if you would like to accept incoming network connections. You can safely accept or ignore this popup and it should disappear when the simulation is complete.
