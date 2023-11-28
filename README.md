@@ -6,7 +6,6 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 
 # Table of Contents
 
-- [functions-toolkit](#functions-toolkit)
 - [Table of Contents](#table-of-contents)
 - [Prerequisites](#prerequisites)
   - [Functions Billing Subscription Management](#functions-billing-subscription-management)
