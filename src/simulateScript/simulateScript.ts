@@ -86,8 +86,6 @@ export const simulateScript = async ({
   const simulation = spawn('deno', [
     'run',
     '--no-prompt',
-    '--no-npm',
-    '--no-remote',
     `--v8-flags=--max-old-space-size=${maxMemoryUsageMb}`,
     '--allow-net',
     scriptPath,

@@ -207,21 +207,6 @@ describe('simulateScript', () => {
       expect(result).toEqual(expected)
     })
 
-    it('should capture import error', async () => {
-      const result = await simulateScript({
-        source: 'const http = await import("https://deno.land/std/http/mod.ts");',
-        maxExecutionTimeMs: 100,
-      })
-
-      const expected = {
-        capturedTerminalOutput: '',
-        errorString:
-          'A remote specifier was requested: "https://deno.land/std/http/mod.ts", but --no-remote is specified.',
-      }
-
-      expect(result).toEqual(expected)
-    })
-
     it('should capture permissions error', async () => {
       const result = await simulateScript({
         source: "Deno.openSync('test.txt')",
@@ -295,6 +280,28 @@ describe('simulateScript', () => {
       })
 
       await expect(result).rejects.toThrow('bytesArgs param contains invalid hex string')
+    })
+
+    it('should allow 3rd party imports', async () => {
+      const result = await simulateScript({
+        source:
+          'const { escape } = await import("https://deno.land/std/regexp/mod.ts"); return Functions.encodeString(escape("$hello*world?"));',
+      })
+
+      expect(result.responseBytesHexstring).toEqual(
+        `0x${Buffer.from('\\$hello\\*world\\?').toString('hex')}`,
+      )
+    })
+
+    it('should allow NPM imports', async () => {
+      const result = await simulateScript({
+        source:
+          'const { format } = await import("npm:date-fns"); return Functions.encodeString(format(new Date(), "yyyy-MM-dd"));',
+      })
+
+      expect(Buffer.from(result.responseBytesHexstring?.slice(2) as string, 'hex').length).toEqual(
+        10,
+      )
     })
   })
 })
