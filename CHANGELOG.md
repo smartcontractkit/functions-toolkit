@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.2.7
+
+### Patch Changes
+
+- [#46](https://github.com/smartcontractkit/functions-toolkit/pull/46) [`d570bf8`](https://github.com/smartcontractkit/functions-toolkit/commit/d570bf8363a08056b442dc7a0437449152aa7dda) Thanks [@KuphJr](https://github.com/KuphJr)! - Added support for 3rd party imports in the simulator
+
 ## 0.2.6
 
 ### Patch Changes
