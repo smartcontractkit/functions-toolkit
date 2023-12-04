@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.2.8
+
+### Patch Changes
+
+- [#48](https://github.com/smartcontractkit/functions-toolkit/pull/48) [`a27e840`](https://github.com/smartcontractkit/functions-toolkit/commit/a27e840e71dfee14b0e083f45cd46c1578fbb511) Thanks [@KuphJr](https://github.com/KuphJr)! - Update frontend simulator
+
 ## 0.2.7
 
 ### Patch Changes
