@@ -572,6 +572,17 @@ const result = await simulateScript({
 }
 ```
 
+Any 3rd party imports used in the JavaScript source code are loaded asynchronously at runtime. Therefore, to use 3rd party imports in the source code that is executed by the `simulateScript` function, you must use the async `import` function as shown in the examples below.
+
+```
+const { format } = await import("npm:date-fns");
+return Functions.encodeString(format(new Date(), "yyyy-MM-dd"));
+```
+```
+const { escape } = await import("https://deno.land/std/regexp/mod.ts");
+return Functions.encodeString(escape("$hello*world?"));
+```
+
 **_NOTE:_** When running `simulateScript`, depending on your security settings, you may get a popup asking if you would like to accept incoming network connections. You can safely accept or ignore this popup and it should disappear when the simulation is complete.
 
 **_NOTE:_** The `simulateScript` function is a debugging tool and hence is not a perfect representation of the actual Chainlink oracle execution environment. Therefore, it is important to make a Functions request on a supported testnet blockchain before mainnet usage.
