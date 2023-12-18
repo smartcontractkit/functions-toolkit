@@ -403,7 +403,7 @@ const Functions = {
     }
     if (typeof num === 'number') {
       if (!Number.isInteger(num)) {
-        throw new Error('input into Functions.encodeUint256 is not an integer')
+        throw new Error('input into Functions.encodeInt256 is not an integer')
       }
     }
     num = BigInt(num)
