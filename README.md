@@ -598,13 +598,14 @@ The `localFunctionsTestnet` function takes the following values as arguments.
 ```
 const localFunctionsTestnet = await startLocalFunctionsTestnet(
   simulationConfigPath?: string // Absolute path to config file which exports simulation config parameters
-  options?: ServerOptions, // Anvil server options (See: https://www.npmjs.com/package/@viem/anvil#api and https://book.getfoundry.sh/reference/anvil/)
+  options?: CreateAnvilOptions, // Anvil server options (See: https://www.npmjs.com/package/@viem/anvil#api and https://book.getfoundry.sh/reference/anvil/)
+  port = 8545
 )
 ```
 
-`ServerOptions` is optional, and ships with a default `port` of 8545 and the default `test test test...junk`  BIP39 mnemonic.  
+`options` is optional, and ships with a default `port` of 8545 and the default `test test test...junk`  BIP39 mnemonic.  
 
-Observe that `localFunctionsTestnet` takes in a `simulationConfigPath` string as an optional argument. The primary reason for this is because the local testnet does not have the ability to access or decrypt encrypted secrets provided within request transactions. Instead, you can export an object named `secrets` from a TypeScript or JavaScript file and provide the absolute path to that file as the `simulationConfigPath` argument. When the JavaScript code is executed during the request, secrets specified in that file will be made accessible within the JavaScript code regardless of the `secretsLocation` or `encryptedSecretsReference` values sent in the request transaction. This config file can also contain other simulation config parameters. An example of this config file is shown below.
+Observe that `localFunctionsTestnet` takes in a `simulationConfigPath` string as an optional argument. This is the path to a file that exports an object that has a `secrets` property on it. See [here](https://github.com/smartcontractkit/functions-hardhat-starter-kit/tree/main?tab=readme-ov-file#local-simulations-with-the-localfunctionstestnet) for an example. The primary reason for config property is because the local testnet does not have the ability to access or decrypt encrypted secrets provided within request transactions. Instead, you can export an object named `secrets` from a TypeScript or JavaScript file and provide the absolute path to that file as the `simulationConfigPath` argument. When the JavaScript code is executed during the request, secrets specified in that file will be made accessible within the JavaScript code regardless of the `secretsLocation` or `encryptedSecretsReference` values sent in the request transaction. This config file can also contain other simulation config parameters. An example of this config file is shown below.
 
 ```
 export const secrets: { test: 'hello world' } // `secrets` object which can be accessed by the JavaScript code during request execution (can only contain string values)
