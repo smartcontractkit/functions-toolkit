@@ -54,7 +54,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to NPM
         id: changesets
-        uses: smartcontractkit/.github/actions/signed-commits@95b6030f4d23d5d87f53eb0f018f51806afa4da3 # changesets-signed-commits@1.0.1
+        uses: changesets/action@f13b1baaa620fde937751f5d2c3572b9da32af23
         with:
           publish: npx changeset publish
         env:
@@ -83,9 +83,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           # We need to checkout main again because the changesets action
-          # consumes the changesets via "changeset version", but we
+          # consumes the changesets via "changeset version", but we 
           # want to do a snapshot versioning instead, hence checking out
           # main again.
-          git checkout main
+          git checkout main 
           npx changeset version --snapshot
           npx changeset publish --tag dev
