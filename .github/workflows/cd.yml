@@ -31,7 +31,7 @@ jobs:
           url: ${{ secrets.LAMBDA_FUNCTIONS_URL }}
 
       - name: Checkout the repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           # This sets up the local git config so that the changesets action
           # can commit changes to the repo on behalf of the GitHub Actions bot.
