@@ -14,6 +14,7 @@ import {
   simulatedSecretsKeys,
   DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES,
   numberOfSimulatedNodeExecutions,
+  simulatedLinkUsdPrice,
 } from './simulationConfig'
 import {
   LinkTokenSource,
@@ -367,9 +368,12 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     MockV3AggregatorSource.bytecode,
     deployer,
   )
-  const linkPriceFeed = await linkPriceFeedFactory
+  const linkEthPriceFeed = await linkPriceFeedFactory
     .connect(deployer)
     .deploy(18, simulatedLinkEthPrice)
+  const linkUsdPriceFeed = await linkPriceFeedFactory
+    .connect(deployer)
+    .deploy(8, simulatedLinkUsdPrice)
 
   const routerFactory = new ContractFactory(
     FunctionsRouterSource.abi,
@@ -387,14 +391,21 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   )
   const mockCoordinator = await mockCoordinatorFactory
     .connect(deployer)
-    .deploy(router.address, simulatedCoordinatorConfig, linkPriceFeed.address)
+    .deploy(
+      router.address,
+      simulatedCoordinatorConfig,
+      linkEthPriceFeed.address,
+      linkUsdPriceFeed.address,
+    )
 
   const allowlistFactory = new ContractFactory(
     TermsOfServiceAllowListSource.abi,
     TermsOfServiceAllowListSource.bytecode,
     deployer,
   )
-  const allowlist = await allowlistFactory.connect(deployer).deploy(simulatedAllowListConfig)
+  const initialAllowedSenders: string[] = []
+  const initialBlockedSenders: string[] = []
+  const allowlist = await allowlistFactory.connect(deployer).deploy(simulatedAllowListConfig, initialAllowedSenders, initialBlockedSenders)
 
   const setAllowListIdTx = await router.setAllowListId(
     utils.formatBytes32String(simulatedAllowListId),
