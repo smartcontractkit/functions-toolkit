@@ -405,7 +405,9 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   )
   const initialAllowedSenders: string[] = []
   const initialBlockedSenders: string[] = []
-  const allowlist = await allowlistFactory.connect(deployer).deploy(simulatedAllowListConfig, initialAllowedSenders, initialBlockedSenders)
+  const allowlist = await allowlistFactory
+    .connect(deployer)
+    .deploy(simulatedAllowListConfig, initialAllowedSenders, initialBlockedSenders)
 
   const setAllowListIdTx = await router.setAllowListId(
     utils.formatBytes32String(simulatedAllowListId),

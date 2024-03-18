@@ -26,8 +26,8 @@ export const simulatedCoordinatorConfig = {
   fulfillmentGasPriceOverEstimationBP: 0,
   fallbackNativePerUnitLink: BigInt('5000000000000000'),
   minimumEstimateGasPriceWei: 1000000000, // 1 gwei
-  fallbackUsdPerUnitLink: 1400000000, 
-  fallbackUsdPerUnitLinkDecimals: 8, 
+  fallbackUsdPerUnitLink: 1400000000,
+  fallbackUsdPerUnitLinkDecimals: 8,
   operationFeeCentsUsd: 0,
 }
 
