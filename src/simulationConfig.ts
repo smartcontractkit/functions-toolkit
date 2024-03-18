@@ -1,4 +1,5 @@
-export const simulatedLinkEthPrice = BigInt('1000000000000000')
+export const simulatedLinkEthPrice = BigInt('6000000000000000')
+export const simulatedLinkUsdPrice = BigInt('1500000000')
 
 export const simulatedDonId = 'local-functions-testnet'
 
@@ -20,10 +21,14 @@ export const simulatedCoordinatorConfig = {
   gasOverheadBeforeCallback: 44_615,
   gasOverheadAfterCallback: 44_615,
   requestTimeoutSeconds: 0, // 300 is used on actual mainnet & testnet blockchains
-  donFee: 0,
+  donFeeCentsUsd: 0,
   maxSupportedRequestDataVersion: 1,
   fulfillmentGasPriceOverEstimationBP: 0,
   fallbackNativePerUnitLink: BigInt('5000000000000000'),
+  minimumEstimateGasPriceWei: 1000000000, // 1 gwei
+  fallbackUsdPerUnitLink: 1400000000,
+  fallbackUsdPerUnitLinkDecimals: 8,
+  operationFeeCentsUsd: 0,
 }
 
 export const simulatedAllowListConfig = {

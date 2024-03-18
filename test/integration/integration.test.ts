@@ -1194,7 +1194,7 @@ describe('Functions toolkit classes', () => {
           donId,
         })
 
-        expect(estimatedCostInJuels.toString()).toBe(BigInt('38923000000000000000').toString())
+        expect(estimatedCostInJuels.toString()).toBe(BigInt('6487166666666666666').toString())
       })
 
       it('Throws an error for missing donId', async () => {
