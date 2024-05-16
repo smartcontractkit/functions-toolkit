@@ -1,4 +1,11 @@
-import { BigNumber, Contract, utils } from 'ethers'
+import {
+  BigNumberish,
+  toBigInt,
+  Contract,
+  isAddress,
+  formatEther,
+  encodeBytes32String,
+} from 'ethers'
 
 import {
   LinkTokenSource,
@@ -7,7 +14,7 @@ import {
   FunctionsCoordinatorSource,
 } from './v1_contract_sources'
 
-import type { Signer } from 'ethers'
+import { Signer, AbiCoder } from 'ethers'
 import type { TransactionReceipt } from '@ethersproject/abstract-provider'
 
 import type {
@@ -94,7 +101,7 @@ export class SubscriptionManager {
     await this.isAllowlisted(await this.signer.getAddress())
 
     if (subCreateConfig?.consumerAddress) {
-      if (!utils.isAddress(subCreateConfig.consumerAddress)) {
+      if (isAddress(subCreateConfig.consumerAddress)) {
         throw Error(
           `Adding consumer contract failed - invalid address ${subCreateConfig.consumerAddress}`,
         )
@@ -144,7 +151,7 @@ export class SubscriptionManager {
       throw Error('Missing consumer contract address')
     }
 
-    if (!utils.isAddress(consumerAddress)) {
+    if (isAddress(consumerAddress)) {
       throw Error(`Adding consumer contract failed - invalid address ${consumerAddress}`)
     }
 
@@ -165,7 +172,7 @@ export class SubscriptionManager {
 
     // Check that the consumer is not already authorized (for convenience and gas saving)
     const existingConsumers = preSubInfo.consumers.map((addr: string) => addr.toLowerCase())
-    if (existingConsumers.includes(consumerAddress.toLowerCase())) {
+    if (existingConsumers.includes((consumerAddress as string).toLowerCase())) {
       throw Error(
         `Consumer ${consumerAddress} is already authorized to use subscription ${subscriptionId}`,
       )
@@ -194,14 +201,14 @@ export class SubscriptionManager {
       throw Error('Juels funding amount must be a string or BigInt')
     }
 
-    let juelsAmountBN: BigNumber
+    let juelsAmountBigInt: BigNumberish
     try {
-      juelsAmountBN = BigNumber.from(juelsAmount.toString())
+      juelsAmountBigInt = toBigInt(juelsAmount.toString())
     } catch (error) {
       throw Error(`Juels funding amount invalid:\n${error}`)
     }
 
-    if (juelsAmountBN.lte(0)) {
+    if (juelsAmountBigInt < 0) {
       throw Error('Juels funding amount must be greater than 0')
     }
 
@@ -214,30 +221,30 @@ export class SubscriptionManager {
     // Ensure sufficient balance
     const balance = await this.linkToken.balanceOf(this.signer.getAddress())
 
-    if (juelsAmountBN.gt(balance)) {
+    if (juelsAmountBigInt > balance) {
       throw Error(
-        `Insufficient LINK balance. Trying to fund subscription with ${utils.formatEther(
-          juelsAmountBN,
-        )} LINK, but wallet '${await this.signer.getAddress()}' only has ${utils.formatEther(
+        `Insufficient LINK balance. Trying to fund subscription with ${formatEther(
+          juelsAmountBigInt,
+        )} LINK, but wallet '${await this.signer.getAddress()}' only has ${formatEther(
           balance,
         )} LINK.`,
       )
     }
 
-    const linkContractWithSigner = this.linkToken.connect(this.signer)
+    const linkContractWithSigner = this.linkToken.connect(this.signer) as Contract
 
     try {
       const fundSubTx = txOptions?.overrides
         ? await linkContractWithSigner.transferAndCall(
             this.functionsRouter.address,
-            juelsAmountBN,
-            utils.defaultAbiCoder.encode(['uint64'], [subscriptionId]),
+            juelsAmountBigInt,
+            AbiCoder.defaultAbiCoder().encode(['uint64'], [subscriptionId]),
             txOptions.overrides,
           )
         : await linkContractWithSigner.transferAndCall(
             this.functionsRouter.address,
-            juelsAmountBN,
-            utils.defaultAbiCoder.encode(['uint64'], [subscriptionId]),
+            juelsAmountBigInt,
+            AbiCoder.defaultAbiCoder().encode(['uint64'], [subscriptionId]),
           )
       return await fundSubTx.wait(txOptions?.confirmations)
     } catch (error) {
@@ -278,7 +285,7 @@ export class SubscriptionManager {
       throw Error('Missing Subscription ID')
     }
 
-    if (refundAddress && !utils.isAddress(refundAddress)) {
+    if (refundAddress && !isAddress(refundAddress)) {
       throw Error(`'${refundAddress}' is an invalid address`)
     }
 
@@ -327,7 +334,7 @@ export class SubscriptionManager {
       throw Error('Missing consumer contract address')
     }
 
-    if (!utils.isAddress(consumerAddress)) {
+    if (isAddress(consumerAddress)) {
       throw Error(`Adding consumer contract failed - invalid address ${consumerAddress}`)
     }
 
@@ -347,7 +354,7 @@ export class SubscriptionManager {
 
     // Check that the consumer is not already removed (for convenience and gas saving).
     const existingConsumers = subInfo.consumers.map((addr: string) => addr.toLowerCase())
-    if (!existingConsumers.includes(consumerAddress.toLowerCase())) {
+    if (!existingConsumers.includes((consumerAddress as string).toLowerCase())) {
       throw Error(
         `Consumer ${consumerAddress} is not authorized on Subscription ID ${subscriptionId} - no need to remove consumer.`,
       )
@@ -378,7 +385,7 @@ export class SubscriptionManager {
       throw Error('Missing Subscription Id')
     }
 
-    if (newOwner && !utils.isAddress(newOwner)) {
+    if (newOwner && !isAddress(newOwner)) {
       throw Error(`'${newOwner}' is an invalid address`)
     }
 
@@ -480,7 +487,7 @@ export class SubscriptionManager {
       throw Error('donId has invalid type')
     }
 
-    const donIdBytes32 = utils.formatBytes32String(donId)
+    const donIdBytes32 = encodeBytes32String(donId)
 
     await this.getSubscriptionInfo(subscriptionId)
 
