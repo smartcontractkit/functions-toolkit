@@ -68,7 +68,7 @@ jobs:
 
       - name: SonarQube Scan
         if: always()
-        uses: sonarsource/sonarqube-scan-action@v2.0.1
+        uses: sonarsource/sonarqube-scan-action@86fe81775628f1c6349c28baab87881a2170f495 # v2.1.0
         with:
           args: >
             -Dsonar.javascript.lcov.reportPaths=${{ steps.sonarqube_report_paths.outputs.sonarqube_coverage_report_paths }}
