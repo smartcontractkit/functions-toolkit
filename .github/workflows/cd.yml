@@ -55,7 +55,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to NPM
         id: changesets
-        uses: smartcontractkit/.github/actions/signed-commits@2ad717a39e5007bcdc4168e970ca21983c046a0e # changesets-signed-commits@1.0.2
+        uses: smartcontractkit/.github/actions/signed-commits@ff80d56f5301dc8a65f66c4d47d746ee956beed9 # changesets-signed-commits@1.2.3
         with:
           publish: npx changeset publish
         env:
