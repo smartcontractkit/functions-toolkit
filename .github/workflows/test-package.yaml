@@ -22,7 +22,7 @@ jobs:
         run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency --no-optional
 
       - name: Setup Deno
-        uses: denoland/setup-deno@0df5d9c641efdff149993c321fc27c11c5df8623 # v1.1.3
+        uses: denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba # v1.1.4
         with:
           deno-version: '1.36.2'
 
