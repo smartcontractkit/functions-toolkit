@@ -27,7 +27,7 @@ jobs:
 
       - name: Get github token from gati
         id: gati
-        uses: smartcontractkit/chainlink-github-actions/github-app-token-issuer@main
+        uses: smartcontractkit/chainlink-github-actions/github-app-token-issuer@fc3e0df622521019f50d772726d6bf8dc919dd38 # v2.3.19
         with:
           url: ${{ secrets.LAMBDA_FUNCTIONS_URL }}
 
