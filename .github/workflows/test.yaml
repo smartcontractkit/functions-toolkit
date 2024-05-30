@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
 
       - name: Set up Node.js
-        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: 18
 
@@ -25,7 +25,7 @@ jobs:
         run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency
 
       - name: Setup Deno
-        uses: denoland/setup-deno@0df5d9c641efdff149993c321fc27c11c5df8623 # v1.1.3
+        uses: denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba # v1.1.4
         with:
           deno-version: '1.36.2'
 
@@ -35,7 +35,7 @@ jobs:
 
       - name: Upload test coverage report
         if: always()
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: unit-tests-coverage
           path: ./coverage/lcov.info

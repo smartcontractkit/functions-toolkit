@@ -18,27 +18,28 @@ jobs:
       contents: read
     steps:
       - name: Assume role capable of getting token from gati
-        uses: aws-actions/configure-aws-credentials@8c3f20df09ac63af7b3ae3d7c91f105f857d8497 # v4.0.0
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
           role-to-assume: ${{  secrets.AWS_OIDC_FUNCTIONS_TOOLKIT_CI_CHANGESET_TOKEN_ISSUER_ROLE_ARN }}
           role-duration-seconds: '900'
           aws-region: ${{ secrets.AWS_REGION }}
+          mask-aws-account-id: true
 
       - name: Get github token from gati
         id: gati
-        uses: smartcontractkit/chainlink-github-actions/github-app-token-issuer@main
+        uses: smartcontractkit/chainlink-github-actions/github-app-token-issuer@fc3e0df622521019f50d772726d6bf8dc919dd38 # v2.3.19
         with:
           url: ${{ secrets.LAMBDA_FUNCTIONS_URL }}
 
       - name: Checkout the repo
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
         with:
           # This sets up the local git config so that the changesets action
           # can commit changes to the repo on behalf of the GitHub Actions bot.
           token: ${{ steps.gati.outputs.access-token }}
 
       - name: Setup node
-        uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           cache: npm
           node-version: '18'
@@ -54,7 +55,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to NPM
         id: changesets
-        uses: smartcontractkit/.github/actions/signed-commits@2ad717a39e5007bcdc4168e970ca21983c046a0e # changesets-signed-commits@1.0.2
+        uses: smartcontractkit/.github/actions/signed-commits@ff80d56f5301dc8a65f66c4d47d746ee956beed9 # changesets-signed-commits@1.2.3
         with:
           publish: npx changeset publish
         env:
