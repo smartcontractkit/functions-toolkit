@@ -34,45 +34,14 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
+      - name: ci-sonarqube
+        uses: smartcontractkit/.github/actions/ci-sonarqube-ts@42cac739a42c5a56d439772a874b3cd95ee1bdc9 # ci-sonarqube-ts@0.0.0
         with:
-          fetch-depth: 0 # fetches all history for all tags and branches to provide more metadata for sonar reports
-
-      - name: Download ESLint report
-        uses: dawidd6/action-download-artifact@93c629661111aae296c04004b30ae3ba22ed46f3 # v5
-        with:
-          workflow: lint.yaml
-          workflow_conclusion: ''
-          name: eslint-report
-          if_no_artifact_found: warn
-
-      - name: Download tests report
-        uses: dawidd6/action-download-artifact@93c629661111aae296c04004b30ae3ba22ed46f3 # v5
-        with:
-          workflow: test.yaml
-          workflow_conclusion: ''
-          name: unit-tests-coverage
-          if_no_artifact_found: warn
-
-      - name: Set SonarQube Report Paths
-        if: always()
-        id: sonarqube_report_paths
-        shell: bash
-        run: |
-          echo "sonarqube_coverage_report_paths=$(find -type f -name 'lcov.info' -printf "%p,")" >> $GITHUB_OUTPUT
-          echo "sonarqube_eslint_report_paths=$(find -type f -name 'eslint-report.json' -printf "%p")" >> $GITHUB_OUTPUT
-      - name: Update ESLint report symlinks
-        continue-on-error: true
-        run: sed -i 's+/home/runner/work/functions-toolkit/functions-toolkit/+/github/workspace/+g' ${{ steps.sonarqube_report_paths.outputs.sonarqube_eslint_report_paths }}
-
-      - name: SonarQube Scan
-        if: always()
-        uses: sonarsource/sonarqube-scan-action@86fe81775628f1c6349c28baab87881a2170f495 # v2.1.0
-        with:
-          args: >
-            -Dsonar.javascript.lcov.reportPaths=${{ steps.sonarqube_report_paths.outputs.sonarqube_coverage_report_paths }}
-            -Dsonar.eslint.reportPaths=${{ steps.sonarqube_report_paths.outputs.sonarqube_eslint_report_paths }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          test-report-artifact: "unit-tests-coverage"
+          junit-xml-report-paths: "junit.xml"
+          typescript-lcov-report-paths: "lcov.info"
+          lint-report-artifact: "eslint-report"
+          eslint-json-report-paths: "eslint-report.json"
+          include-lint: "true"
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          sonar-host-url: ${{ secrets.SONAR_HOST_URL }}

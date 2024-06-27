@@ -6,6 +6,16 @@ module.exports = {
   testTimeout: 5 * 60 * 1000,
 
   coverageReporters: ['html', 'lcov'],
+  reporters: [
+    "default",
+    [
+      "jest-junit",
+      {
+        outputDirectory: "coverage/junit",
+        outputName: "junit.xml",
+      },
+    ],
+  ],
   collectCoverageFrom: ['src/**/*.ts', '!src/simulateScript/deno-sandbox/*.ts'],
   coverageThreshold: {
     global: {
