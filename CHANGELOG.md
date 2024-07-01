@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.3.0
+
+### Minor Changes
+
+- [#57](https://github.com/smartcontractkit/functions-toolkit/pull/57) [`595bf30`](https://github.com/smartcontractkit/functions-toolkit/commit/595bf30fddcd24620a1a991e4c92a742fc0e9c4f) Thanks [@justinkaseman](https://github.com/justinkaseman)! - Update to Functions Contracts v1.3.0
+
 ## 0.2.8
 
 ### Patch Changes
