@@ -35,11 +35,13 @@ jobs:
     if: always()
     steps:
       - name: ci-sonarqube
-        uses: smartcontractkit/.github/actions/ci-sonarqube-ts@d1201dba8bf20febb6b72807ca4a0dab5b78bf9e # ci-sonarqube-ts@0.1.1
+        uses: smartcontractkit/.github/actions/ci-sonarqube-ts@bac45e1fd4ef8ac543eb3560e1362de326720df6 # ci-sonarqube-ts@0.1.1
         with:
+          test-report-workflow: "test.yaml"
           test-report-artifact: "unit-tests-coverage"
           junit-xml-report-paths: "junit.xml"
           typescript-lcov-report-paths: "lcov.info"
+          lint-report-workflow: "lint.yaml"
           lint-report-artifact: "eslint-report"
           eslint-json-report-paths: "eslint-report.json"
           include-lint: "true"
