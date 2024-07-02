@@ -9,7 +9,7 @@ import {
 import { mockOffchainSecretsEndpoints, mockGatewayUrl } from './apiFixture'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { BigNumber, Contract, Wallet, utils } from 'ethers'
+import { toBigInt, Contract, Wallet, parseUnits } from 'ethers'
 
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
@@ -204,7 +204,7 @@ describe('Functions toolkit classes', () => {
           consumerAddress,
         })
 
-        const subInfo = await subscriptionManager.getSubscriptionInfo(BigInt(subscriptionId))
+        const subInfo = await subscriptionManager.getSubscriptionInfo(toBigInt(subscriptionId))
 
         expect(subInfo.consumers.length).toBe(1)
         expect(subInfo.consumers[0]).toBe(consumerAddress)
@@ -475,7 +475,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = BigInt(utils.parseUnits('2', 'ether').toString())
+        const juelsAmount = toBigInt(parseUnits('2', 'ether').toString())
         const subscriptionId = await subscriptionManager.createSubscription()
 
         await subscriptionManager.fundSubscription({
@@ -499,7 +499,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = Number(utils.parseUnits('2.723', 'ether').toString())
+        const juelsAmount = Number(parseUnits('2.723', 'ether').toString())
         const subscriptionId = await subscriptionManager.createSubscription()
 
         await expect(async () => {
@@ -519,7 +519,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = parseUnits('2', 'ether').toString()
         const subscriptionId = await subscriptionManager.createSubscription()
 
         await subscriptionManager.fundSubscription({
@@ -544,9 +544,9 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = parseUnits('2', 'ether').toString()
         const subscriptionId = await subscriptionManager.createSubscription()
-        const gasLimit = BigNumber.from(10_000_000)
+        const gasLimit = toBigInt(10_000_000)
 
         const funderSubManager = new SubscriptionManager({
           signer: allowlistedUser_A, // Has LINK
@@ -600,7 +600,7 @@ describe('Functions toolkit classes', () => {
 
         const subscriptionId = await subscriptionManager.createSubscription()
 
-        const juelsAmount = utils.parseUnits('0', 'ether').toString()
+        const juelsAmount = parseUnits('0', 'ether').toString()
 
         await expect(async () => {
           await subscriptionManager.fundSubscription({
@@ -618,7 +618,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = parseUnits('2', 'ether').toString()
         const nonExistent = 345
 
         await expect(async () => {
@@ -638,7 +638,7 @@ describe('Functions toolkit classes', () => {
         await subscriptionManager.initialize()
 
         const subscriptionId = await subscriptionManager.createSubscription()
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = parseUnits('2', 'ether').toString()
 
         await expect(async () => {
           await subscriptionManager.fundSubscription({
@@ -696,7 +696,7 @@ describe('Functions toolkit classes', () => {
         await subscriptionManager.initialize()
 
         const subscriptionId = await subscriptionManager.createSubscription()
-        const juelsAmount = utils.parseUnits('1.057', 'ether').toString()
+        const juelsAmount = parseUnits('1.057', 'ether').toString()
         await subscriptionManager.fundSubscription({
           subscriptionId: subscriptionId.toString(),
           juelsAmount,
@@ -706,7 +706,7 @@ describe('Functions toolkit classes', () => {
         await subscriptionManager.cancelSubscription({ subscriptionId })
         const endingBal = await linkTokenContract.balanceOf(allowlistedUser_A.address)
 
-        expect((BigInt(endingBal.toString()) - BigInt(startingBal.toString())).toString()).toBe(
+        expect((toBigInt(endingBal.toString()) - toBigInt(startingBal.toString())).toString()).toBe(
           juelsAmount,
         )
       })
@@ -722,7 +722,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('0.2599', 'ether').toString()
+        const juelsAmount = parseUnits('0.2599', 'ether').toString()
         const subscriptionId = await subscriptionManager.createSubscription()
         await subscriptionManager.fundSubscription({ subscriptionId, juelsAmount })
 
@@ -736,7 +736,7 @@ describe('Functions toolkit classes', () => {
         expect(recipientStartingBal.toString()).toBe('0')
         expect(
           (
-            BigInt(recipientEndingBal.toString()) - BigInt(recipientStartingBal.toString())
+            toBigInt(recipientEndingBal.toString()) - toBigInt(recipientStartingBal.toString())
           ).toString(),
         ).toBe(juelsAmount)
       })
@@ -827,7 +827,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.fundSubscription({
           subscriptionId,
-          juelsAmount: utils.parseUnits('0.1', 'ether').toString(),
+          juelsAmount: parseUnits('0.1', 'ether').toString(),
           txOptions: { overrides: { gasLimit: 150_000 } },
         })
 
@@ -962,7 +962,7 @@ describe('Functions toolkit classes', () => {
 
         await subscriptionManager.fundSubscription({
           subscriptionId,
-          juelsAmount: utils.parseUnits('0.1', 'ether').toString(),
+          juelsAmount: parseUnits('0.1', 'ether').toString(),
           txOptions: { overrides: { gasLimit: 1500000 } },
         })
 
@@ -1057,12 +1057,12 @@ describe('Functions toolkit classes', () => {
 
         const subscriptionId = await subscriptionManager.createSubscription()
         await subscriptionManager.fundSubscription({
-          juelsAmount: utils.parseUnits('1', 'ether').toString(),
+          juelsAmount: parseUnits('1', 'ether').toString(),
           subscriptionId,
         })
         await subscriptionManager.addConsumer({
           subscriptionId,
-          consumerAddress: exampleClient.address,
+          consumerAddress: await exampleClient.getAddress(),
           txOptions: {
             confirmations: 1,
           },
@@ -1084,6 +1084,7 @@ describe('Functions toolkit classes', () => {
           reqReceipt.blockHash,
         )
 
+        // @ts-ignore next line
         const commitmentData = oracleRequestEvent[0].args![9]
 
         const commitment: RequestCommitment = {
@@ -1121,15 +1122,15 @@ describe('Functions toolkit classes', () => {
         const nonExistentReqCommitment: RequestCommitment = {
           requestId: '0x0000000000000000000000000000000000000000000000000000000000000000',
           coordinator: '0x0000000000000000000000000000000000000000',
-          estimatedTotalCostJuels: BigInt(0),
+          estimatedTotalCostJuels: toBigInt(0),
           client: '0x0000000000000000000000000000000000000000',
           subscriptionId: 0,
-          callbackGasLimit: BigInt(0),
-          adminFee: BigInt(0),
-          donFee: BigInt(0),
-          gasOverheadBeforeCallback: BigInt(0),
-          gasOverheadAfterCallback: BigInt(0),
-          timeoutTimestamp: BigInt(0),
+          callbackGasLimit: toBigInt(0),
+          adminFee: toBigInt(0),
+          donFee: toBigInt(0),
+          gasOverheadBeforeCallback: toBigInt(0),
+          gasOverheadAfterCallback: toBigInt(0),
+          timeoutTimestamp: toBigInt(0),
         }
 
         await expect(async () => {
@@ -1194,7 +1195,7 @@ describe('Functions toolkit classes', () => {
           donId,
         })
 
-        expect(estimatedCostInJuels.toString()).toBe(BigInt('6487166666666666666').toString())
+        expect(estimatedCostInJuels.toString()).toBe(toBigInt('6487166666666666666').toString())
       })
 
       it('Throws an error for missing donId', async () => {

@@ -1,5 +1,5 @@
 import cbor from 'cbor'
-import { utils } from 'ethers'
+import { isHexString } from 'ethers'
 
 import { Location, CodeLanguage } from './types'
 
@@ -39,7 +39,7 @@ export const buildRequestCBOR = (requestParams: FunctionsRequestParams): string 
   }
 
   if (requestParams.encryptedSecretsReference) {
-    if (!utils.isHexString(requestParams.encryptedSecretsReference)) {
+    if (!isHexString(requestParams.encryptedSecretsReference)) {
       throw Error('Invalid encryptedSecretsReference')
     }
     if (
@@ -66,7 +66,7 @@ export const buildRequestCBOR = (requestParams: FunctionsRequestParams): string 
   if (requestParams.bytesArgs) {
     if (
       !Array.isArray(requestParams.bytesArgs) ||
-      !requestParams.bytesArgs.every(arg => utils.isHexString(arg))
+      !requestParams.bytesArgs.every(arg => isHexString(arg))
     ) {
       throw Error('Invalid bytesArgs')
     }
