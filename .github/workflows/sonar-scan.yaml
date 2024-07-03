@@ -35,7 +35,7 @@ jobs:
     if: always()
     steps:
       - name: ci-sonarqube
-        uses: smartcontractkit/.github/actions/ci-sonarqube-ts@bac45e1fd4ef8ac543eb3560e1362de326720df6 # ci-sonarqube-ts@0.1.1
+        uses: smartcontractkit/.github/actions/ci-sonarqube-ts@50e632d346022462870a85ea19e6bc8b0c0a92bc # ci-sonarqube-ts@0.1.1
         with:
           test-report-workflow: "test.yaml"
           test-report-artifact: "unit-tests-coverage"
