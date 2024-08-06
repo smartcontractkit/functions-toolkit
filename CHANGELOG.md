@@ -1,5 +1,13 @@
 # @chainlink/functions-toolkit
 
+## 0.3.0
+
+### Minor Changes
+
+- [#66](https://github.com/smartcontractkit/functions-toolkit/pull/66) [`a6d789e`](https://github.com/smartcontractkit/functions-toolkit/commit/a6d789e2881bef8341c621b11ef99a0c81b5261e) Thanks [@KuphJr](https://github.com/KuphJr)! - Enable timing out requests on Coordinator v1.3.1
+
+- [#57](https://github.com/smartcontractkit/functions-toolkit/pull/57) [`595bf30`](https://github.com/smartcontractkit/functions-toolkit/commit/595bf30fddcd24620a1a991e4c92a742fc0e9c4f) Thanks [@justinkaseman](https://github.com/justinkaseman)! - Update to Functions Contracts v1.3.0
+
 ## 0.2.8
 
 ### Patch Changes
