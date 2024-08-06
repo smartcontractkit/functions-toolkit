@@ -458,6 +458,11 @@ export class SubscriptionManager {
       throw Error('Must provide at least one request commitment')
     }
 
+    requestCommitments = requestCommitments.map(commitment => {
+      commitment.adminFee = 0n
+      return commitment
+    })
+
     try {
       const timeoutTx = txOptions?.overrides
         ? await this.functionsRouter.timeoutRequests(requestCommitments, txOptions)
