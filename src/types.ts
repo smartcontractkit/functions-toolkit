@@ -1,4 +1,4 @@
-import type { Overrides, Contract, providers } from 'ethers'
+import type { Overrides, Contract, JsonRpcProvider } from 'ethers'
 import type { Server } from 'ganache'
 
 export enum Location {
@@ -41,7 +41,7 @@ export type ThresholdPublicKey = {
 
 export type RequestCommitmentFetchConfig = {
   requestId: string
-  provider: providers.JsonRpcProvider
+  provider: JsonRpcProvider
   functionsRouterAddress: string
   donId: string
   toBlock?: number | 'latest' // Ending block number to search for the request commitment
