@@ -65,7 +65,7 @@ export class ResponseListener {
 
   /**
    *
-   * @param txHash Transaction hash for the Functions Request
+   * @param txHash Tx hash for the Functions Request
    * @param timeoutMs after which the listener throws, indicating  the time limit was exceeded (default 5 minutes)
    * @param confirmations  number of confirmations to wait for before considering the transaction successful (default 1, but recommend 2 or more)
    * @param checkIntervalMs frequency of checking if the Tx is  included on-chain (or if it got moved after a chain re-org) (default 2 seconds. Intervals longer than block time may cause the listener to wait indefinitely.)
