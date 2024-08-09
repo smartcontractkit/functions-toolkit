@@ -21,12 +21,15 @@ export class ResponseListener {
     this.functionsRouter = new Contract(functionsRouterAddress, FunctionsRouterSource.abi, provider)
   }
 
-  public async listenForResponse(requestId: string, timeout = 300000): Promise<FunctionsResponse> {
+  public async listenForResponse(
+    requestId: string,
+    timeoutMs = 300000,
+  ): Promise<FunctionsResponse> {
     let expirationTimeout: NodeJS.Timeout
     const responsePromise = new Promise<FunctionsResponse>((resolve, reject) => {
       expirationTimeout = setTimeout(() => {
         reject('Response not received within timeout period')
-      }, timeout)
+      }, timeoutMs)
 
       this.functionsRouter.on(
         'RequestProcessed',
@@ -60,11 +63,19 @@ export class ResponseListener {
     return responsePromise
   }
 
+  /**
+   *
+   * @param txHash Transaction hash for the Functions Request
+   * @param timeoutMs after which the listener throws, indicating  the time limit was exceeded (default 5 minutes)
+   * @param confirmations  number of confirmations to wait for before considering the transaction successful (default 1, but recommend 2 or more)
+   * @param checkIntervalMs frequency of checking if the Tx is  included on-chain (or if it got moved after a chain re-org) (default 2 seconds. Intervals longer than block time may cause the listener to wait indefinitely.)
+   * @returns
+   */
   public async listenForResponseFromTransaction(
     txHash: string,
-    timeout = 3000000,
-    confirmations = 2,
-    checkInterval = 2000,
+    timeoutMs = 3000000,
+    confirmations = 1,
+    checkIntervalMs = 2000,
   ): Promise<FunctionsResponse> {
     return new Promise<FunctionsResponse>((resolve, reject) => {
       ;(async () => {
@@ -73,14 +84,14 @@ export class ResponseListener {
         let checkTimeout: NodeJS.Timeout
         const expirationTimeout = setTimeout(() => {
           reject('Response not received within timeout period')
-        }, timeout)
+        }, timeoutMs)
 
         const check = async () => {
-          const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeout)
+          const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeoutMs)
           const updatedId = receipt.logs[0].topics[1]
           if (updatedId !== requestId) {
             requestId = updatedId
-            const response = await this.listenForResponse(requestId, timeout)
+            const response = await this.listenForResponse(requestId, timeoutMs)
             if (updatedId === requestId) {
               // Resolve only if the ID hasn't changed in the meantime
               clearTimeout(expirationTimeout)
@@ -91,7 +102,7 @@ export class ResponseListener {
         }
 
         // Check periodically if the transaction has been re-orged and requestID changed
-        checkTimeout = setInterval(check, checkInterval)
+        checkTimeout = setInterval(check, checkIntervalMs)
 
         check()
       })()
