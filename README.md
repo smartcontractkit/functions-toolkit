@@ -452,20 +452,22 @@ functionsRouterAddress,
 
 To listen for a response to a single Functions request, use the `listenForResponseFromTransaction()` method.
 Optionally, you can provide:
-- timeout after which the listener will throw an error indicating that the time limit was exceeded (default 5 minutes) 
-- number of block confirmations (default 2)
-- frequency of checking if the request is already included on-chain (or if it got moved after a chain re-org) (default 2 seconds)
+
+- timeout after which the listener will throw an error indicating that the time limit was exceeded (default 5 minutes expressed in milliseconds)
+- number of block confirmations (default 1, but note that should be 2 or more to for higher confidence in finality, and to protect against reorgs)
+- frequency of checking if the request is already included on-chain (or if it got moved after a chain re-org) (default 2 seconds, but note that `checkInterval`s higher than block time could cause this listener to hang as the response will have completed before the next check.)
 
 ```
 const response: FunctionsResponse = await responseListener.listenForResponseFromTransaction(
   txHash: string,
-  timeout?: number,
+  timeoutMs?: number, // milliseconds
   confirmations?: number,
   checkInterval?: number,
 )
 ```
 
 `listenForResponseFromTransaction()` returns a response with the following structure:
+
 ```
 {
   requestId: string // Request ID of the fulfilled request represented as a bytes32 hex string
@@ -480,7 +482,8 @@ const response: FunctionsResponse = await responseListener.listenForResponseFrom
 
 Alternatively, to listen using a request ID, use the `listenForResponse()` method.
 
-**Notes:** 
+**Notes:**
+
 1. Request ID can change during a chain re-org so it's less reliable than a request transaction hash.
 2. If the methods are called after the response is already on chain, it won't be returned correctly.
 3. Listening for multiple responses simultaneously is not supported by the above methods and will lead to undefined behavior.
@@ -578,6 +581,7 @@ Any 3rd party imports used in the JavaScript source code are loaded asynchronous
 const { format } = await import("npm:date-fns");
 return Functions.encodeString(format(new Date(), "yyyy-MM-dd"));
 ```
+
 ```
 const { escape } = await import("https://deno.land/std/regexp/mod.ts");
 return Functions.encodeString(escape("$hello*world?"));
@@ -720,6 +724,6 @@ const functionsRequestBytesHexString: string = buildRequestCBOR({
 })
 ```
 
-
 ## Browser use
-This package can also be used in most modern web browsers. You can import the package in your front-end application, and call the APIs as you would in a back end NodeJs/Deno environment.  
+
+This package can also be used in most modern web browsers. You can import the package in your front-end application, and call the APIs as you would in a back end NodeJs/Deno environment.
