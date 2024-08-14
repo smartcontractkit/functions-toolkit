@@ -1,7 +1,7 @@
 {
   "name": "@chainlink/functions-toolkit",
   "private": false,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "An NPM package with collection of functions that can be used for working with Chainlink Functions.",
   "main": "./dist/index.js",
   "scripts": {

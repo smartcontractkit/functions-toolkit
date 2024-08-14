@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.3.1
+
+### Patch Changes
+
+- [#67](https://github.com/smartcontractkit/functions-toolkit/pull/67) [`073c381`](https://github.com/smartcontractkit/functions-toolkit/commit/073c381e4ba5854f4a5eebddcf152515c4933772) Thanks [@zeuslawyer](https://github.com/zeuslawyer)! - Change default minimum confirmations from listenForResponseFromTransaction() to 1.
+
 ## 0.3.0
 
 ### Minor Changes
