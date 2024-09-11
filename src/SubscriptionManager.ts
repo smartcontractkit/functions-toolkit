@@ -328,7 +328,7 @@ export class SubscriptionManager {
     }
 
     if (!utils.isAddress(consumerAddress)) {
-      throw Error(`Adding consumer contract failed - invalid address ${consumerAddress}`)
+      throw Error(`Removing consumer contract failed - invalid address ${consumerAddress}`)
     }
 
     let subInfo
