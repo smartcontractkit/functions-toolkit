@@ -1,5 +1,11 @@
 # @chainlink/functions-toolkit
 
+## 0.3.2
+
+### Patch Changes
+
+- [#69](https://github.com/smartcontractkit/functions-toolkit/pull/69) [`b3da1b3`](https://github.com/smartcontractkit/functions-toolkit/commit/b3da1b34b2ab94187fbc5885e1848d3eee13dfac) Thanks [@ernest-nowacki](https://github.com/ernest-nowacki)! - Improve the error message around remove consumer input validation
+
 ## 0.3.1
 
 ### Patch Changes
