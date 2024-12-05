@@ -116,15 +116,22 @@ export class SubscriptionManager {
         )
 
         // Search through logs to find the topic that matches the SubscriptionCreated event
-        if (!txReceipt.logs) throw new Error('No logs present within transaction receipt')
+        if (!txReceipt.logs) {
+          throw new Error('No logs present within transaction receipt')
+        }
 
         const createSubscriptionLog = txReceipt.logs.find(
           log => log.topics[0] === FunctionsTopics.SubscriptionCreated,
         )
 
         // Sanity checking, ensure that the SubscriptionCreated event was found in the log
-        if (!createSubscriptionLog) throw new Error('No SubscriptionCreated event found in logs')
-        if (!createSubscriptionLog.topics[1]) throw new Error('No subscriptionId found in logs')
+        if (!createSubscriptionLog) {
+          throw new Error('No SubscriptionCreated event found in logs')
+        }
+
+        if (!createSubscriptionLog.topics[1]) {
+          throw new Error('No subscriptionId found in logs')
+        }
 
         // The signature is SubscriptionCreated(uint64,address) so the subscriptionId is the second topic
         const subscriptionId = createSubscriptionLog.topics[1]
@@ -144,14 +151,22 @@ export class SubscriptionManager {
       )
 
       // Search through logs to find the topic that matches the SubscriptionCreated event
-      if (!createSubTxReceipt.logs) throw new Error('No logs present within transaction receipt')
+      if (!createSubTxReceipt.logs) {
+        throw new Error('No logs present within transaction receipt')
+      }
+
       const createSubscriptionLog = createSubTxReceipt.logs.find(
         log => log.topics[0] === FunctionsTopics.SubscriptionCreated,
       )
 
       // Sanity checking, ensure that the SubscriptionCreated event was found in the log
-      if (!createSubscriptionLog) throw new Error('No SubscriptionCreated event found in logs')
-      if (!createSubscriptionLog.topics[1]) throw new Error('No subscriptionId found in logs')
+      if (!createSubscriptionLog) {
+        throw new Error('No SubscriptionCreated event found in logs')
+      }
+
+      if (!createSubscriptionLog.topics[1]) {
+        throw new Error('No subscriptionId found in logs')
+      }
 
       // The signature is SubscriptionCreated(uint64,address) so the subscriptionId is the second topic
       const subscriptionId = createSubscriptionLog.topics[1]

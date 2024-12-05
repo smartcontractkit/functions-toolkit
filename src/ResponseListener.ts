@@ -91,7 +91,9 @@ export class ResponseListener {
           const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeoutMs)
 
           // There must be logs in the receipt otherwise it's a chain that doesn't support logs or the tx was reverted
-          if (!receipt.logs) throw new Error('No logs found in the transaction receipt')
+          if (!receipt.logs) {
+            throw new Error('No logs found in the transaction receipt')
+          }
 
           // Find the RequestStart event in the logs
           const requestStartLog = receipt.logs.find(
@@ -99,8 +101,13 @@ export class ResponseListener {
           )
 
           // Ensure the requestID exists in the logs
-          if (!requestStartLog) throw new Error('RequestStart event not found in the logs')
-          if (!requestStartLog.topics[1]) throw new Error('Request ID not found in the logs')
+          if (!requestStartLog) {
+            throw new Error('RequestStart event not found in the logs')
+          }
+
+          if (!requestStartLog.topics[1]) {
+            throw new Error('Request ID not found in the logs')
+          }
 
           const updatedId = requestStartLog.topics[1]
           if (updatedId !== requestId) {
