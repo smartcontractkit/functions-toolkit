@@ -706,7 +706,7 @@ This function will return a promise which resolves to `true` if deletion is succ
 
 ### Building Functions Request CBOR Bytes
 
-Instead of performing the [CBOR encoding for a Functions request on-chain](https://docs.chain.link/chainlink-functions/api-reference/functions#encodecbor) in your Functions consumer contract, it is also possible to generate the CBOR encoding off-chain in order to save gas. Then, the resulting encoded CBOR bytes can be used when making an on-chain request. You can either store the encoded request in a `bytes` storage variable within your consumer contract, or initiate the Functions request by passing the CBOR-encoded request object `bytes` directly into the `_sendRequest()` method which [is inherited from `FunctionsClient.sol`](https://docs.chain.link/chainlink-functions/api-reference/functions-client) .
+Instead of performing the [CBOR encoding for a Functions request on-chain](https://docs.chain.link/chainlink-functions/api-reference/functions-request#encodecbor) in your Functions consumer contract, it is also possible to generate the CBOR encoding off-chain in order to save gas. Then, the resulting encoded CBOR bytes can be used when making an on-chain request. You can either store the encoded request in a `bytes` storage variable within your consumer contract, or initiate the Functions request by passing the CBOR-encoded request object `bytes` directly into the `_sendRequest()` method which [is inherited from `FunctionsClient.sol`](https://docs.chain.link/chainlink-functions/api-reference/functions-client) .
 
 Note that when encoding a request off-chain, `args` or `bytesArgs` cannot be added to the request on-chain. This is a limitation of CBOR encoding due to its immutable structure.
 
