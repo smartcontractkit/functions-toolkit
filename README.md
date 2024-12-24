@@ -592,6 +592,8 @@ return Functions.encodeString(escape("$hello*world?"));
 **_NOTE:_** The `simulateScript` function is a debugging tool and hence is not a perfect representation of the actual Chainlink oracle execution environment. Therefore, it is important to make a Functions request on a supported testnet blockchain before mainnet usage.
 
 ### Local Functions Testnet
+> **Note**
+> Anvil is required to use `localFunctionsTestnet`. Please refer to the [foundry book](https://book.getfoundry.sh) for Anvil [installation instructions](https://book.getfoundry.sh/getting-started/installation).
 
 For debugging smart contracts and the end-to-end request flow on your local machine, you can use the `localFunctionsTestnet` function. This creates a local testnet RPC node with a mock Chainlink Functions contracts. You can then deploy your own Functions consumer contract to this local network, create and manage subscriptions, and send requests. Request processing will simulate the behavior of an actual DON where the request is executed 4 times and the discrete median response is transmitted back to the consumer contract. (Note that Chainlink Functions uses the following calculation to select the discrete median response: `const medianResponse = responses[responses.length - 1) / 2]`).
 
@@ -600,12 +602,14 @@ The `localFunctionsTestnet` function takes the following values as arguments.
 ```
 const localFunctionsTestnet = await startLocalFunctionsTestnet(
   simulationConfigPath?: string // Absolute path to config file which exports simulation config parameters
-  options?: ServerOptions, // Ganache server options
-  port?: number, // Defaults to 8545
+  options?: CreateAnvilOptions, // Anvil server options (See: https://www.npmjs.com/package/@viem/anvil#api and https://book.getfoundry.sh/reference/anvil/)
+  port = 8545
 )
 ```
 
-Observe that `localFunctionsTestnet` takes in a `simulationConfigPath` string as an optional argument. The primary reason for this is because the local testnet does not have the ability to access or decrypt encrypted secrets provided within request transactions. Instead, you can export an object named `secrets` from a TypeScript or JavaScript file and provide the absolute path to that file as the `simulationConfigPath` argument. When the JavaScript code is executed during the request, secrets specified in that file will be made accessible within the JavaScript code regardless of the `secretsLocation` or `encryptedSecretsReference` values sent in the request transaction. This config file can also contain other simulation config parameters. An example of this config file is shown below.
+`options` is optional, and ships with a default `port` of 8545 and the default `test test test...junk`  BIP39 mnemonic.  
+
+Observe that `localFunctionsTestnet` takes in a `simulationConfigPath` string as an optional argument. This is the path to a file that exports an object that has a `secrets` property on it. See [here](https://github.com/smartcontractkit/functions-hardhat-starter-kit/tree/main?tab=readme-ov-file#local-simulations-with-the-localfunctionstestnet) for an example. The primary reason for config property is because the local testnet does not have the ability to access or decrypt encrypted secrets provided within request transactions. Instead, you can export an object named `secrets` from a TypeScript or JavaScript file and provide the absolute path to that file as the `simulationConfigPath` argument. When the JavaScript code is executed during the request, secrets specified in that file will be made accessible within the JavaScript code regardless of the `secretsLocation` or `encryptedSecretsReference` values sent in the request transaction. This config file can also contain other simulation config parameters. An example of this config file is shown below.
 
 ```
 export const secrets: { test: 'hello world' } // `secrets` object which can be accessed by the JavaScript code during request execution (can only contain string values)
@@ -623,7 +627,7 @@ export const maxQueryResponseBytes = 2097152 // Maximum size of incoming HTTP re
 
 ```
 {
-  server: Server // Ganache server
+  server: Server // Anvil server
   adminWallet: { address: string, privateKey: string } // Funded admin wallet
   getFunds: (address: string, { weiAmount, juelsAmount }: { weiAmount?: BigInt | string; juelsAmount?: BigInt | string }) => Promise<void> // Method which can be called to send funds to any address
   close: () => Promise<void> // Method to close the server
