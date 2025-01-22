@@ -1,4 +1,4 @@
-import { BigNumber, Contract, utils } from 'ethers'
+import { Contract, ethers } from 'ethers'
 
 import {
   LinkTokenSource,
@@ -94,7 +94,7 @@ export class SubscriptionManager {
     await this.isAllowlisted(await this.signer.getAddress())
 
     if (subCreateConfig?.consumerAddress) {
-      if (!utils.isAddress(subCreateConfig.consumerAddress)) {
+      if (!ethers.isAddress(subCreateConfig.consumerAddress)) {
         throw Error(
           `Adding consumer contract failed - invalid address ${subCreateConfig.consumerAddress}`,
         )
@@ -144,7 +144,7 @@ export class SubscriptionManager {
       throw Error('Missing consumer contract address')
     }
 
-    if (!utils.isAddress(consumerAddress)) {
+    if (!ethers.isAddress(consumerAddress)) {
       throw Error(`Adding consumer contract failed - invalid address ${consumerAddress}`)
     }
 
@@ -194,14 +194,14 @@ export class SubscriptionManager {
       throw Error('Juels funding amount must be a string or BigInt')
     }
 
-    let juelsAmountBN: BigNumber
+    let juelsAmountBN: bigint
     try {
-      juelsAmountBN = BigNumber.from(juelsAmount.toString())
+      juelsAmountBN = BigInt(juelsAmount.toString())
     } catch (error) {
       throw Error(`Juels funding amount invalid:\n${error}`)
     }
 
-    if (juelsAmountBN.lte(0)) {
+    if (juelsAmountBN <= 0n) {
       throw Error('Juels funding amount must be greater than 0')
     }
 
@@ -214,11 +214,11 @@ export class SubscriptionManager {
     // Ensure sufficient balance
     const balance = await this.linkToken.balanceOf(this.signer.getAddress())
 
-    if (juelsAmountBN.gt(balance)) {
+    if (juelsAmountBN > balance) {
       throw Error(
-        `Insufficient LINK balance. Trying to fund subscription with ${utils.formatEther(
+        `Insufficient LINK balance. Trying to fund subscription with ${ethers.formatEther(
           juelsAmountBN,
-        )} LINK, but wallet '${await this.signer.getAddress()}' only has ${utils.formatEther(
+        )} LINK, but wallet '${await this.signer.getAddress()}' only has ${ethers.formatEther(
           balance,
         )} LINK.`,
       )
@@ -228,16 +228,16 @@ export class SubscriptionManager {
 
     try {
       const fundSubTx = txOptions?.overrides
-        ? await linkContractWithSigner.transferAndCall(
+        ? await linkContractWithSigner.getFunction('transferAndCall')(
             this.functionsRouter.address,
             juelsAmountBN,
-            utils.defaultAbiCoder.encode(['uint64'], [subscriptionId]),
+            ethers.AbiCoder.defaultAbiCoder().encode(['uint64'], [subscriptionId]),
             txOptions.overrides,
           )
-        : await linkContractWithSigner.transferAndCall(
+        : await linkContractWithSigner.getFunction('transferAndCall')(
             this.functionsRouter.address,
             juelsAmountBN,
-            utils.defaultAbiCoder.encode(['uint64'], [subscriptionId]),
+            ethers.AbiCoder.defaultAbiCoder().encode(['uint64'], [subscriptionId]),
           )
       return await fundSubTx.wait(txOptions?.confirmations)
     } catch (error) {
@@ -278,7 +278,7 @@ export class SubscriptionManager {
       throw Error('Missing Subscription ID')
     }
 
-    if (refundAddress && !utils.isAddress(refundAddress)) {
+    if (refundAddress && !ethers.isAddress(refundAddress)) {
       throw Error(`'${refundAddress}' is an invalid address`)
     }
 
@@ -327,7 +327,7 @@ export class SubscriptionManager {
       throw Error('Missing consumer contract address')
     }
 
-    if (!utils.isAddress(consumerAddress)) {
+    if (!ethers.isAddress(consumerAddress)) {
       throw Error(`Removing consumer contract failed - invalid address ${consumerAddress}`)
     }
 
@@ -378,7 +378,7 @@ export class SubscriptionManager {
       throw Error('Missing Subscription Id')
     }
 
-    if (newOwner && !utils.isAddress(newOwner)) {
+    if (newOwner && !ethers.isAddress(newOwner)) {
       throw Error(`'${newOwner}' is an invalid address`)
     }
 
@@ -485,7 +485,7 @@ export class SubscriptionManager {
       throw Error('donId has invalid type')
     }
 
-    const donIdBytes32 = utils.formatBytes32String(donId)
+    const donIdBytes32 = ethers.encodeBytes32String(donId)
 
     await this.getSubscriptionInfo(subscriptionId)
 

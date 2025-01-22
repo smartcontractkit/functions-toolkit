@@ -1,4 +1,4 @@
-import { Contract, utils } from 'ethers'
+import { Contract, ethers } from 'ethers'
 
 import { FunctionsRouterSource, FunctionsCoordinatorSource } from './v1_contract_sources'
 
@@ -27,7 +27,7 @@ export const fetchRequestCommitment = async ({
   }
 
   const functionsRouter = new Contract(functionsRouterAddress, FunctionsRouterSource.abi, provider)
-  const donIdBytes32 = utils.formatBytes32String(donId)
+  const donIdBytes32 = ethers.encodeBytes32String(donId)
   let functionsCoordinatorAddress: string
   try {
     functionsCoordinatorAddress = await functionsRouter.getContractById(donIdBytes32)
@@ -55,6 +55,7 @@ export const fetchRequestCommitment = async ({
   }
 
   const event = functionsCoordinator.interface.parseLog(logs[0])
+  // @ts-ignore
   const commitmentData = event.args.commitment
   const requestCommitment: RequestCommitment = {
     requestId: commitmentData.requestId,

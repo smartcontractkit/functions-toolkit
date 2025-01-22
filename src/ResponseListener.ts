@@ -2,19 +2,19 @@ import { Contract } from 'ethers'
 
 import { FunctionsRouterSource } from './v1_contract_sources'
 
-import type { BigNumber, providers } from 'ethers'
+import type { Provider } from 'ethers'
 
 import { FulfillmentCode, type FunctionsResponse } from './types'
 
 export class ResponseListener {
   private functionsRouter: Contract
-  private provider: providers.Provider
+  private provider: Provider
 
   constructor({
     provider,
     functionsRouterAddress,
   }: {
-    provider: providers.Provider
+    provider: Provider
     functionsRouterAddress: string
   }) {
     this.provider = provider
@@ -35,8 +35,8 @@ export class ResponseListener {
         'RequestProcessed',
         (
           _requestId: string,
-          subscriptionId: BigNumber,
-          totalCostJuels: BigNumber,
+          subscriptionId: bigint,
+          totalCostJuels: bigint,
           _,
           resultCode: number,
           response: string,
@@ -88,6 +88,7 @@ export class ResponseListener {
 
         const check = async () => {
           const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeoutMs)
+          // @ts-ignore
           const updatedId = receipt.logs[0].topics[1]
           if (updatedId !== requestId) {
             requestId = updatedId
@@ -122,8 +123,8 @@ export class ResponseListener {
       'RequestProcessed',
       (
         requestId: string,
-        _subscriptionId: BigNumber,
-        totalCostJuels: BigNumber,
+        _subscriptionId: bigint,
+        totalCostJuels: bigint,
         _,
         resultCode: number,
         response: string,
