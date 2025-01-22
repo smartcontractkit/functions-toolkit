@@ -10,16 +10,16 @@ import {
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { utils } from 'ethers'
+import { BaseContract, ethers } from 'ethers'
 
 import type { GetFunds } from '../../src'
 
-import type { Contract, Wallet } from 'ethers'
+import type { Wallet } from 'ethers'
 
 describe('Local Functions Testnet', () => {
   let linkTokenAddress: string
   let functionsRouterAddress: string
-  let exampleClient: Contract
+  let exampleClient: BaseContract
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
   let getFunds: GetFunds
@@ -48,23 +48,24 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
+      // @ts-ignore
       provider: allowlistedUser_A.provider,
       functionsRouterAddress,
     })
 
-    const reqTx = await exampleClient.sendRequest(
+    const reqTx = await exampleClient.getFunction('sendRequest')(
       'return Functions.encodeString(secrets.test + " " + args[0] + " " + args[1] + bytesArgs[0] + bytesArgs[1])',
       1,
       '0xabcd',
@@ -92,18 +93,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
+      // @ts-ignore
       provider: allowlistedUser_A.provider,
       functionsRouterAddress,
     })
@@ -119,7 +121,7 @@ describe('Local Functions Testnet', () => {
       encryptedSecretsReference: '0xabcd',
     })
 
-    const reqTx = await exampleClient.sendEncodedRequest(
+    const reqTx = await exampleClient.getFunction('sendEncodedRequest')(
       encodedRequestBytes,
       subscriptionId,
       100_000,
@@ -143,18 +145,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
+      // @ts-ignore
       provider: allowlistedUser_A.provider,
       functionsRouterAddress,
     })
@@ -169,7 +172,7 @@ describe('Local Functions Testnet', () => {
         })
         .toString('hex')
 
-    const reqTx = await exampleClient.sendEncodedRequest(
+    const reqTx = await exampleClient.getFunction('sendEncodedRequest')(
       encodedRequestBytes,
       subscriptionId,
       100_000,
@@ -192,23 +195,28 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
+      // @ts-ignore
       provider: allowlistedUser_A.provider,
       functionsRouterAddress,
     })
 
-    const reqTx = await exampleClient.sendEncodedRequest('0xabcd', subscriptionId, 100_000)
+    const reqTx = await exampleClient.getFunction('sendEncodedRequest')(
+      '0xabcd',
+      subscriptionId,
+      100_000,
+    )
 
     const req = await reqTx.wait()
     const requestId = req.events[0].topics[1]
@@ -227,23 +235,24 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
+      // @ts-ignore
       provider: allowlistedUser_A.provider,
       functionsRouterAddress,
     })
 
-    const reqTx = await exampleClient.sendRequest(
+    const reqTx = await exampleClient.getFunction('sendRequest')(
       'return Functions.encodeUint256(Math.floor((Math.random() + 0.1) * 1_000_000_000))',
       1,
       '0xabcd',
@@ -270,23 +279,24 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
+      // @ts-ignore
       provider: allowlistedUser_A.provider,
       functionsRouterAddress,
     })
 
-    const reqTx = await exampleClient.sendRequest(
+    const reqTx = await exampleClient.getFunction('sendRequest')(
       'throw Error(`${Math.floor((Math.random() + 0.1) * 100)}`)',
       1,
       '0xabcd',

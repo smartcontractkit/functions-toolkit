@@ -9,17 +9,17 @@ import {
 import { mockOffchainSecretsEndpoints, mockGatewayUrl } from './apiFixture'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { BigNumber, Contract, Wallet, utils } from 'ethers'
+import { Wallet, ethers, BaseContract, toBigInt } from 'ethers'
 
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
 describe('Functions toolkit classes', () => {
   let donId = simulatedDonId
-  let linkTokenContract: Contract
+  let linkTokenContract: BaseContract
   let linkTokenAddress: string
-  let functionsCoordinator: Contract
+  let functionsCoordinator: BaseContract
   let functionsRouterAddress: string
-  let exampleClient: Contract
+  let exampleClient: BaseContract
   let consumerAddress: string
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
@@ -475,7 +475,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = BigInt(utils.parseUnits('2', 'ether').toString())
+        const juelsAmount = BigInt(ethers.parseUnits('2', 'ether').toString())
         const subscriptionId = await subscriptionManager.createSubscription()
 
         await subscriptionManager.fundSubscription({
@@ -499,7 +499,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = Number(utils.parseUnits('2.723', 'ether').toString())
+        const juelsAmount = Number(ethers.parseUnits('2.723', 'ether').toString())
         const subscriptionId = await subscriptionManager.createSubscription()
 
         await expect(async () => {
@@ -519,7 +519,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = ethers.parseUnits('2', 'ether').toString()
         const subscriptionId = await subscriptionManager.createSubscription()
 
         await subscriptionManager.fundSubscription({
@@ -544,9 +544,9 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = ethers.parseUnits('2', 'ether').toString()
         const subscriptionId = await subscriptionManager.createSubscription()
-        const gasLimit = BigNumber.from(10_000_000)
+        const gasLimit = toBigInt(10_000_000)
 
         const funderSubManager = new SubscriptionManager({
           signer: allowlistedUser_A, // Has LINK
@@ -600,7 +600,7 @@ describe('Functions toolkit classes', () => {
 
         const subscriptionId = await subscriptionManager.createSubscription()
 
-        const juelsAmount = utils.parseUnits('0', 'ether').toString()
+        const juelsAmount = ethers.parseUnits('0', 'ether').toString()
 
         await expect(async () => {
           await subscriptionManager.fundSubscription({
@@ -618,7 +618,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = ethers.parseUnits('2', 'ether').toString()
         const nonExistent = 345
 
         await expect(async () => {
@@ -638,7 +638,7 @@ describe('Functions toolkit classes', () => {
         await subscriptionManager.initialize()
 
         const subscriptionId = await subscriptionManager.createSubscription()
-        const juelsAmount = utils.parseUnits('2', 'ether').toString()
+        const juelsAmount = ethers.parseUnits('2', 'ether').toString()
 
         await expect(async () => {
           await subscriptionManager.fundSubscription({
@@ -696,15 +696,19 @@ describe('Functions toolkit classes', () => {
         await subscriptionManager.initialize()
 
         const subscriptionId = await subscriptionManager.createSubscription()
-        const juelsAmount = utils.parseUnits('1.057', 'ether').toString()
+        const juelsAmount = ethers.parseUnits('1.057', 'ether').toString()
         await subscriptionManager.fundSubscription({
           subscriptionId: subscriptionId.toString(),
           juelsAmount,
         })
-        const startingBal = await linkTokenContract.balanceOf(allowlistedUser_A.address)
+        const startingBal = await linkTokenContract.getFunction('balanceOf')(
+          allowlistedUser_A.address,
+        )
 
         await subscriptionManager.cancelSubscription({ subscriptionId })
-        const endingBal = await linkTokenContract.balanceOf(allowlistedUser_A.address)
+        const endingBal = await linkTokenContract.getFunction('balanceOf')(
+          allowlistedUser_A.address,
+        )
 
         expect((BigInt(endingBal.toString()) - BigInt(startingBal.toString())).toString()).toBe(
           juelsAmount,
@@ -713,7 +717,9 @@ describe('Functions toolkit classes', () => {
 
       it('cancels and third party gets refunded', async () => {
         const recipient = Wallet.createRandom()
-        const recipientStartingBal = await linkTokenContract.balanceOf(recipient.address)
+        const recipientStartingBal = await linkTokenContract.getFunction('balanceOf')(
+          recipient.address,
+        )
 
         const subscriptionManager = new SubscriptionManager({
           signer: allowlistedUser_A,
@@ -722,7 +728,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.initialize()
 
-        const juelsAmount = utils.parseUnits('0.2599', 'ether').toString()
+        const juelsAmount = ethers.parseUnits('0.2599', 'ether').toString()
         const subscriptionId = await subscriptionManager.createSubscription()
         await subscriptionManager.fundSubscription({ subscriptionId, juelsAmount })
 
@@ -731,7 +737,9 @@ describe('Functions toolkit classes', () => {
           refundAddress: recipient.address,
         })
 
-        const recipientEndingBal = await linkTokenContract.balanceOf(recipient.address)
+        const recipientEndingBal = await linkTokenContract.getFunction('balanceOf')(
+          recipient.address,
+        )
 
         expect(recipientStartingBal.toString()).toBe('0')
         expect(
@@ -827,7 +835,7 @@ describe('Functions toolkit classes', () => {
         })
         await subscriptionManager.fundSubscription({
           subscriptionId,
-          juelsAmount: utils.parseUnits('0.1', 'ether').toString(),
+          juelsAmount: ethers.parseUnits('0.1', 'ether').toString(),
           txOptions: { overrides: { gasLimit: 150_000 } },
         })
 
@@ -962,7 +970,7 @@ describe('Functions toolkit classes', () => {
 
         await subscriptionManager.fundSubscription({
           subscriptionId,
-          juelsAmount: utils.parseUnits('0.1', 'ether').toString(),
+          juelsAmount: ethers.parseUnits('0.1', 'ether').toString(),
           txOptions: { overrides: { gasLimit: 1500000 } },
         })
 
@@ -1057,18 +1065,18 @@ describe('Functions toolkit classes', () => {
 
         const subscriptionId = await subscriptionManager.createSubscription()
         await subscriptionManager.fundSubscription({
-          juelsAmount: utils.parseUnits('1', 'ether').toString(),
+          juelsAmount: ethers.parseUnits('1', 'ether').toString(),
           subscriptionId,
         })
         await subscriptionManager.addConsumer({
           subscriptionId,
-          consumerAddress: exampleClient.address,
+          consumerAddress: await exampleClient.getAddress(),
           txOptions: {
             confirmations: 1,
           },
         })
 
-        const reqTx = await exampleClient.sendRequest(
+        const reqTx = await exampleClient.getFunction('sendRequest')(
           'return Functions.encodeUint256(1)',
           1,
           [],

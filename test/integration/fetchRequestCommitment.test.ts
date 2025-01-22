@@ -1,7 +1,7 @@
 import { fetchRequestCommitment, SubscriptionManager } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Contract, Wallet, utils, providers } from 'ethers'
+import { Wallet, ethers, JsonRpcProvider, BaseContract } from 'ethers'
 
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
@@ -9,7 +9,7 @@ describe('fetchRequestCommitment', () => {
   let donId: string
   let linkTokenAddress: string
   let functionsRouterAddress: string
-  let exampleClient: Contract
+  let exampleClient: BaseContract
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
 
@@ -37,18 +37,18 @@ describe('fetchRequestCommitment', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
-    const reqTx = await exampleClient.sendRequest(
+    const reqTx = await exampleClient.getFunction('sendRequest')(
       'return Functions.encodeUint256(1)',
       1,
       [],
@@ -62,7 +62,7 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+      provider: new JsonRpcProvider('http://localhost:8004/'),
       functionsRouterAddress,
       donId,
     })
@@ -80,18 +80,18 @@ describe('fetchRequestCommitment', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: ethers.parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
-    const reqTx = await exampleClient.sendRequest(
+    const reqTx = await exampleClient.getFunction('sendRequest')(
       'return Functions.encodeUint256(1)',
       1,
       [],
@@ -105,7 +105,7 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+      provider: new JsonRpcProvider('http://localhost:8004/'),
       functionsRouterAddress,
       donId,
       toBlock: 1000,
@@ -119,7 +119,7 @@ describe('fetchRequestCommitment', () => {
     await expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xDummyRequestId',
-        provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+        provider: new JsonRpcProvider('http://localhost:8004/'),
         functionsRouterAddress,
         donId: 'invalid donId',
       })
@@ -132,7 +132,7 @@ describe('fetchRequestCommitment', () => {
     await expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+        provider: new JsonRpcProvider('http://localhost:8004/'),
         functionsRouterAddress,
         donId,
       })
