@@ -3,7 +3,7 @@ import { ExampleFunctionsConsumerSource } from './contracts/FunctionsConsumerSou
 
 import path from 'path'
 
-import { Wallet, JsonRpcProvider, ContractFactory, ethers, BaseContract } from 'ethers'
+import { Wallet, JsonRpcProvider, ContractFactory, ethers, Contract } from 'ethers'
 
 import type { GetFunds } from '../../src'
 
@@ -13,11 +13,11 @@ export const setupLocalTestnetFixture = async (
   port: number,
 ): Promise<{
   donId: string
-  linkTokenContract: BaseContract
+  linkTokenContract: Contract
   linkTokenAddress: string
-  functionsCoordinator: BaseContract
+  functionsCoordinator: Contract
   functionsRouterAddress: string
-  exampleConsumer: BaseContract
+  exampleConsumer: Contract
   exampleConsumerAddress: string
   close: () => Promise<void>
   user_A: Wallet
@@ -44,14 +44,20 @@ export const setupLocalTestnetFixture = async (
     ExampleFunctionsConsumerSource.bytecode,
     admin,
   )
-  const exampleConsumer = await functionsTestConsumerContractFactory
+  const exampleConsumerBase = await functionsTestConsumerContractFactory
     .connect(admin)
     .deploy(
       await localFunctionsTestnet.functionsRouterContract.getAddress(),
       ethers.encodeBytes32String(localFunctionsTestnet.donId),
     )
-  // @ts-ignore
-  await exampleConsumer.deploymentTransaction().wait(1)
+
+  await exampleConsumerBase.waitForDeployment()
+
+  const exampleConsumer = new Contract(
+    await exampleConsumerBase.getAddress(),
+    exampleConsumerBase.interface,
+    admin,
+  )
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(

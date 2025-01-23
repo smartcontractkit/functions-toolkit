@@ -1,7 +1,7 @@
 import { fetchRequestCommitment, SubscriptionManager } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Wallet, ethers, JsonRpcProvider, BaseContract } from 'ethers'
+import { Wallet, ethers, JsonRpcProvider, Contract } from 'ethers'
 
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
@@ -9,7 +9,7 @@ describe('fetchRequestCommitment', () => {
   let donId: string
   let linkTokenAddress: string
   let functionsRouterAddress: string
-  let exampleClient: BaseContract
+  let exampleClient: Contract
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
 

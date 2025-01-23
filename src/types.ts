@@ -1,4 +1,4 @@
-import { Overrides, JsonRpcProvider, BaseContract } from 'ethers'
+import { Overrides, JsonRpcProvider, Contract } from 'ethers'
 import type { Server } from 'ganache'
 
 export enum Location {
@@ -226,9 +226,9 @@ export interface RequestEventData {
 
 export interface FunctionsContracts {
   donId: string
-  linkTokenContract: BaseContract
-  functionsRouterContract: BaseContract
-  functionsMockCoordinatorContract: BaseContract
+  linkTokenContract: Contract
+  functionsRouterContract: Contract
+  functionsMockCoordinatorContract: Contract
 }
 
 export type GetFunds = (

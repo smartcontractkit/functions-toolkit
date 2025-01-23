@@ -1,4 +1,4 @@
-import { BaseContract, ContractFactory, ethers, JsonRpcProvider, Wallet } from 'ethers'
+import { Contract, ContractFactory, ethers, JsonRpcProvider, Wallet } from 'ethers'
 import type { ServerOptions } from 'ganache'
 import Ganache from 'ganache'
 import cbor from 'cbor'
@@ -143,7 +143,7 @@ export const startLocalFunctionsTestnet = async (
 
 const handleOracleRequest = async (
   requestEventData: RequestEventData,
-  mockCoordinator: BaseContract,
+  mockCoordinator: Contract,
   admin: Wallet,
   simulationConfigPath?: string,
 ) => {
@@ -362,7 +362,13 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     LinkTokenSource.bytecode,
     deployer,
   )
-  const linkToken = await linkTokenFactory.connect(deployer).deploy()
+  const linkTokenBase = await linkTokenFactory.connect(deployer).deploy()
+  await linkTokenBase.waitForDeployment()
+  const linkToken = new Contract(
+    await linkTokenBase.getAddress(),
+    linkTokenBase.interface,
+    deployer,
+  )
 
   const linkPriceFeedFactory = new ContractFactory(
     MockV3AggregatorSource.abi,
@@ -381,16 +387,18 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     FunctionsRouterSource.bytecode,
     deployer,
   )
-  const router = await routerFactory
+  const routerBase = await routerFactory
     .connect(deployer)
     .deploy(await linkToken.getAddress(), simulatedRouterConfig)
+  await routerBase.waitForDeployment()
+  const router = new Contract(await routerBase.getAddress(), routerBase.interface, deployer)
 
   const mockCoordinatorFactory = new ContractFactory(
     FunctionsCoordinatorTestHelperSource.abi,
     FunctionsCoordinatorTestHelperSource.bytecode,
     deployer,
   )
-  const mockCoordinator = await mockCoordinatorFactory
+  const mockCoordinatorBase = await mockCoordinatorFactory
     .connect(deployer)
     .deploy(
       await router.getAddress(),
@@ -398,6 +406,12 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
       await linkEthPriceFeed.getAddress(),
       await linkUsdPriceFeed.getAddress(),
     )
+  await mockCoordinatorBase.waitForDeployment()
+  const mockCoordinator = new Contract(
+    await mockCoordinatorBase.getAddress(),
+    mockCoordinatorBase.interface,
+    deployer,
+  )
 
   const allowlistFactory = new ContractFactory(
     TermsOfServiceAllowListSource.abi,
