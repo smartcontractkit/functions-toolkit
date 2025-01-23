@@ -9,17 +9,17 @@ import {
 import { mockOffchainSecretsEndpoints, mockGatewayUrl } from './apiFixture'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Wallet, ethers, BaseContract, toBigInt, EventLog } from 'ethers'
+import { Wallet, ethers, Contract, toBigInt, EventLog } from 'ethers'
 
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
 describe('Functions toolkit classes', () => {
   let donId = simulatedDonId
-  let linkTokenContract: BaseContract
+  let linkTokenContract: Contract
   let linkTokenAddress: string
-  let functionsCoordinator: BaseContract
+  let functionsCoordinator: Contract
   let functionsRouterAddress: string
-  let exampleClient: BaseContract
+  let exampleClient: Contract
   let consumerAddress: string
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet

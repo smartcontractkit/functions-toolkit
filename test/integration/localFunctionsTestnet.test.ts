@@ -10,7 +10,7 @@ import {
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { BaseContract, ethers } from 'ethers'
+import { Contract, ethers } from 'ethers'
 
 import type { GetFunds } from '../../src'
 
@@ -19,7 +19,7 @@ import type { Wallet } from 'ethers'
 describe('Local Functions Testnet', () => {
   let linkTokenAddress: string
   let functionsRouterAddress: string
-  let exampleClient: BaseContract
+  let exampleClient: Contract
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
   let getFunds: GetFunds
