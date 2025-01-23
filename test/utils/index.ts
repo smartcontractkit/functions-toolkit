@@ -50,6 +50,8 @@ export const setupLocalTestnetFixture = async (
       await localFunctionsTestnet.functionsRouterContract.getAddress(),
       ethers.encodeBytes32String(localFunctionsTestnet.donId),
     )
+  // @ts-ignore
+  await exampleConsumer.deploymentTransaction().wait(1);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(
