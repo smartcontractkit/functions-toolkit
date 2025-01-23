@@ -314,14 +314,14 @@ describe('Local Functions Testnet', () => {
   })
 
   it('getFunds throws error for invalid weiAmount', async () => {
-    expect(async () => {
+    await expect(async () => {
       // @ts-ignore
       await getFunds('0xc0ffee254729296a45a3885639AC7E10F9d54979', { weiAmount: 1 })
     }).rejects.toThrow(/weiAmount must be a BigInt or string/)
   })
 
   it('getFunds throws error for invalid juelsAmount', async () => {
-    expect(async () => {
+    await expect(async () => {
       // @ts-ignore
       await getFunds('0xc0ffee254729296a45a3885639AC7E10F9d54979', { juelsAmount: 1 })
     }).rejects.toThrow(/juelsAmount must be a BigInt or string/)
