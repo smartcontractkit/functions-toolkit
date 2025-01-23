@@ -9,7 +9,7 @@ import {
 import { mockOffchainSecretsEndpoints, mockGatewayUrl } from './apiFixture'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Wallet, ethers, BaseContract, toBigInt } from 'ethers'
+import { Wallet, ethers, BaseContract, toBigInt, EventLog } from 'ethers'
 
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
@@ -1092,7 +1092,11 @@ describe('Functions toolkit classes', () => {
           reqReceipt.blockHash,
         )
 
-        const commitmentData = oracleRequestEvent[0].args![9]
+        // only EventLog has args. Log does not have args.
+        // check the type of oracleRequestEvent[0] and make sure it is EventLog
+        expect(typeof oracleRequestEvent[0]).toBe('EventLog')
+        const eventLog = oracleRequestEvent[0] as EventLog
+        const commitmentData = eventLog.args![9]
 
         const commitment: RequestCommitment = {
           requestId: commitmentData[0],

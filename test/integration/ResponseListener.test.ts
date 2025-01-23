@@ -7,12 +7,12 @@ import {
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Contract, Wallet, ethers } from 'ethers'
+import { Wallet, ethers, BaseContract } from 'ethers'
 
 describe('Functions toolkit classes', () => {
   let linkTokenAddress: string
   let functionsRouterAddress: string
-  let exampleClient: Contract
+  let exampleClient: BaseContract
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
 
@@ -57,7 +57,7 @@ describe('Functions toolkit classes', () => {
         functionsRouterAddress,
       })
 
-      const succReqTx = await exampleClient.sendRequest(
+      const succReqTx = await exampleClient.getFunction('sendRequest')(
         'return Functions.encodeUint256(1)',
         1,
         [],
@@ -80,7 +80,7 @@ describe('Functions toolkit classes', () => {
       expect(succResponse.returnDataBytesHexstring).toBe('0x')
       expect(succResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
 
-      const errReqTx = await exampleClient.sendRequest(
+      const errReqTx = await exampleClient.getFunction('sendRequest')(
         'return Functions.encodeUint256(1',
         1,
         [],
@@ -129,7 +129,7 @@ describe('Functions toolkit classes', () => {
         functionsRouterAddress,
       })
 
-      const succReqTx = await exampleClient.sendRequest(
+      const succReqTx = await exampleClient.getFunction('sendRequest')(
         'return Functions.encodeUint256(1)',
         1,
         [],
@@ -153,7 +153,7 @@ describe('Functions toolkit classes', () => {
       expect(succResponse.returnDataBytesHexstring).toBe('0x')
       expect(succResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
 
-      const errReqTx = await exampleClient.sendRequest(
+      const errReqTx = await exampleClient.getFunction('sendRequest')(
         'return Functions.encodeUint256(1',
         1,
         [],
@@ -216,7 +216,7 @@ describe('Functions toolkit classes', () => {
       const subIdString = subscriptionId.toString()
       functionsListener.listenForResponses(subIdString, responseCallback)
 
-      await exampleClient.sendRequest(
+      await exampleClient.getFunction('sendRequest')(
         'return Functions.encodeUint256(1)',
         1,
         [],
