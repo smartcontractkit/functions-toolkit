@@ -7,12 +7,12 @@ import {
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Wallet, ethers, BaseContract } from 'ethers'
+import { Wallet, ethers, Contract } from 'ethers'
 
 describe('Functions toolkit classes', () => {
   let linkTokenAddress: string
   let functionsRouterAddress: string
-  let exampleClient: BaseContract
+  let exampleClient: Contract
   let close: () => Promise<void>
   let allowlistedUser_A: Wallet
 
@@ -57,7 +57,7 @@ describe('Functions toolkit classes', () => {
         functionsRouterAddress,
       })
 
-      const succReqTx = await exampleClient.getFunction('sendRequest')(
+      const succReqTx = await exampleClient.sendRequest(
         'return Functions.encodeUint256(1)',
         1,
         [],
@@ -80,8 +80,8 @@ describe('Functions toolkit classes', () => {
       expect(succResponse.returnDataBytesHexstring).toBe('0x')
       expect(succResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
 
-      const errReqTx = await exampleClient.getFunction('sendRequest')(
-        'return Functions.encodeUint256(1',
+      const errReqTx = await exampleClient.sendRequst(
+        'return Functions.encodeUint256(1)',
         1,
         [],
         [],
@@ -129,7 +129,7 @@ describe('Functions toolkit classes', () => {
         functionsRouterAddress,
       })
 
-      const succReqTx = await exampleClient.getFunction('sendRequest')(
+      const succReqTx = await exampleClient.sendRequest(
         'return Functions.encodeUint256(1)',
         1,
         [],
@@ -154,7 +154,7 @@ describe('Functions toolkit classes', () => {
       expect(succResponse.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
 
       const errReqTx = await exampleClient.getFunction('sendRequest')(
-        'return Functions.encodeUint256(1',
+        'return Functions.encodeUint256(1)',
         1,
         [],
         [],

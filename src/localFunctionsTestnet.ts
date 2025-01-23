@@ -57,7 +57,7 @@ export const startLocalFunctionsTestnet = async (
 
   const contracts = await deployFunctionsOracle(admin)
 
-  contracts.functionsMockCoordinatorContract.on(
+  await contracts.functionsMockCoordinatorContract.on(
     'OracleRequest',
     (
       requestId,
@@ -125,7 +125,7 @@ export const startLocalFunctionsTestnet = async (
   }
 
   const close = async (): Promise<void> => {
-    contracts.functionsMockCoordinatorContract.removeAllListeners('OracleRequest')
+    await contracts.functionsMockCoordinatorContract.removeAllListeners('OracleRequest')
     await server.close()
   }
 
