@@ -51,7 +51,7 @@ export const setupLocalTestnetFixture = async (
       ethers.encodeBytes32String(localFunctionsTestnet.donId),
     )
 
-  await exampleConsumerBase.waitForDeployment()
+  // await exampleConsumerBase.waitForDeployment()
 
   const exampleConsumer = new Contract(
     await exampleConsumerBase.getAddress(),
