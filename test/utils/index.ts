@@ -8,7 +8,7 @@ import { Wallet, providers, ContractFactory, utils } from 'ethers'
 import type { GetFunds } from '../../src'
 
 import type { Contract } from 'ethers'
-import type { Server } from 'ganache'
+// import type { Server } from 'ganache'
 
 export const setupLocalTestnetFixture = async (
   port: number,
@@ -28,13 +28,13 @@ export const setupLocalTestnetFixture = async (
 }> => {
   const localFunctionsTestnet = await startLocalFunctionsTestnet(
     path.join(__dirname, 'testSimulationConfig.ts'),
-    {
-      logging: {
-        debug: false,
-        verbose: false,
-        quiet: true,
-      },
-    },
+    // {
+    //   logging: {
+    //     debug: false,
+    //     verbose: false,
+    //     quiet: true,
+    //   },
+    // },
     port,
   )
 
@@ -54,7 +54,7 @@ export const setupLocalTestnetFixture = async (
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(
-    localFunctionsTestnet.server,
+    // localFunctionsTestnet.server,
     port,
   )
 
@@ -82,14 +82,16 @@ export const setupLocalTestnetFixture = async (
   }
 }
 
-const createTestWallets = (server: Server, port = 8545): Wallet[] => {
-  const accounts = server.provider.getInitialAccounts()
+// const createTestWallets = (server: Server, port = 8545): Wallet[] => {
+const createTestWallets = (port = 8545): Wallet[] => {
+  // const accounts = server.provider.getInitialAccounts()
 
-  const wallets: Wallet[] = []
   const provider = new providers.JsonRpcProvider(`http://localhost:${port}`)
 
-  for (const addr of Object.keys(accounts)) {
-    wallets.push(new Wallet(accounts[addr].secretKey.slice(2), provider))
+  const wallets: Wallet[] = []
+  for (let i = 0; i < 4; i++) {
+    // const randomWallet = Wallet.createRandom().connect(provider)
+    wallets.push(Wallet.createRandom().connect(provider))
   }
 
   return wallets

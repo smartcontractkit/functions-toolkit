@@ -1,5 +1,6 @@
 import type { Overrides, Contract, providers } from 'ethers'
-import type { Server } from 'ganache'
+
+// import type { Server } from 'ganache'
 
 export enum Location {
   Inline = 0,
@@ -237,7 +238,7 @@ export type GetFunds = (
 ) => Promise<void>
 
 export type LocalFunctionsTestnet = {
-  server: Server
+  // server: Server
   adminWallet: {
     address: string
     privateKey: string

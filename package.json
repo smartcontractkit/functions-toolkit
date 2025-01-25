@@ -24,7 +24,7 @@
     "blockchain",
     "oracle"
   ],
-  "author": "Morgan Kuphal (@KuphJr) & Zubin Pratap (@ZeusLawyer)",
+  "author": "Morgan Kuphal (@KuphJr)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/smartcontractkit/functions-toolkit/issues"
@@ -39,25 +39,29 @@
     "@babel/preset-typescript": "7.21.5",
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.26.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@types/jest": "^29.5.1",
     "@types/node": "^18.16.3",
     "@types/prettier": "^2.7.3",
-    "babel-loader": "9.1.2",
-    "browserify": "17.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
+    "babel-loader": "9.1.2",
+    "browserify": "^17.0.1",
     "cpy-cli": "^5.0.0",
-    "esmify": "2.1.1",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "esmify": "^2.1.1",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.22.18",
     "jest": "^29.5.0",
     "nock": "^13.3.1",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.1",
     "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.0.4",
-    "webpack": "5.82.1",
+    "webpack": "^5.97.1",
     "webpack-cli": "5.1.1"
   },
   "prettier": {
@@ -75,9 +79,12 @@
     "axios": "^1.4.0",
     "bcrypto": "^5.4.0",
     "cbor": "^9.0.1",
+    "deno": "^2.1.7",
     "eth-crypto": "^2.6.0",
-    "ethers": "^5.7.2",
-    "ganache": "^7.9.1",
     "uniq": "^1.0.1"
+  },
+  "types": "./dist/index.d.ts",
+  "directories": {
+    "test": "test"
   }
 }
