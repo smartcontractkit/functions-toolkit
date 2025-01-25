@@ -51,7 +51,7 @@ export const startLocalFunctionsTestnet = async (
   const randWallet = Wallet.createRandom()
   const admin = new Wallet(
     randWallet.privateKey,
-    new providers.JsonRpcProvider(`https://localhost:${port}`),
+    new providers.JsonRpcProvider(`http://localhost:${port}`),
   )
 
   const contracts = await deployFunctionsOracle(admin)
