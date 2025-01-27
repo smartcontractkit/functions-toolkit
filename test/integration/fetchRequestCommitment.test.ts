@@ -1,7 +1,9 @@
 import { fetchRequestCommitment, SubscriptionManager } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Contract, Wallet, utils, providers } from 'ethers'
+import { expect } from 'chai'
+
+import { Contract, Wallet, parseUnits, JsonRpcProvider } from 'ethers'
 
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
@@ -37,12 +39,12 @@ describe('fetchRequestCommitment', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
@@ -62,12 +64,12 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+      provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
       functionsRouterAddress,
       donId,
     })
 
-    expect(commitment.requestId).toEqual(reqId)
+    expect(commitment.requestId).to.equal(reqId)
   })
 
   it('returns the commitment for a given request ID within a given block range', async () => {
@@ -80,12 +82,12 @@ describe('fetchRequestCommitment', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
@@ -105,39 +107,35 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+      provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
       functionsRouterAddress,
       donId,
       toBlock: 1000,
       pastBlocksToSearch: 1001,
     })
 
-    expect(commitment.requestId).toEqual(reqId)
+    expect(commitment.requestId).to.equal(reqId)
   })
 
   it('Throws error when unable to fetch coordinator', async () => {
-    await expect(async () => {
+    expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xDummyRequestId',
-        provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+        provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
         functionsRouterAddress,
         donId: 'invalid donId',
       })
-    }).rejects.toThrowError(
-      /Error encountered when attempting to fetch the FunctionsCoordinator address/,
-    )
+    }).to.throw(/Error encountered when attempting to fetch the FunctionsCoordinator address/)
   })
 
   it('Throws error when unable to fetch matching request', async () => {
-    await expect(async () => {
+    expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+        provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
         functionsRouterAddress,
         donId,
       })
-    }).rejects.toThrowError(
-      /No request commitment event found for the provided requestId in block range/,
-    )
+    }).to.throw(/No request commitment event found for the provided requestId in block range/)
   })
 })

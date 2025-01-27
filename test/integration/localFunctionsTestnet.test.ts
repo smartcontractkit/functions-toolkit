@@ -10,7 +10,7 @@ import {
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { utils } from 'ethers'
+import { parseUnits } from 'ethers'
 
 import type { GetFunds } from '../../src'
 
@@ -48,19 +48,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
-      provider: allowlistedUser_A.provider,
+      provider: allowlistedUser_A.provider!,
       functionsRouterAddress,
     })
 
@@ -92,19 +92,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
-      provider: allowlistedUser_A.provider,
+      provider: allowlistedUser_A.provider!,
       functionsRouterAddress,
     })
 
@@ -143,19 +143,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
-      provider: allowlistedUser_A.provider,
+      provider: allowlistedUser_A.provider!,
       functionsRouterAddress,
     })
 
@@ -192,19 +192,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
-      provider: allowlistedUser_A.provider,
+      provider: allowlistedUser_A.provider!,
       functionsRouterAddress,
     })
 
@@ -227,19 +227,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
-      provider: allowlistedUser_A.provider,
+      provider: allowlistedUser_A.provider!,
       functionsRouterAddress,
     })
 
@@ -270,19 +270,19 @@ describe('Local Functions Testnet', () => {
 
     const subscriptionId = await subscriptionManager.createSubscription()
     await subscriptionManager.fundSubscription({
-      juelsAmount: utils.parseUnits('1', 'ether').toString(),
+      juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
     await subscriptionManager.addConsumer({
       subscriptionId,
-      consumerAddress: exampleClient.address,
+      consumerAddress: await exampleClient.getAddress(),
       txOptions: {
         confirmations: 1,
       },
     })
 
     const functionsListener = new ResponseListener({
-      provider: allowlistedUser_A.provider,
+      provider: allowlistedUser_A.provider!,
       functionsRouterAddress,
     })
 

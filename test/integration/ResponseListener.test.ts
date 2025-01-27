@@ -7,7 +7,7 @@ import {
 } from '../../src'
 import { setupLocalTestnetFixture } from '../utils'
 
-import { Contract, Wallet, utils } from 'ethers'
+import { Contract, Wallet, parseUnits } from 'ethers'
 
 describe('Functions toolkit classes', () => {
   let linkTokenAddress: string
@@ -40,19 +40,19 @@ describe('Functions toolkit classes', () => {
 
       const subscriptionId = await subscriptionManager.createSubscription()
       await subscriptionManager.fundSubscription({
-        juelsAmount: utils.parseUnits('1', 'ether').toString(),
+        juelsAmount: parseUnits('1', 'ether').toString(),
         subscriptionId,
       })
       await subscriptionManager.addConsumer({
         subscriptionId,
-        consumerAddress: exampleClient.address,
+        consumerAddress: await exampleClient.getAddress(),
         txOptions: {
           confirmations: 1,
         },
       })
 
       const functionsListener = new ResponseListener({
-        provider: allowlistedUser_A.provider,
+        provider: allowlistedUser_A.provider!,
         functionsRouterAddress,
       })
 
@@ -111,19 +111,19 @@ describe('Functions toolkit classes', () => {
 
       const subscriptionId = await subscriptionManager.createSubscription()
       await subscriptionManager.fundSubscription({
-        juelsAmount: utils.parseUnits('1', 'ether').toString(),
+        juelsAmount: parseUnits('1', 'ether').toString(),
         subscriptionId,
       })
       await subscriptionManager.addConsumer({
         subscriptionId,
-        consumerAddress: exampleClient.address,
+        consumerAddress: await exampleClient.getAddress(),
         txOptions: {
           confirmations: 1,
         },
       })
 
       const functionsListener = new ResponseListener({
-        provider: allowlistedUser_A.provider,
+        provider: allowlistedUser_A.provider!,
         functionsRouterAddress,
       })
 
@@ -183,19 +183,19 @@ describe('Functions toolkit classes', () => {
 
       const subscriptionId = await subscriptionManager.createSubscription()
       await subscriptionManager.fundSubscription({
-        juelsAmount: utils.parseUnits('1', 'ether').toString(),
+        juelsAmount: parseUnits('1', 'ether').toString(),
         subscriptionId,
       })
       await subscriptionManager.addConsumer({
         subscriptionId,
-        consumerAddress: exampleClient.address,
+        consumerAddress: await exampleClient.getAddress(),
         txOptions: {
           confirmations: 1,
         },
       })
 
       const functionsListener = new ResponseListener({
-        provider: allowlistedUser_A.provider,
+        provider: allowlistedUser_A.provider!,
         functionsRouterAddress,
       })
 
@@ -211,7 +211,7 @@ describe('Functions toolkit classes', () => {
       }
 
       const subIdString = subscriptionId.toString()
-      functionsListener.listenForResponses(subIdString, responseCallback)
+      await functionsListener.listenForResponses(subIdString, responseCallback)
 
       await exampleClient.sendRequest(
         'return Functions.encodeUint256(1)',
@@ -231,7 +231,7 @@ describe('Functions toolkit classes', () => {
       expect(functionsResponse!.returnDataBytesHexstring).toBe('0x')
       expect(functionsResponse!.fulfillmentCode).toBe(FulfillmentCode.FULFILLED)
 
-      functionsListener.stopListeningForResponses()
+      await functionsListener.stopListeningForResponses()
     })
   })
 })

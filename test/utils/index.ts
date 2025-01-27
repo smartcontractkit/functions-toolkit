@@ -3,12 +3,13 @@ import { ExampleFunctionsConsumerSource } from './contracts/FunctionsConsumerSou
 
 import path from 'path'
 
-import { Wallet, providers, ContractFactory, utils } from 'ethers'
+import { Wallet, ContractFactory, encodeBytes32String, parseUnits, JsonRpcProvider } from 'ethers'
+// import { ethers } from '@nomicfoundation/hardhat-ethers'
+// import '@nomiclabs/hardhat-ethers'
 
 import type { GetFunds } from '../../src'
 
 import type { Contract } from 'ethers'
-// import type { Server } from 'ganache'
 
 export const setupLocalTestnetFixture = async (
   port: number,
@@ -38,19 +39,19 @@ export const setupLocalTestnetFixture = async (
     port,
   )
 
-  const provider = new providers.JsonRpcProvider(`http://localhost:${port}/`)
+  const provider = new JsonRpcProvider(`http://127.0.0.1:${port}`)
   const admin = new Wallet(localFunctionsTestnet.adminWallet.privateKey, provider)
   const functionsTestConsumerContractFactory = new ContractFactory(
     ExampleFunctionsConsumerSource.abi,
     ExampleFunctionsConsumerSource.bytecode,
     admin,
   )
-  const exampleConsumer = await functionsTestConsumerContractFactory
+  const exampleConsumer = (await functionsTestConsumerContractFactory
     .connect(admin)
     .deploy(
       localFunctionsTestnet.functionsRouterContract.address,
-      utils.formatBytes32String(localFunctionsTestnet.donId),
-    )
+      encodeBytes32String(localFunctionsTestnet.donId),
+    )) as Contract
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(
@@ -58,7 +59,7 @@ export const setupLocalTestnetFixture = async (
     port,
   )
 
-  const juelsAmount = BigInt(utils.parseUnits('100', 'ether').toString())
+  const juelsAmount = BigInt(parseUnits('100', 'ether').toString())
   await localFunctionsTestnet.getFunds(user_A.address, {
     juelsAmount,
   })
@@ -69,11 +70,11 @@ export const setupLocalTestnetFixture = async (
   return {
     donId: localFunctionsTestnet.donId,
     linkTokenContract: localFunctionsTestnet.linkTokenContract,
-    linkTokenAddress: localFunctionsTestnet.linkTokenContract.address,
+    linkTokenAddress: await localFunctionsTestnet.linkTokenContract.getAddress(),
     functionsCoordinator: localFunctionsTestnet.functionsMockCoordinatorContract,
-    functionsRouterAddress: localFunctionsTestnet.functionsRouterContract.address,
+    functionsRouterAddress: await localFunctionsTestnet.functionsRouterContract.getAddress(),
     exampleConsumer: exampleConsumer,
-    exampleConsumerAddress: exampleConsumer.address,
+    exampleConsumerAddress: await exampleConsumer.getAddress(),
     close: localFunctionsTestnet.close,
     user_A,
     user_B_NoLINK,
@@ -86,12 +87,12 @@ export const setupLocalTestnetFixture = async (
 const createTestWallets = (port = 8545): Wallet[] => {
   // const accounts = server.provider.getInitialAccounts()
 
-  const provider = new providers.JsonRpcProvider(`http://localhost:${port}`)
+  const provider = new JsonRpcProvider(`http://127.0.0.1:${port}`)
 
   const wallets: Wallet[] = []
   for (let i = 0; i < 4; i++) {
-    // const randomWallet = Wallet.createRandom().connect(provider)
-    wallets.push(Wallet.createRandom().connect(provider))
+    const randomWallet = new Wallet(Wallet.createRandom().privateKey, provider)
+    wallets.push(randomWallet)
   }
 
   return wallets

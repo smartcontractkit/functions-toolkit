@@ -1,6 +1,6 @@
 import axios from 'axios'
 import cbor from 'cbor'
-import { Contract, utils } from 'ethers'
+import { Contract, encodeBytes32String, isHexString } from 'ethers'
 import EthCrypto from 'eth-crypto'
 
 import { encrypt } from './tdh2.js'
@@ -44,7 +44,7 @@ export class SecretsManager {
   }
 
   public async initialize(): Promise<void> {
-    const donIdBytes32 = utils.formatBytes32String(this.donId!)
+    const donIdBytes32 = encodeBytes32String(this.donId!)
 
     let functionsCoordinatorAddress: string
     try {
@@ -121,7 +121,7 @@ export class SecretsManager {
         throw Error(`URL ${url} did not return a JSON object with an encryptedSecrets field`)
       }
 
-      if (!utils.isHexString(response.data.encryptedSecrets)) {
+      if (!isHexString(response.data.encryptedSecrets)) {
         throw Error(`URL ${url} did not return a valid hex string for the encryptedSecrets field`)
       }
 
@@ -197,7 +197,7 @@ export class SecretsManager {
     this.isInitialized()
     this.validateGatewayUrls(gatewayUrls)
 
-    if (!utils.isHexString(encryptedSecretsHexstring)) {
+    if (!isHexString(encryptedSecretsHexstring)) {
       throw Error('encryptedSecretsHexstring must be a valid hex string')
     }
 
@@ -436,7 +436,7 @@ export class SecretsManager {
     }
 
     const didAllNodesReturnFailure = nodeResponses.every(nodeResponse => {
-      return nodeResponse.success === false
+      return !nodeResponse.success
     })
     if (didAllNodesReturnFailure) {
       throw Error('All nodes returned a failure response')

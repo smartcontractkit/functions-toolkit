@@ -14,5 +14,6 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*", "src/**/*.json", "test/**/*", "test/**/*.json"],
-  "exclude": ["dist", "src/simulateScript/deno-sandbox/**/*.ts"]
+  "exclude": ["dist", "src/simulateScript/deno-sandbox/**/*.ts"],
+  "files": ["./hardhat.config.ts"],
 }

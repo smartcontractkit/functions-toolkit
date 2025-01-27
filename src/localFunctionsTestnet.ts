@@ -1,37 +1,44 @@
-import { Wallet, Contract, ContractFactory, utils, providers } from 'ethers'
+import {
+  AbiCoder,
+  Contract,
+  ContractFactory,
+  encodeBytes32String,
+  formatEther,
+  JsonRpcProvider,
+  Wallet,
+} from 'ethers'
 // import Ganache from 'ganache'
 import cbor from 'cbor'
 
 import { simulateScript } from './simulateScript'
 import {
-  simulatedRouterConfig,
-  simulatedCoordinatorConfig,
-  simulatedAllowListConfig,
-  simulatedDonId,
-  simulatedAllowListId,
-  simulatedLinkEthPrice,
   callReportGasLimit,
-  simulatedSecretsKeys,
   DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES,
   numberOfSimulatedNodeExecutions,
+  simulatedAllowListConfig,
+  simulatedAllowListId,
+  simulatedCoordinatorConfig,
+  simulatedDonId,
+  simulatedLinkEthPrice,
   simulatedLinkUsdPrice,
+  simulatedRouterConfig,
+  simulatedSecretsKeys,
 } from './simulationConfig'
 import {
+  FunctionsCoordinatorTestHelperSource,
+  FunctionsRouterSource,
   LinkTokenSource,
   MockV3AggregatorSource,
-  FunctionsRouterSource,
-  FunctionsCoordinatorTestHelperSource,
   TermsOfServiceAllowListSource,
 } from './v1_contract_sources'
 
 // import type { ServerOptions } from 'ganache'
-
 import type {
-  FunctionsRequestParams,
-  RequestCommitment,
-  LocalFunctionsTestnet,
-  GetFunds,
   FunctionsContracts,
+  FunctionsRequestParams,
+  GetFunds,
+  LocalFunctionsTestnet,
+  RequestCommitment,
   RequestEventData,
 } from './types'
 
@@ -49,14 +56,11 @@ export const startLocalFunctionsTestnet = async (
   // })
 
   const randWallet = Wallet.createRandom()
-  const admin = new Wallet(
-    randWallet.privateKey,
-    new providers.JsonRpcProvider(`http://localhost:${port}`),
-  )
+  const admin = new Wallet(randWallet.privateKey, new JsonRpcProvider(`http://localhost:${port}`))
 
   const contracts = await deployFunctionsOracle(admin)
 
-  contracts.functionsMockCoordinatorContract.on(
+  await contracts.functionsMockCoordinatorContract.on(
     'OracleRequest',
     (
       requestId,
@@ -110,11 +114,12 @@ export const startLocalFunctionsTestnet = async (
       to: address,
       value: weiAmount.toString(),
     })
-    const linkTx = await contracts.linkTokenContract.connect(admin).transfer(address, juelsAmount)
+    const linkToken = contracts.linkTokenContract.connect(admin) as Contract
+    const linkTx = await linkToken.transfer(address, juelsAmount)
     await ethTx.wait(1)
     await linkTx.wait(1)
     console.log(
-      `Sent ${utils.formatEther(weiAmount.toString())} ETH and ${utils.formatEther(
+      `Sent ${formatEther(weiAmount.toString())} ETH and ${formatEther(
         juelsAmount.toString(),
       )} LINK to ${address}`,
     )
@@ -155,10 +160,10 @@ const handleOracleRequest = async (
     errorHexstring,
   )
 
-  const reportTx = await mockCoordinator
-    .connect(admin)
-    .callReport(encodedReport, { gasLimit: callReportGasLimit })
-  await reportTx.wait(1)
+  const connectedMockCoordinator = mockCoordinator.connect(admin) as Contract
+  await connectedMockCoordinator.callReport(encodedReport, {
+    gasLimit: callReportGasLimit,
+  })
 }
 
 const simulateDONExecution = async (
@@ -267,7 +272,7 @@ const encodeReport = (
   result?: string,
   error?: string,
 ): string => {
-  const encodedCommitment = utils.defaultAbiCoder.encode(
+  const encodedCommitment = AbiCoder.defaultAbiCoder().encode(
     [
       'bytes32',
       'address',
@@ -295,11 +300,10 @@ const encodeReport = (
       commitment.timeoutTimestamp,
     ],
   )
-  const encodedReport = utils.defaultAbiCoder.encode(
+  return AbiCoder.defaultAbiCoder().encode(
     ['bytes32[]', 'bytes[]', 'bytes[]', 'bytes[]', 'bytes[]'],
     [[requestId], [result ?? []], [error ?? []], [encodedCommitment], [[]]],
   )
-  return encodedReport
 }
 
 const buildRequestObject = async (
@@ -359,42 +363,42 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     LinkTokenSource.bytecode,
     deployer,
   )
-  const linkToken = await linkTokenFactory.connect(deployer).deploy()
+  const linkToken = (await linkTokenFactory.connect(deployer).deploy()) as Contract
 
   const linkPriceFeedFactory = new ContractFactory(
     MockV3AggregatorSource.abi,
     MockV3AggregatorSource.bytecode,
     deployer,
   )
-  const linkEthPriceFeed = await linkPriceFeedFactory
+  const linkEthPriceFeed = (await linkPriceFeedFactory
     .connect(deployer)
-    .deploy(18, simulatedLinkEthPrice)
-  const linkUsdPriceFeed = await linkPriceFeedFactory
+    .deploy(18, simulatedLinkEthPrice)) as Contract
+  const linkUsdPriceFeed = (await linkPriceFeedFactory
     .connect(deployer)
-    .deploy(8, simulatedLinkUsdPrice)
+    .deploy(8, simulatedLinkUsdPrice)) as Contract
 
   const routerFactory = new ContractFactory(
     FunctionsRouterSource.abi,
     FunctionsRouterSource.bytecode,
     deployer,
   )
-  const router = await routerFactory
+  const router = (await routerFactory
     .connect(deployer)
-    .deploy(linkToken.address, simulatedRouterConfig)
+    .deploy(linkToken.address, simulatedRouterConfig)) as Contract
 
   const mockCoordinatorFactory = new ContractFactory(
     FunctionsCoordinatorTestHelperSource.abi,
     FunctionsCoordinatorTestHelperSource.bytecode,
     deployer,
   )
-  const mockCoordinator = await mockCoordinatorFactory
+  const mockCoordinator = (await mockCoordinatorFactory
     .connect(deployer)
     .deploy(
       router.address,
       simulatedCoordinatorConfig,
       linkEthPriceFeed.address,
       linkUsdPriceFeed.address,
-    )
+    )) as Contract
 
   const allowlistFactory = new ContractFactory(
     TermsOfServiceAllowListSource.abi,
@@ -403,18 +407,16 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   )
   const initialAllowedSenders: string[] = []
   const initialBlockedSenders: string[] = []
-  const allowlist = await allowlistFactory
+  const allowlist = (await allowlistFactory
     .connect(deployer)
-    .deploy(simulatedAllowListConfig, initialAllowedSenders, initialBlockedSenders)
+    .deploy(simulatedAllowListConfig, initialAllowedSenders, initialBlockedSenders)) as Contract
 
-  const setAllowListIdTx = await router.setAllowListId(
-    utils.formatBytes32String(simulatedAllowListId),
-  )
+  const setAllowListIdTx = await router.setAllowListId(encodeBytes32String(simulatedAllowListId))
   await setAllowListIdTx.wait(1)
 
   const allowlistId = await router.getAllowListId()
   const proposeContractsTx = await router.proposeContractsUpdate(
-    [allowlistId, utils.formatBytes32String(simulatedDonId)],
+    [allowlistId, encodeBytes32String(simulatedDonId)],
     [allowlist.address, mockCoordinator.address],
     {
       gasLimit: 1_000_000,
@@ -423,9 +425,9 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   await proposeContractsTx.wait(1)
   await router.updateContracts({ gasLimit: 1_000_000 })
 
-  await mockCoordinator.connect(deployer).setDONPublicKey(simulatedSecretsKeys.donKey.publicKey)
+  await mockCoordinator.setDONPublicKey(simulatedSecretsKeys.donKey.publicKey)
   await mockCoordinator
-    .connect(deployer)
+    //.connect(deployer)
     .setThresholdPublicKey(
       '0x' + Buffer.from(simulatedSecretsKeys.thresholdKeys.publicKey).toString('hex'),
     )
