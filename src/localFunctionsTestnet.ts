@@ -46,6 +46,8 @@ export const startLocalFunctionsTestnet = async (
   const anvil = createAnvil({
     port,
     chainId: 90000001,
+    startTimeout: 60000,
+    // networkId: 90000001,
     // logging: {
     //   debug: false,
     //   verbose: false,
