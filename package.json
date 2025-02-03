@@ -7,9 +7,9 @@
   "scripts": {
     "build": "rimraf dist && tsc -P tsconfig.build.json && cpy src/simulateScript/deno-sandbox/**/* dist/simulateScript/deno-sandbox && yarn build:browser",
     "build:browser": "webpack && browserify dist/frontendSimulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/frontendSimulateScript.bundle.js",
-    "test": "jest",
-    "test:ci": "anvil --port 8545 --chain-id 90000001 & anvil --port 8546 --chain-id 90000002 & anvil --port 8547 --chain-id 90000003 & anvil --port 8548 --chain-id 90000004 & jest --silent --ci --coverage",
-    "test:package": "jest --config jest.config.package.js",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
+    "test:ci": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --silent --ci --coverage",
+    "test:package": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config jest.config.package.js",
     "lint:check": "eslint '{src,test}/**/*.ts' && tsc --noEmit",
     "lint:fix": "eslint '{src,test}/**/*.ts' --fix",
     "lint:ci": "eslint '{src,test}/**/*.ts' --max-warnings=0 -f json -o eslint-report.json",
@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "@ethersproject/abstract-provider": "^5.7.0",
+    "@viem/anvil": "^0.0.10",
     "axios": "^1.4.0",
     "bcrypto": "^5.4.0",
     "cbor": "^9.0.1",

@@ -1,5 +1,6 @@
 import { Wallet, Contract, ContractFactory, utils, providers } from 'ethers'
 // import Ganache from 'ganache'
+import { createAnvil } from '@viem/anvil'
 import cbor from 'cbor'
 
 import { simulateScript } from './simulateScript'
@@ -41,6 +42,18 @@ export const startLocalFunctionsTestnet = async (
   port = 8545,
 ): Promise<LocalFunctionsTestnet> => {
   // const server = Ganache.server(options)
+
+  const anvil = createAnvil({
+    port,
+    chainId: 90000001,
+    // logging: {
+    //   debug: false,
+    //   verbose: false,
+    //   quiet: true
+  })
+
+  await anvil.start()
+  console.log(`Anvil started on port ${port} with chain ID 90000001`)
 
   // server.listen(port, 'localhost', (err: Error | null) => {
   //   if (err) {
@@ -129,10 +142,12 @@ export const startLocalFunctionsTestnet = async (
   const close = async (): Promise<void> => {
     contracts.functionsMockCoordinatorContract.removeAllListeners('OracleRequest')
     // await server.close()
+    await anvil.stop()
   }
 
   return {
     // server,
+    anvil,
     adminWallet: {
       address: admin.address,
       privateKey: admin.privateKey,

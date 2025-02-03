@@ -1,4 +1,5 @@
 import type { Overrides, Contract, providers } from 'ethers'
+import { Anvil } from "@viem/anvil"
 // import type { Server } from 'ganache'
 
 export enum Location {
@@ -238,6 +239,7 @@ export type GetFunds = (
 
 export type LocalFunctionsTestnet = {
   // server: Server
+  anvil: Anvil
   adminWallet: {
     address: string
     privateKey: string
