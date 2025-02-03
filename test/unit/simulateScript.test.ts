@@ -215,7 +215,7 @@ describe('simulateScript', () => {
 
       const expected = {
         capturedTerminalOutput: '',
-        errorString: 'attempted access to blocked resource detected',
+        errorString: 'Requires read access to "test.txt", run again with the --allow-read flag',
       }
 
       expect(result).toEqual(expected)

@@ -38,7 +38,7 @@ import type {
 
 export const startLocalFunctionsTestnet = async (
   simulationConfigPath?: string,
-  // options?: ServerOptions,
+  // options?: CreateAnvilOptions,
   port = 8545,
 ): Promise<LocalFunctionsTestnet> => {
   // const server = Ganache.server(options)
@@ -47,7 +47,7 @@ export const startLocalFunctionsTestnet = async (
     port,
     chainId: 90000001,
     startTimeout: 60000,
-    // networkId: 90000001,
+    // ...options,
     // logging: {
     //   debug: false,
     //   verbose: false,

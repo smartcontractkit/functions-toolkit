@@ -12,8 +12,7 @@
     "test:package": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config jest.config.package.js",
     "lint:check": "eslint '{src,test}/**/*.ts' && tsc --noEmit",
     "lint:fix": "eslint '{src,test}/**/*.ts' --fix",
-    "lint:ci": "eslint '{src,test}/**/*.ts' --max-warnings=0 -f json -o eslint-report.json",
-    "anvil": "anvil --port 8545 --chain-id 90000001 & anvil --port 8546 --chain-id 90000002 & anvil --port 8547 --chain-id 90000003 & anvil --port 8548 --chain-id 90000004"
+    "lint:ci": "eslint '{src,test}/**/*.ts' --max-warnings=0 -f json -o eslint-report.json"
   },
   "repository": {
     "type": "git",
