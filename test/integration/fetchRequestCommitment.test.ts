@@ -14,7 +14,7 @@ describe('fetchRequestCommitment', () => {
   let allowlistedUser_A: Wallet
 
   beforeAll(async () => {
-    const testSetup = await setupLocalTestnetFixture(8004)
+    const testSetup = await setupLocalTestnetFixture(8546)
     donId = testSetup.donId
     linkTokenAddress = testSetup.linkTokenAddress
     functionsRouterAddress = testSetup.functionsRouterAddress
@@ -62,7 +62,7 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+      provider: new providers.JsonRpcProvider('http://localhost:8546/'),
       functionsRouterAddress,
       donId,
     })
@@ -105,7 +105,7 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+      provider: new providers.JsonRpcProvider('http://localhost:8546/'),
       functionsRouterAddress,
       donId,
       toBlock: 1000,
@@ -119,7 +119,7 @@ describe('fetchRequestCommitment', () => {
     await expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xDummyRequestId',
-        provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+        provider: new providers.JsonRpcProvider('http://localhost:8546/'),
         functionsRouterAddress,
         donId: 'invalid donId',
       })
@@ -132,7 +132,7 @@ describe('fetchRequestCommitment', () => {
     await expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        provider: new providers.JsonRpcProvider('http://localhost:8004/'),
+        provider: new providers.JsonRpcProvider('http://localhost:8546/'),
         functionsRouterAddress,
         donId,
       })

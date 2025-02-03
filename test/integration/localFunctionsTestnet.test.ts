@@ -25,7 +25,7 @@ describe('Local Functions Testnet', () => {
   let getFunds: GetFunds
 
   beforeAll(async () => {
-    const testSetup = await setupLocalTestnetFixture(8003)
+    const testSetup = await setupLocalTestnetFixture(8547)
     linkTokenAddress = testSetup.linkTokenAddress
     functionsRouterAddress = testSetup.functionsRouterAddress
     exampleClient = testSetup.exampleConsumer
