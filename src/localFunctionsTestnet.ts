@@ -45,8 +45,7 @@ export const startLocalFunctionsTestnet = async (
 
   const anvil = createAnvil({
     port,
-    chainId: 90000001,
-    startTimeout: 60000,
+    chainId: 1337,
     // ...options,
     // logging: {
     //   debug: false,
@@ -55,7 +54,7 @@ export const startLocalFunctionsTestnet = async (
   })
 
   await anvil.start()
-  console.log(`Anvil started on port ${port} with chain ID 90000001`)
+  console.log(`Anvil started on port ${port} with chain ID 1337`)
 
   // server.listen(port, 'localhost', (err: Error | null) => {
   //   if (err) {

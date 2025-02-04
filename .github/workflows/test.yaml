@@ -32,8 +32,8 @@ jobs:
         with:
           deno-version: '1.36.2'
 
-      - name: start-anvil
-        run: anvil --chain-id 1337 &
+#      - name: start-anvil
+#        run: anvil --chain-id 1337 &
 
       # 'integration' are the Jest tests that cover code in unit-testing way, so both are included
       - name: Run unit tests
