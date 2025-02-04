@@ -8,7 +8,6 @@ import { Wallet, providers, ContractFactory, utils } from 'ethers'
 import type { GetFunds } from '../../src'
 
 import type { Contract } from 'ethers'
-// import type { Server } from 'ganache'
 
 export const setupLocalTestnetFixture = async (
   port: number,
@@ -28,13 +27,6 @@ export const setupLocalTestnetFixture = async (
 }> => {
   const localFunctionsTestnet = await startLocalFunctionsTestnet(
     path.join(__dirname, 'testSimulationConfig.ts'),
-    // {
-    //   logging: {
-    //     debug: false,
-    //     verbose: false,
-    //     quiet: true,
-    //   },
-    // },
     port,
   )
 
@@ -53,10 +45,7 @@ export const setupLocalTestnetFixture = async (
     )
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(
-    // localFunctionsTestnet.server,
-    port,
-  )
+  const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(port)
 
   const juelsAmount = BigInt(utils.parseUnits('100', 'ether').toString())
   await localFunctionsTestnet.getFunds(user_A.address, {
@@ -83,15 +72,8 @@ export const setupLocalTestnetFixture = async (
 }
 
 const createTestWallets = (port = 8545): Wallet[] => {
-  // const accounts = server.provider.getInitialAccounts()
-
   const wallets: Wallet[] = []
   const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}`)
-
-  // for (let i = 0; i < 4; i++) {
-  // const randomWallet = Wallet.createRandom().connect(provider)
-  //   wallets.push(Wallet.createRandom().connect(provider))
-  // }
 
   // these are random private keys provided by anvil
   wallets.push(
