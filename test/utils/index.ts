@@ -44,8 +44,7 @@ export const setupLocalTestnetFixture = async (
       utils.formatBytes32String(localFunctionsTestnet.donId),
     )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(port)
+  const [user_A, user_B_NoLINK, subFunder] = createTestWallets(port)
 
   const juelsAmount = BigInt(utils.parseUnits('100', 'ether').toString())
   await localFunctionsTestnet.getFunds(user_A.address, {
@@ -88,11 +87,6 @@ const createTestWallets = (port = 8545): Wallet[] => {
   )
   wallets.push(
     new Wallet('7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6').connect(
-      provider,
-    ),
-  )
-  wallets.push(
-    new Wallet('47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a').connect(
       provider,
     ),
   )

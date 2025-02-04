@@ -45,11 +45,13 @@ export const startLocalFunctionsTestnet = async (
   await anvil.start()
   console.log(`Anvil started on port ${port} with chain ID 1337`)
 
-  // this is a private key provided by anvil
-  const admin = new Wallet(
-    'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
-    new providers.JsonRpcProvider(`http://127.0.0.1:${port}`),
-  )
+  let privateKey = process.env.PRIVATE_KEY
+  if (!privateKey) {
+    // this is a private key provided by anvil
+    privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+  }
+
+  const admin = new Wallet(privateKey, new providers.JsonRpcProvider(`http://127.0.0.1:${port}`))
 
   const contracts = await deployFunctionsOracle(admin)
 
