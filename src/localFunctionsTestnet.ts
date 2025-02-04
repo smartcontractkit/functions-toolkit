@@ -71,7 +71,7 @@ export const startLocalFunctionsTestnet = async (
   const admin = new Wallet(
     // accounts[firstAccount].secretKey.slice(2),
     'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
-    new providers.JsonRpcProvider(`http://localhost:${port}`),
+    new providers.JsonRpcProvider(`http://127.0.0.1:${port}`),
   )
 
   const contracts = await deployFunctionsOracle(admin)

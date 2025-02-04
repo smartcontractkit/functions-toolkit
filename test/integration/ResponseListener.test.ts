@@ -17,7 +17,7 @@ describe('Functions toolkit classes', () => {
   let allowlistedUser_A: Wallet
 
   beforeAll(async () => {
-    const testSetup = await setupLocalTestnetFixture(8003)
+    const testSetup = await setupLocalTestnetFixture(8002)
     linkTokenAddress = testSetup.linkTokenAddress
     functionsRouterAddress = testSetup.functionsRouterAddress
     exampleClient = testSetup.exampleConsumer

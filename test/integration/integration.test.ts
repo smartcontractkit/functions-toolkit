@@ -27,7 +27,7 @@ describe('Functions toolkit classes', () => {
   let subFunder_A: Wallet
 
   beforeAll(async () => {
-    const testSetup = await setupLocalTestnetFixture(8545)
+    const testSetup = await setupLocalTestnetFixture(8001)
     donId = testSetup.donId
     linkTokenContract = testSetup.linkTokenContract
     linkTokenAddress = testSetup.linkTokenAddress

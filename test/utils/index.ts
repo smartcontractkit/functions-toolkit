@@ -38,7 +38,7 @@ export const setupLocalTestnetFixture = async (
     port,
   )
 
-  const provider = new providers.JsonRpcProvider(`http://localhost:${port}/`)
+  const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}/`)
   const admin = new Wallet(localFunctionsTestnet.adminWallet.privateKey, provider)
   const functionsTestConsumerContractFactory = new ContractFactory(
     ExampleFunctionsConsumerSource.abi,
@@ -86,7 +86,7 @@ const createTestWallets = (port = 8545): Wallet[] => {
   // const accounts = server.provider.getInitialAccounts()
 
   const wallets: Wallet[] = []
-  const provider = new providers.JsonRpcProvider(`http://localhost:${port}`)
+  const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}`)
 
   // for (let i = 0; i < 4; i++) {
   // const randomWallet = Wallet.createRandom().connect(provider)
