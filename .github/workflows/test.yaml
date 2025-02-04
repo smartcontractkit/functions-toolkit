@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: 18
 
+      - name: setup-foundry
+        uses: foundry-rs/foundry-toolchain@8f1998e9878d786675189ef566a2e4bf24869773 # v1.2.0
+
       - name: Install dependencies
         run: npm install # npm install instead of npm ci is used to prevent unsupported platform errors due to the fsevents sub-dependency
 
