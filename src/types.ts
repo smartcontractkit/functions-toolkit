@@ -237,7 +237,6 @@ export type GetFunds = (
 ) => Promise<void>
 
 export type LocalFunctionsTestnet = {
-  // server: Server
   anvil: Anvil
   adminWallet: {
     address: string

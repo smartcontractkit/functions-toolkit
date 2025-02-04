@@ -119,12 +119,10 @@ export const startLocalFunctionsTestnet = async (
 
   const close = async (): Promise<void> => {
     contracts.functionsMockCoordinatorContract.removeAllListeners('OracleRequest')
-    // await server.close()
     await anvil.stop()
   }
 
   return {
-    // server,
     anvil,
     adminWallet: {
       address: admin.address,
