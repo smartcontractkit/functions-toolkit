@@ -1,5 +1,4 @@
 import { Wallet, Contract, ContractFactory, utils, providers } from 'ethers'
-// import Ganache from 'ganache'
 import { createAnvil } from '@viem/anvil'
 import cbor from 'cbor'
 
@@ -25,8 +24,6 @@ import {
   TermsOfServiceAllowListSource,
 } from './v1_contract_sources'
 
-// import type { ServerOptions } from 'ganache'
-
 import type {
   FunctionsRequestParams,
   RequestCommitment,
@@ -38,38 +35,18 @@ import type {
 
 export const startLocalFunctionsTestnet = async (
   simulationConfigPath?: string,
-  // options?: CreateAnvilOptions,
   port = 8545,
 ): Promise<LocalFunctionsTestnet> => {
-  // const server = Ganache.server(options)
-
   const anvil = createAnvil({
     port,
     chainId: 1337,
-    // ...options,
-    // logging: {
-    //   debug: false,
-    //   verbose: false,
-    //   quiet: true
   })
 
   await anvil.start()
   console.log(`Anvil started on port ${port} with chain ID 1337`)
 
-  // server.listen(port, 'localhost', (err: Error | null) => {
-  //   if (err) {
-  //     throw Error(`Error starting local Functions testnet server:\n${err}`)
-  //   }
-  //   console.log(`Local Functions testnet server started on port ${port}`)
-  // })
-
-  // const randWallet = Wallet.createRandom()
-  // const accounts = server.provider.getInitialAccounts()
-  // const firstAccount = Object.keys(accounts)[0]
-
   // this is a private key provided by anvil
   const admin = new Wallet(
-    // accounts[firstAccount].secretKey.slice(2),
     'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
     new providers.JsonRpcProvider(`http://127.0.0.1:${port}`),
   )
