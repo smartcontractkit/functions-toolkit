@@ -59,7 +59,8 @@ export const startLocalFunctionsTestnet = async (
     privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
   }
 
-  const admin = new Wallet(privateKey, new JsonRpcProvider(`http://127.0.0.1:${port}`))
+  const provider = new JsonRpcProvider(`http://127.0.0.1:${port}`)
+  const admin = new Wallet(privateKey, provider)
 
   const contracts = await deployFunctionsOracle(admin)
 
@@ -113,16 +114,36 @@ export const startLocalFunctionsTestnet = async (
     }
     weiAmount = BigInt(weiAmount)
     juelsAmount = BigInt(juelsAmount)
+
+    // const linkToken = contracts.linkTokenContract.connect(admin) as Contract
+    // await linkToken.waitForDeployment()
+    console.log('getFunds 1.5: ', await admin.getNonce(), address, await provider.getSigner())
+    // const contract = new Contract(
+    //   await contracts.linkTokenContract.getAddress(),
+    //   LinkTokenSource.abi,
+    //   admin,
+    // )
+    const linkTx = await (
+      contracts.linkTokenContract.connect(await provider.getSigner()) as Contract
+    ).transfer(address, juelsAmount)
+    // const linkTx = await contract.transfer(address, juelsAmount)
+    // const linkTx = contract['transfer(address,uint256)'](address, juelsAmount)
+    console.log('getFunds 1.6: ', await admin.getNonce(), address)
+    await linkTx.wait(1)
+    console.log('getFunds 2: ', await admin.getNonce())
+
+    console.log('getFunds 0: ', await admin.getNonce(), admin.address, address)
     const ethTx = await admin.sendTransaction({
       to: address,
       value: weiAmount.toString(),
     })
+    console.log('getFunds 0.5: ', await admin.getNonce(), address)
     await ethTx.wait(1)
-    console.log('getFunds 1')
-    const linkToken = contracts.linkTokenContract.connect(admin) as Contract
-    const linkTx = await linkToken.transfer(address, juelsAmount)
-    await linkTx.wait(1)
-    console.log('getFunds 2')
+    // console.log('getFunds 0.6: ', await admin.getNonce())
+    // await provider.send('evm_mine', [])
+    // console.log('getFunds 0.7: ', await admin.getNonce())
+    // await provider.send('evm_mine', [])
+    console.log('getFunds 1: ', await admin.getNonce(), address)
     console.log(
       `Sent ${formatEther(weiAmount.toString())} ETH and ${formatEther(
         juelsAmount.toString(),
@@ -370,22 +391,23 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     LinkTokenSource.bytecode,
     deployer,
   )
-  console.log('deployFunctionsOracle 1')
+  console.log('deployFunctionsOracle 1:', await deployer.getNonce())
   const linkToken = await linkTokenFactory.connect(deployer).deploy()
+  // const linkToken = linkTokenBase as Contract
   await linkToken.waitForDeployment()
-  console.log('deployFunctionsOracle 2')
+  console.log('deployFunctionsOracle 2:', await deployer.getNonce())
 
   const linkPriceFeedFactory = new ContractFactory(
     MockV3AggregatorSource.abi,
     MockV3AggregatorSource.bytecode,
     deployer,
   )
-  console.log('deployFunctionsOracle 3')
+  console.log('deployFunctionsOracle 3:', await deployer.getNonce())
   const linkEthPriceFeed = await linkPriceFeedFactory
     .connect(deployer)
     .deploy(18, simulatedLinkEthPrice)
   await linkEthPriceFeed.waitForDeployment()
-  console.log('deployFunctionsOracle 4')
+  console.log('deployFunctionsOracle 3.5:', await deployer.getNonce())
   const linkUsdPriceFeed = await linkPriceFeedFactory
     .connect(deployer)
     .deploy(8, simulatedLinkUsdPrice)
@@ -440,11 +462,11 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   await allowlistBase.waitForDeployment()
   console.log('deployFunctionsOracle 7')
   const allowlist = allowlistBase as Contract
-  console.log('deployFunctionsOracle 7.5')
+  console.log('deployFunctionsOracle 7.5:', await deployer.getNonce())
 
   const setAllowListIdTx = await router.setAllowListId(encodeBytes32String(simulatedAllowListId))
   await setAllowListIdTx.wait(1)
-  console.log('deployFunctionsOracle 8')
+  console.log('deployFunctionsOracle 8:', await deployer.getNonce())
 
   const allowlistId = await router.getAllowListId()
   const proposeContractsTx = await router.proposeContractsUpdate(
@@ -455,27 +477,27 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
     },
   )
   await proposeContractsTx.wait(1)
-  console.log('deployFunctionsOracle 9')
+  console.log('deployFunctionsOracle 9:', await deployer.getNonce())
 
   const updateTx = await router.updateContracts({ gasLimit: 1_000_000 })
   await updateTx.wait(1)
-  console.log('deployFunctionsOracle 9.5')
+  console.log('deployFunctionsOracle 9.5:', await deployer.getNonce())
 
   const mockC = mockCoordinator.connect(deployer) as Contract
   const setPubKeyTx = await mockC.setDONPublicKey(simulatedSecretsKeys.donKey.publicKey)
   await setPubKeyTx.wait(1)
-  console.log('deployFunctionsOracle 10')
+  console.log('deployFunctionsOracle 10:', await deployer.getNonce())
 
   const setThresholdKeyTx = await mockC.setThresholdPublicKey(
     '0x' + Buffer.from(simulatedSecretsKeys.thresholdKeys.publicKey).toString('hex'),
   )
   await setThresholdKeyTx.wait(1)
-  console.log('deployFunctionsOracle 11')
+  console.log('deployFunctionsOracle 11:', await deployer.getNonce())
 
   return {
     donId: simulatedDonId,
-    linkTokenContract: linkToken as Contract,
+    linkTokenContract: linkToken,
     functionsRouterContract: router,
-    functionsMockCoordinatorContract: mockCoordinator as Contract,
+    functionsMockCoordinatorContract: mockCoordinator,
   }
 }

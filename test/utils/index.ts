@@ -7,13 +7,13 @@ import { Wallet, JsonRpcProvider, ContractFactory, encodeBytes32String, parseUni
 
 import type { GetFunds } from '../../src'
 
-import type { Contract } from 'ethers'
+import type { BaseContract, Contract } from 'ethers'
 
 export const setupLocalTestnetFixture = async (
   port: number,
 ): Promise<{
   donId: string
-  linkTokenContract: Contract
+  linkTokenContract: BaseContract
   linkTokenAddress: string
   functionsCoordinator: Contract
   functionsRouterAddress: string
@@ -30,10 +30,9 @@ export const setupLocalTestnetFixture = async (
     port,
   )
 
-  console.log('setupLocalTestnetFixture 1')
   const provider = new JsonRpcProvider(`http://127.0.0.1:${port}/`)
   const admin = new Wallet(localFunctionsTestnet.adminWallet.privateKey, provider)
-  console.log('setupLocalTestnetFixture 2')
+  console.log('setupLocalTestnetFixture 2: ', await admin.getNonce(), admin.address)
   const functionsTestConsumerContractFactory = new ContractFactory(
     ExampleFunctionsConsumerSource.abi,
     ExampleFunctionsConsumerSource.bytecode,
@@ -46,11 +45,11 @@ export const setupLocalTestnetFixture = async (
       encodeBytes32String(localFunctionsTestnet.donId),
     )
   await exampleConsumer.waitForDeployment()
-  console.log('setupLocalTestnetFixture 3')
+  console.log('setupLocalTestnetFixture 3: ', await admin.getNonce(), admin.address)
 
   const [user_A, user_B_NoLINK, subFunder] = createTestWallets(port)
 
-  console.log('setupLocalTestnetFixture 4')
+  console.log('setupLocalTestnetFixture 4: ', await admin.getNonce(), admin.address)
   const juelsAmount = BigInt(parseUnits('100', 'ether').toString())
   await localFunctionsTestnet.getFunds(user_A.address, {
     juelsAmount,

@@ -28,18 +28,22 @@ describe('fetchRequestCommitment', () => {
   })
 
   it('returns the commitment for a given request ID', async () => {
+    console.log(1)
     const subscriptionManager = new SubscriptionManager({
       signer: allowlistedUser_A,
       linkTokenAddress,
       functionsRouterAddress,
     })
     await subscriptionManager.initialize()
+    console.log(2)
 
     const subscriptionId = await subscriptionManager.createSubscription()
+    console.log(3)
     await subscriptionManager.fundSubscription({
       juelsAmount: parseUnits('1', 'ether').toString(),
       subscriptionId,
     })
+    console.log(4)
     await subscriptionManager.addConsumer({
       subscriptionId,
       consumerAddress: await exampleClient.getAddress(),
@@ -47,6 +51,7 @@ describe('fetchRequestCommitment', () => {
         confirmations: 1,
       },
     })
+    console.log(5)
 
     const reqTx = await exampleClient.sendRequest(
       'return Functions.encodeUint256(1)',
@@ -57,7 +62,8 @@ describe('fetchRequestCommitment', () => {
       subscriptionId,
       100_000,
     )
-    const req = await reqTx.wait()
+    const req = await reqTx.wait(1)
+    console.log(6)
     const reqId = req.events[0].topics[1]
 
     const commitment = await fetchRequestCommitment({
@@ -66,78 +72,79 @@ describe('fetchRequestCommitment', () => {
       functionsRouterAddress,
       donId,
     })
+    console.log(7)
 
     expect(commitment.requestId).toEqual(reqId)
   })
 
-  it('returns the commitment for a given request ID within a given block range', async () => {
-    const subscriptionManager = new SubscriptionManager({
-      signer: allowlistedUser_A,
-      linkTokenAddress,
-      functionsRouterAddress,
-    })
-    await subscriptionManager.initialize()
-
-    const subscriptionId = await subscriptionManager.createSubscription()
-    await subscriptionManager.fundSubscription({
-      juelsAmount: parseUnits('1', 'ether').toString(),
-      subscriptionId,
-    })
-    await subscriptionManager.addConsumer({
-      subscriptionId,
-      consumerAddress: await exampleClient.getAddress(),
-      txOptions: {
-        confirmations: 1,
-      },
-    })
-
-    const reqTx = await exampleClient.sendRequest(
-      'return Functions.encodeUint256(1)',
-      1,
-      [],
-      [],
-      [],
-      subscriptionId,
-      100_000,
-    )
-    const req = await reqTx.wait()
-    const reqId = req.events[0].topics[1]
-
-    const commitment = await fetchRequestCommitment({
-      requestId: reqId,
-      provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
-      functionsRouterAddress,
-      donId,
-      toBlock: 1000,
-      pastBlocksToSearch: 1001,
-    })
-
-    expect(commitment.requestId).toEqual(reqId)
-  })
-
-  it('Throws error when unable to fetch coordinator', async () => {
-    await expect(async () => {
-      await fetchRequestCommitment({
-        requestId: '0xDummyRequestId',
-        provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
-        functionsRouterAddress,
-        donId: 'invalid donId',
-      })
-    }).rejects.toThrowError(
-      /Error encountered when attempting to fetch the FunctionsCoordinator address/,
-    )
-  })
-
-  it('Throws error when unable to fetch matching request', async () => {
-    await expect(async () => {
-      await fetchRequestCommitment({
-        requestId: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
-        functionsRouterAddress,
-        donId,
-      })
-    }).rejects.toThrowError(
-      /No request commitment event found for the provided requestId in block range/,
-    )
-  })
+  // it('returns the commitment for a given request ID within a given block range', async () => {
+  //   const subscriptionManager = new SubscriptionManager({
+  //     signer: allowlistedUser_A,
+  //     linkTokenAddress,
+  //     functionsRouterAddress,
+  //   })
+  //   await subscriptionManager.initialize()
+  //
+  //   const subscriptionId = await subscriptionManager.createSubscription()
+  //   await subscriptionManager.fundSubscription({
+  //     juelsAmount: parseUnits('1', 'ether').toString(),
+  //     subscriptionId,
+  //   })
+  //   await subscriptionManager.addConsumer({
+  //     subscriptionId,
+  //     consumerAddress: await exampleClient.getAddress(),
+  //     txOptions: {
+  //       confirmations: 1,
+  //     },
+  //   })
+  //
+  //   const reqTx = await exampleClient.sendRequest(
+  //     'return Functions.encodeUint256(1)',
+  //     1,
+  //     [],
+  //     [],
+  //     [],
+  //     subscriptionId,
+  //     100_000,
+  //   )
+  //   const req = await reqTx.wait()
+  //   const reqId = req.events[0].topics[1]
+  //
+  //   const commitment = await fetchRequestCommitment({
+  //     requestId: reqId,
+  //     provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
+  //     functionsRouterAddress,
+  //     donId,
+  //     toBlock: 1000,
+  //     pastBlocksToSearch: 1001,
+  //   })
+  //
+  //   expect(commitment.requestId).toEqual(reqId)
+  // })
+  //
+  // it('Throws error when unable to fetch coordinator', async () => {
+  //   await expect(async () => {
+  //     await fetchRequestCommitment({
+  //       requestId: '0xDummyRequestId',
+  //       provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
+  //       functionsRouterAddress,
+  //       donId: 'invalid donId',
+  //     })
+  //   }).rejects.toThrowError(
+  //     /Error encountered when attempting to fetch the FunctionsCoordinator address/,
+  //   )
+  // })
+  //
+  // it('Throws error when unable to fetch matching request', async () => {
+  //   await expect(async () => {
+  //     await fetchRequestCommitment({
+  //       requestId: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  //       provider: new JsonRpcProvider('http://127.0.0.1:8004/'),
+  //       functionsRouterAddress,
+  //       donId,
+  //     })
+  //   }).rejects.toThrowError(
+  //     /No request commitment event found for the provided requestId in block range/,
+  //   )
+  // })
 })

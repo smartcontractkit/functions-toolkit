@@ -1,4 +1,4 @@
-import type { Overrides, Contract, JsonRpcProvider } from 'ethers'
+import type { Overrides, Contract, JsonRpcProvider, BaseContract } from 'ethers'
 import { Anvil } from '@viem/anvil'
 
 export enum Location {
@@ -226,7 +226,7 @@ export interface RequestEventData {
 
 export interface FunctionsContracts {
   donId: string
-  linkTokenContract: Contract
+  linkTokenContract: BaseContract
   functionsRouterContract: Contract
   functionsMockCoordinatorContract: Contract
 }

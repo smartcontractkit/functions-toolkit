@@ -27,7 +27,11 @@ export const fetchRequestCommitment = async ({
     }
   }
 
-  const functionsRouter = new Contract(functionsRouterAddress, FunctionsRouterSource.abi, provider)
+  const functionsRouter = new Contract(
+    functionsRouterAddress,
+    FunctionsRouterSource.abi,
+    await provider.getSigner(),
+  )
   const donIdBytes32 = encodeBytes32String(donId)
   let functionsCoordinatorAddress: string
   try {
@@ -41,7 +45,7 @@ export const fetchRequestCommitment = async ({
   const functionsCoordinator = new Contract(
     functionsCoordinatorAddress,
     FunctionsCoordinatorSource.abi,
-    provider,
+    await provider.getSigner(),
   )
   const eventFilter = functionsCoordinator.filters.OracleRequest(requestId)
   const logs = await provider.getLogs({
