@@ -91,7 +91,7 @@ export class SubscriptionManager {
   public async isAllowlisted(addr: string): Promise<void> {
     this.isInitialized()
 
-    if (this.functionsAllowList && !(await this.functionsAllowList.hasAccess(addr, []))) {
+    if (this.functionsAllowList && !(await this.functionsAllowList.hasAccess(addr, '0x'))) {
       throw Error(
         'This wallet has not been added to the allow list. For access, sign up here:\nhttps://functions.chain.link\n',
       )
