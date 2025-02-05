@@ -3,7 +3,7 @@ import { ExampleFunctionsConsumerSource } from './contracts/FunctionsConsumerSou
 
 import path from 'path'
 
-import { Wallet, providers, ContractFactory, utils } from 'ethers'
+import { Wallet, JsonRpcProvider, ContractFactory, encodeBytes32String, parseUnits } from 'ethers'
 
 import type { GetFunds } from '../../src'
 
@@ -30,8 +30,10 @@ export const setupLocalTestnetFixture = async (
     port,
   )
 
-  const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}/`)
+  console.log('setupLocalTestnetFixture 1')
+  const provider = new JsonRpcProvider(`http://127.0.0.1:${port}/`)
   const admin = new Wallet(localFunctionsTestnet.adminWallet.privateKey, provider)
+  console.log('setupLocalTestnetFixture 2')
   const functionsTestConsumerContractFactory = new ContractFactory(
     ExampleFunctionsConsumerSource.abi,
     ExampleFunctionsConsumerSource.bytecode,
@@ -40,28 +42,32 @@ export const setupLocalTestnetFixture = async (
   const exampleConsumer = await functionsTestConsumerContractFactory
     .connect(admin)
     .deploy(
-      localFunctionsTestnet.functionsRouterContract.address,
-      utils.formatBytes32String(localFunctionsTestnet.donId),
+      await localFunctionsTestnet.functionsRouterContract.getAddress(),
+      encodeBytes32String(localFunctionsTestnet.donId),
     )
+  await exampleConsumer.waitForDeployment()
+  console.log('setupLocalTestnetFixture 3')
 
   const [user_A, user_B_NoLINK, subFunder] = createTestWallets(port)
 
-  const juelsAmount = BigInt(utils.parseUnits('100', 'ether').toString())
+  console.log('setupLocalTestnetFixture 4')
+  const juelsAmount = BigInt(parseUnits('100', 'ether').toString())
   await localFunctionsTestnet.getFunds(user_A.address, {
     juelsAmount,
   })
   await localFunctionsTestnet.getFunds(subFunder.address, {
     juelsAmount,
   })
+  console.log('setupLocalTestnetFixture 5')
 
   return {
     donId: localFunctionsTestnet.donId,
     linkTokenContract: localFunctionsTestnet.linkTokenContract,
-    linkTokenAddress: localFunctionsTestnet.linkTokenContract.address,
+    linkTokenAddress: await localFunctionsTestnet.linkTokenContract.getAddress(),
     functionsCoordinator: localFunctionsTestnet.functionsMockCoordinatorContract,
-    functionsRouterAddress: localFunctionsTestnet.functionsRouterContract.address,
-    exampleConsumer: exampleConsumer,
-    exampleConsumerAddress: exampleConsumer.address,
+    functionsRouterAddress: await localFunctionsTestnet.functionsRouterContract.getAddress(),
+    exampleConsumer: exampleConsumer as Contract,
+    exampleConsumerAddress: await exampleConsumer.getAddress(),
     close: localFunctionsTestnet.close,
     user_A,
     user_B_NoLINK,
@@ -72,7 +78,7 @@ export const setupLocalTestnetFixture = async (
 
 const createTestWallets = (port = 8545): Wallet[] => {
   const wallets: Wallet[] = []
-  const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}`)
+  const provider = new JsonRpcProvider(`http://127.0.0.1:${port}`)
 
   // these are random private keys provided by anvil
   wallets.push(

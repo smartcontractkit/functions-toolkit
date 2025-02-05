@@ -1,4 +1,12 @@
-import { Wallet, Contract, ContractFactory, utils, providers } from 'ethers'
+import {
+  Wallet,
+  Contract,
+  ContractFactory,
+  formatEther,
+  encodeBytes32String,
+  JsonRpcProvider,
+  AbiCoder,
+} from 'ethers'
 import { createAnvil } from '@viem/anvil'
 import cbor from 'cbor'
 
@@ -51,7 +59,7 @@ export const startLocalFunctionsTestnet = async (
     privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
   }
 
-  const admin = new Wallet(privateKey, new providers.JsonRpcProvider(`http://127.0.0.1:${port}`))
+  const admin = new Wallet(privateKey, new JsonRpcProvider(`http://127.0.0.1:${port}`))
 
   const contracts = await deployFunctionsOracle(admin)
 
@@ -109,11 +117,14 @@ export const startLocalFunctionsTestnet = async (
       to: address,
       value: weiAmount.toString(),
     })
-    const linkTx = await contracts.linkTokenContract.connect(admin).transfer(address, juelsAmount)
     await ethTx.wait(1)
+    console.log('getFunds 1')
+    const linkToken = contracts.linkTokenContract.connect(admin) as Contract
+    const linkTx = await linkToken.transfer(address, juelsAmount)
     await linkTx.wait(1)
+    console.log('getFunds 2')
     console.log(
-      `Sent ${utils.formatEther(weiAmount.toString())} ETH and ${utils.formatEther(
+      `Sent ${formatEther(weiAmount.toString())} ETH and ${formatEther(
         juelsAmount.toString(),
       )} LINK to ${address}`,
     )
@@ -154,9 +165,9 @@ const handleOracleRequest = async (
     errorHexstring,
   )
 
-  const reportTx = await mockCoordinator
-    .connect(admin)
-    .callReport(encodedReport, { gasLimit: callReportGasLimit })
+  const reportTx = await (mockCoordinator.connect(admin) as Contract).callReport(encodedReport, {
+    gasLimit: callReportGasLimit,
+  })
   await reportTx.wait(1)
 }
 
@@ -266,7 +277,7 @@ const encodeReport = (
   result?: string,
   error?: string,
 ): string => {
-  const encodedCommitment = utils.defaultAbiCoder.encode(
+  const encodedCommitment = AbiCoder.defaultAbiCoder().encode(
     [
       'bytes32',
       'address',
@@ -294,7 +305,7 @@ const encodeReport = (
       commitment.timeoutTimestamp,
     ],
   )
-  const encodedReport = utils.defaultAbiCoder.encode(
+  const encodedReport = AbiCoder.defaultAbiCoder().encode(
     ['bytes32[]', 'bytes[]', 'bytes[]', 'bytes[]', 'bytes[]'],
     [[requestId], [result ?? []], [error ?? []], [encodedCommitment], [[]]],
   )
@@ -353,47 +364,68 @@ const buildRequestObject = async (
 }
 
 export const deployFunctionsOracle = async (deployer: Wallet): Promise<FunctionsContracts> => {
+  console.log('deployFunctionsOracle 0')
   const linkTokenFactory = new ContractFactory(
     LinkTokenSource.abi,
     LinkTokenSource.bytecode,
     deployer,
   )
+  console.log('deployFunctionsOracle 1')
   const linkToken = await linkTokenFactory.connect(deployer).deploy()
+  await linkToken.waitForDeployment()
+  console.log('deployFunctionsOracle 2')
 
   const linkPriceFeedFactory = new ContractFactory(
     MockV3AggregatorSource.abi,
     MockV3AggregatorSource.bytecode,
     deployer,
   )
+  console.log('deployFunctionsOracle 3')
   const linkEthPriceFeed = await linkPriceFeedFactory
     .connect(deployer)
     .deploy(18, simulatedLinkEthPrice)
+  await linkEthPriceFeed.waitForDeployment()
+  console.log('deployFunctionsOracle 4')
   const linkUsdPriceFeed = await linkPriceFeedFactory
     .connect(deployer)
     .deploy(8, simulatedLinkUsdPrice)
+  await linkUsdPriceFeed.waitForDeployment()
+  console.log('deployFunctionsOracle 4 ', await deployer.getNonce())
 
   const routerFactory = new ContractFactory(
     FunctionsRouterSource.abi,
     FunctionsRouterSource.bytecode,
     deployer,
   )
-  const router = await routerFactory
+
+  const routerBase = await routerFactory
     .connect(deployer)
-    .deploy(linkToken.address, simulatedRouterConfig)
+    .deploy(await linkToken.getAddress(), simulatedRouterConfig)
+  await routerBase.waitForDeployment()
+  console.log('deployFunctionsOracle 5 ', await deployer.getNonce())
+
+  const router = routerBase as Contract
+  // await router.waitForDeployment()
+  console.log('deployFunctionsOracle 5.5: ', await deployer.getNonce())
 
   const mockCoordinatorFactory = new ContractFactory(
     FunctionsCoordinatorTestHelperSource.abi,
     FunctionsCoordinatorTestHelperSource.bytecode,
     deployer,
   )
-  const mockCoordinator = await mockCoordinatorFactory
+  const mockCoordinatorBase = await mockCoordinatorFactory
     .connect(deployer)
     .deploy(
-      router.address,
+      await router.getAddress(),
       simulatedCoordinatorConfig,
-      linkEthPriceFeed.address,
-      linkUsdPriceFeed.address,
+      await linkEthPriceFeed.getAddress(),
+      await linkUsdPriceFeed.getAddress(),
     )
+  await mockCoordinatorBase.waitForDeployment()
+  console.log('deployFunctionsOracle 6: ', await deployer.getNonce())
+  const mockCoordinator = mockCoordinatorBase as Contract
+  // await mockCoordinator.waitForDeployment()
+  console.log('deployFunctionsOracle 6.5:', await deployer.getNonce())
 
   const allowlistFactory = new ContractFactory(
     TermsOfServiceAllowListSource.abi,
@@ -402,37 +434,48 @@ export const deployFunctionsOracle = async (deployer: Wallet): Promise<Functions
   )
   const initialAllowedSenders: string[] = []
   const initialBlockedSenders: string[] = []
-  const allowlist = await allowlistFactory
+  const allowlistBase = await allowlistFactory
     .connect(deployer)
     .deploy(simulatedAllowListConfig, initialAllowedSenders, initialBlockedSenders)
+  await allowlistBase.waitForDeployment()
+  console.log('deployFunctionsOracle 7')
+  const allowlist = allowlistBase as Contract
+  console.log('deployFunctionsOracle 7.5')
 
-  const setAllowListIdTx = await router.setAllowListId(
-    utils.formatBytes32String(simulatedAllowListId),
-  )
+  const setAllowListIdTx = await router.setAllowListId(encodeBytes32String(simulatedAllowListId))
   await setAllowListIdTx.wait(1)
+  console.log('deployFunctionsOracle 8')
 
   const allowlistId = await router.getAllowListId()
   const proposeContractsTx = await router.proposeContractsUpdate(
-    [allowlistId, utils.formatBytes32String(simulatedDonId)],
-    [allowlist.address, mockCoordinator.address],
+    [allowlistId, encodeBytes32String(simulatedDonId)],
+    [await allowlist.getAddress(), await mockCoordinator.getAddress()],
     {
       gasLimit: 1_000_000,
     },
   )
   await proposeContractsTx.wait(1)
-  await router.updateContracts({ gasLimit: 1_000_000 })
+  console.log('deployFunctionsOracle 9')
 
-  await mockCoordinator.connect(deployer).setDONPublicKey(simulatedSecretsKeys.donKey.publicKey)
-  await mockCoordinator
-    .connect(deployer)
-    .setThresholdPublicKey(
-      '0x' + Buffer.from(simulatedSecretsKeys.thresholdKeys.publicKey).toString('hex'),
-    )
+  const updateTx = await router.updateContracts({ gasLimit: 1_000_000 })
+  await updateTx.wait(1)
+  console.log('deployFunctionsOracle 9.5')
+
+  const mockC = mockCoordinator.connect(deployer) as Contract
+  const setPubKeyTx = await mockC.setDONPublicKey(simulatedSecretsKeys.donKey.publicKey)
+  await setPubKeyTx.wait(1)
+  console.log('deployFunctionsOracle 10')
+
+  const setThresholdKeyTx = await mockC.setThresholdPublicKey(
+    '0x' + Buffer.from(simulatedSecretsKeys.thresholdKeys.publicKey).toString('hex'),
+  )
+  await setThresholdKeyTx.wait(1)
+  console.log('deployFunctionsOracle 11')
 
   return {
     donId: simulatedDonId,
-    linkTokenContract: linkToken,
+    linkTokenContract: linkToken as Contract,
     functionsRouterContract: router,
-    functionsMockCoordinatorContract: mockCoordinator,
+    functionsMockCoordinatorContract: mockCoordinator as Contract,
   }
 }
