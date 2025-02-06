@@ -38,6 +38,8 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 
 Install Node.js version `18.18.0` or higher _and_ Deno version `1.36.0` or higher.
 
+Starting from ABOVE 0.3.2, Anvil is required to run local tests. A `Makefile` is included to automate the installation and build process. Simply run `make install` to install Anvil and all npm packages.
+
 Chainlink Functions requires signing a terms of service agreement before creating a billing subscription. See this [getting started](https://docs.chain.link/chainlink-functions/getting-started) section in the docs.
 
 ## Functions Billing Subscription Management
@@ -593,6 +595,9 @@ return Functions.encodeString(escape("$hello*world?"));
 
 ### Local Functions Testnet
 
+> **Note**
+> Starting from above 0.3.2, Anvil is REQUIRED to use `localFunctionsTestnet`. Please run `make install` to install Anvil and all the necessary dependencies.
+
 For debugging smart contracts and the end-to-end request flow on your local machine, you can use the `localFunctionsTestnet` function. This creates a local testnet RPC node with a mock Chainlink Functions contracts. You can then deploy your own Functions consumer contract to this local network, create and manage subscriptions, and send requests. Request processing will simulate the behavior of an actual DON where the request is executed 4 times and the discrete median response is transmitted back to the consumer contract. (Note that Chainlink Functions uses the following calculation to select the discrete median response: `const medianResponse = responses[responses.length - 1) / 2]`).
 
 The `localFunctionsTestnet` function takes the following values as arguments.
@@ -600,7 +605,6 @@ The `localFunctionsTestnet` function takes the following values as arguments.
 ```
 const localFunctionsTestnet = await startLocalFunctionsTestnet(
   simulationConfigPath?: string // Absolute path to config file which exports simulation config parameters
-  options?: ServerOptions, // Ganache server options
   port?: number, // Defaults to 8545
 )
 ```
@@ -623,10 +627,10 @@ export const maxQueryResponseBytes = 2097152 // Maximum size of incoming HTTP re
 
 ```
 {
-  server: Server // Ganache server
+  anvil: Anvil // Anvil instance
   adminWallet: { address: string, privateKey: string } // Funded admin wallet
   getFunds: (address: string, { weiAmount, juelsAmount }: { weiAmount?: BigInt | string; juelsAmount?: BigInt | string }) => Promise<void> // Method which can be called to send funds to any address
-  close: () => Promise<void> // Method to close the server
+  close: () => Promise<void> // Method to stop the Anvil instance
   donId: string // DON ID for simulated DON
   // The following values are all Ethers.js contract types: https://docs.ethers.org/v5/api/contract/contract/
   linkTokenContract: Contract // Mock LINK token contract
