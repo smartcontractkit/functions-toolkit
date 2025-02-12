@@ -72,7 +72,6 @@
     "proseWrap": "preserve"
   },
   "dependencies": {
-    "@ethersproject/abstract-provider": "^5.7.0",
     "@viem/anvil": "^0.0.10",
     "axios": "^1.4.0",
     "bcrypto": "^5.4.0",
