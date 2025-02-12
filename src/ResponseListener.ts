@@ -1,8 +1,8 @@
-import { Contract } from 'ethers'
+import { Contract, providers } from 'ethers'
 
 import { FunctionsRouterSource } from './v1_contract_sources'
 
-import type { BigNumber, providers } from 'ethers'
+import type { BigNumber } from 'ethers'
 
 import { FulfillmentCode, type FunctionsResponse } from './types'
 
@@ -73,7 +73,7 @@ export class ResponseListener {
    */
   public async listenForResponseFromTransaction(
     txHash: string,
-    timeoutMs = 3000000,
+    timeoutMs = 300000,
     confirmations = 1,
     checkIntervalMs = 2000,
   ): Promise<FunctionsResponse> {
@@ -87,8 +87,18 @@ export class ResponseListener {
         }, timeoutMs)
 
         const check = async () => {
+          if (this.provider instanceof providers.JsonRpcProvider) {
+            console.log('listenForResponseFromTransaction Listener provider is a JsonRpcProvider')
+            if (this.provider.connection.url) {
+              console.log(`listenForResponseFromTransaction Provider connection url: ${this.provider.connection.url}`)
+            }
+          }
+
           const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeoutMs)
           const updatedId = receipt.logs[0].topics[1]
+          console.log(`listenForResponseFromTransaction Topic 0: ${receipt.logs[0].topics[0]}`)
+          console.log(`listenForResponseFromTransaction Request ID: ${requestId}`)
+          console.log(`listenForResponseFromTransaction Updated ID: ${updatedId}`)
           if (updatedId !== requestId) {
             requestId = updatedId
             const response = await this.listenForResponse(requestId, timeoutMs)

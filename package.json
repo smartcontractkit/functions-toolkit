@@ -6,10 +6,10 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "rimraf dist && tsc -P tsconfig.build.json && cpy src/simulateScript/deno-sandbox/**/* dist/simulateScript/deno-sandbox && yarn build:browser",
-    "build:browser": "webpack && browserify dist/frontendSimulateScript.bundle.js -o dist/simulateScript.browser.js -p esmify --standalone simulateScript && rm dist/frontendSimulateScript.bundle.js",
-    "test": "jest",
-    "test:ci": "jest --silent --ci --coverage",
-    "test:package": "jest --config jest.config.package.js",
+    "build:browser": "webpack && browserify dist/frontendSimulateScript.bundle.js -o dist/simulateScript.browser.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone simulateScript && rm dist/frontendSimulateScript.bundle.js",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
+    "test:ci": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --silent --ci --coverage",
+    "test:package": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config jest.config.package.js",
     "lint:check": "eslint '{src,test}/**/*.ts' && tsc --noEmit",
     "lint:fix": "eslint '{src,test}/**/*.ts' --fix",
     "lint:ci": "eslint '{src,test}/**/*.ts' --max-warnings=0 -f json -o eslint-report.json"
@@ -34,20 +34,20 @@
   ],
   "homepage": "https://github.com/smartcontractkit/functions-toolkit#readme",
   "devDependencies": {
-    "@babel/core": "7.21.8",
-    "@babel/preset-env": "7.21.5",
+    "@babel/core": "^7.21.8",
+    "@babel/preset-env": "^7.21.5",
     "@babel/preset-typescript": "7.21.5",
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.26.2",
     "@types/jest": "^29.5.1",
     "@types/node": "^18.16.3",
     "@types/prettier": "^2.7.3",
-    "babel-loader": "9.1.2",
-    "browserify": "17.0.0",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
+    "babel-loader": "9.1.2",
+    "babelify": "^10.0.0",
+    "browserify": "17.0.0",
     "cpy-cli": "^5.0.0",
-    "esmify": "2.1.1",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -57,7 +57,7 @@
     "rimraf": "^5.0.1",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4",
-    "webpack": "5.82.1",
+    "webpack": "^5.97.1",
     "webpack-cli": "5.1.1"
   },
   "prettier": {
@@ -72,12 +72,12 @@
     "proseWrap": "preserve"
   },
   "dependencies": {
+    "@viem/anvil": "^0.0.10",
     "axios": "^1.4.0",
     "bcrypto": "^5.4.0",
     "cbor": "^9.0.1",
     "eth-crypto": "^2.6.0",
     "ethers": "^5.7.2",
-    "ganache": "^7.9.1",
     "uniq": "^1.0.1"
   }
 }
