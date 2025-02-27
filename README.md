@@ -38,7 +38,8 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 
 Install Node.js version `18.18.0` or higher _and_ Deno version `1.36.0` or higher.
 
-Starting from ABOVE 0.3.2, Anvil is required to run local tests. A `Makefile` is included to automate the installation and build process. Simply run `make install` to install Anvil and all npm packages.
+For version 0.3.2 and above of this functions-toolkit package, Anvil is required to run local tests. A `Makefile` is included to automate the installation and build process. Simply run `make install` to install Anvil and all npm packages.
+If you already have anvil and/or foundry (the Foundry toolchain) installed, you would not need to run this. But you may want to run `foundryup` to update your version and `npm install` to install packages.
 
 Chainlink Functions requires signing a terms of service agreement before creating a billing subscription. See this [getting started](https://docs.chain.link/chainlink-functions/getting-started) section in the docs.
 
@@ -596,7 +597,7 @@ return Functions.encodeString(escape("$hello*world?"));
 ### Local Functions Testnet
 
 > **Note**
-> Starting from above 0.3.2, Anvil is REQUIRED to use `localFunctionsTestnet`. Please run `make install` to install Anvil and all the necessary dependencies.
+> For version 0.3.2 and above of this functions-toolkit package, Anvil is REQUIRED to use `localFunctionsTestnet`. Please run `make install` to install Anvil and all the necessary dependencies. If you already have anvil and/or foundry (the Foundry toolchain) installed, you would not need to run this. But you may want to run `foundryup` to update your version and `npm install` to install packages.
 
 For debugging smart contracts and the end-to-end request flow on your local machine, you can use the `localFunctionsTestnet` function. This creates a local testnet RPC node with a mock Chainlink Functions contracts. You can then deploy your own Functions consumer contract to this local network, create and manage subscriptions, and send requests. Request processing will simulate the behavior of an actual DON where the request is executed 4 times and the discrete median response is transmitted back to the consumer contract. (Note that Chainlink Functions uses the following calculation to select the discrete median response: `const medianResponse = responses[responses.length - 1) / 2]`).
 

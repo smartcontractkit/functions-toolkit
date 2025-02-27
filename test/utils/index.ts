@@ -74,22 +74,17 @@ const createTestWallets = (port = 8545): Wallet[] => {
   const wallets: Wallet[] = []
   const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}`)
 
-  // these are random private keys provided by anvil
-  wallets.push(
-    new Wallet('59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d').connect(
-      provider,
-    ),
-  )
-  wallets.push(
-    new Wallet('5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a').connect(
-      provider,
-    ),
-  )
-  wallets.push(
-    new Wallet('7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6').connect(
-      provider,
-    ),
-  )
+  // these are hardcoded private keys provided by anvil. you can see these private keys in the console output if you simply run `anvil`
+  // using these makes sure that these wallets are properly connected to Anvil local node
+  const privateKeys = [
+    '59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
+    '5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
+    '7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6',
+  ]
+
+  for (const privateKey of privateKeys) {
+    wallets.push(new Wallet(privateKey).connect(provider))
+  }
 
   return wallets
 }

@@ -37,17 +37,26 @@ export const startLocalFunctionsTestnet = async (
   simulationConfigPath?: string,
   port = 8545,
 ): Promise<LocalFunctionsTestnet> => {
-  const anvil = createAnvil({
-    port,
-    chainId: 1337,
-  })
+  let anvil: any
+  try {
+    anvil = createAnvil({
+      port,
+      chainId: 1337,
+    })
+  } catch (error) {
+    console.error('Error creating Anvil instance: ', error)
+    console.error(
+      'Please refer to README about how to properly set up the environment, including anvil.',
+    )
+    throw error
+  }
 
   await anvil.start()
   console.log(`Anvil started on port ${port} with chain ID 1337`)
 
   let privateKey = process.env.PRIVATE_KEY
   if (!privateKey) {
-    // this is a private key provided by anvil
+    // this is a hardcoded private key provided by anvil
     privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
   }
 
