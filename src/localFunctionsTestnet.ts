@@ -54,6 +54,10 @@ export const startLocalFunctionsTestnet = async (
   await anvil.start()
   console.log(`Anvil started on port ${port} with chain ID 1337`)
 
+  anvil.on('message', message => {
+    console.log('Anvil message:', message)
+  })
+
   let privateKey = process.env.PRIVATE_KEY
   if (!privateKey) {
     // this is a hardcoded private key provided by anvil
