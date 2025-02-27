@@ -1,5 +1,5 @@
 import { Wallet, Contract, ContractFactory, utils, providers } from 'ethers'
-import { createAnvil } from '@viem/anvil'
+import { Anvil, createAnvil } from '@viem/anvil'
 import cbor from 'cbor'
 
 import { simulateScript } from './simulateScript'
@@ -37,7 +37,7 @@ export const startLocalFunctionsTestnet = async (
   simulationConfigPath?: string,
   port = 8545,
 ): Promise<LocalFunctionsTestnet> => {
-  let anvil: any
+  let anvil: Anvil
   try {
     anvil = createAnvil({
       port,
