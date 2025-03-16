@@ -1,5 +1,5 @@
 import { Wallet, Contract, ContractFactory, utils, providers } from 'ethers'
-import Ganache from 'ganache'
+import { Anvil, createAnvil } from '@viem/anvil'
 import cbor from 'cbor'
 
 import { simulateScript } from './simulateScript'
@@ -24,8 +24,6 @@ import {
   TermsOfServiceAllowListSource,
 } from './v1_contract_sources'
 
-import type { ServerOptions } from 'ganache'
-
 import type {
   FunctionsRequestParams,
   RequestCommitment,
@@ -37,24 +35,36 @@ import type {
 
 export const startLocalFunctionsTestnet = async (
   simulationConfigPath?: string,
-  options?: ServerOptions,
   port = 8545,
 ): Promise<LocalFunctionsTestnet> => {
-  const server = Ganache.server(options)
+  let anvil: Anvil
+  try {
+    anvil = createAnvil({
+      port,
+      chainId: 1337,
+    })
+  } catch (error) {
+    console.error('Error creating Anvil instance: ', error)
+    console.error(
+      'Please refer to README about how to properly set up the environment, including anvil.',
+    )
+    throw error
+  }
 
-  server.listen(port, 'localhost', (err: Error | null) => {
-    if (err) {
-      throw Error(`Error starting local Functions testnet server:\n${err}`)
-    }
-    console.log(`Local Functions testnet server started on port ${port}`)
+  await anvil.start()
+  console.log(`Anvil started on port ${port} with chain ID 1337`)
+
+  anvil.on('message', message => {
+    console.log('Anvil message:', message)
   })
 
-  const accounts = server.provider.getInitialAccounts()
-  const firstAccount = Object.keys(accounts)[0]
-  const admin = new Wallet(
-    accounts[firstAccount].secretKey.slice(2),
-    new providers.JsonRpcProvider(`http://localhost:${port}`),
-  )
+  let privateKey = process.env.PRIVATE_KEY
+  if (!privateKey) {
+    // this is a hardcoded private key provided by anvil
+    privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+  }
+
+  const admin = new Wallet(privateKey, new providers.JsonRpcProvider(`http://127.0.0.1:${port}`))
 
   const contracts = await deployFunctionsOracle(admin)
 
@@ -124,11 +134,11 @@ export const startLocalFunctionsTestnet = async (
 
   const close = async (): Promise<void> => {
     contracts.functionsMockCoordinatorContract.removeAllListeners('OracleRequest')
-    await server.close()
+    await anvil.stop()
   }
 
   return {
-    server,
+    anvil,
     adminWallet: {
       address: admin.address,
       privateKey: admin.privateKey,

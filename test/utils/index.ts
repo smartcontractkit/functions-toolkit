@@ -8,7 +8,6 @@ import { Wallet, providers, ContractFactory, utils } from 'ethers'
 import type { GetFunds } from '../../src'
 
 import type { Contract } from 'ethers'
-import type { Server } from 'ganache'
 
 export const setupLocalTestnetFixture = async (
   port: number,
@@ -28,17 +27,10 @@ export const setupLocalTestnetFixture = async (
 }> => {
   const localFunctionsTestnet = await startLocalFunctionsTestnet(
     path.join(__dirname, 'testSimulationConfig.ts'),
-    {
-      logging: {
-        debug: false,
-        verbose: false,
-        quiet: true,
-      },
-    },
     port,
   )
 
-  const provider = new providers.JsonRpcProvider(`http://localhost:${port}/`)
+  const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}/`)
   const admin = new Wallet(localFunctionsTestnet.adminWallet.privateKey, provider)
   const functionsTestConsumerContractFactory = new ContractFactory(
     ExampleFunctionsConsumerSource.abi,
@@ -52,11 +44,7 @@ export const setupLocalTestnetFixture = async (
       utils.formatBytes32String(localFunctionsTestnet.donId),
     )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_admin, user_A, user_B_NoLINK, subFunder, _] = createTestWallets(
-    localFunctionsTestnet.server,
-    port,
-  )
+  const [user_A, user_B_NoLINK, subFunder] = createTestWallets(port)
 
   const juelsAmount = BigInt(utils.parseUnits('100', 'ether').toString())
   await localFunctionsTestnet.getFunds(user_A.address, {
@@ -82,14 +70,20 @@ export const setupLocalTestnetFixture = async (
   }
 }
 
-const createTestWallets = (server: Server, port = 8545): Wallet[] => {
-  const accounts = server.provider.getInitialAccounts()
-
+const createTestWallets = (port = 8545): Wallet[] => {
   const wallets: Wallet[] = []
-  const provider = new providers.JsonRpcProvider(`http://localhost:${port}`)
+  const provider = new providers.JsonRpcProvider(`http://127.0.0.1:${port}`)
 
-  for (const addr of Object.keys(accounts)) {
-    wallets.push(new Wallet(accounts[addr].secretKey.slice(2), provider))
+  // these are hardcoded private keys provided by anvil. you can see these private keys in the console output if you simply run `anvil`
+  // using these makes sure that these wallets are properly connected to Anvil local node
+  const privateKeys = [
+    '59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
+    '5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
+    '7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6',
+  ]
+
+  for (const privateKey of privateKeys) {
+    wallets.push(new Wallet(privateKey).connect(provider))
   }
 
   return wallets
