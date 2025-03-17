@@ -38,7 +38,7 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 
 Install Node.js version `18.18.0` or higher _and_ Deno version `1.36.0` or higher.
 
-For version 0.3.2 and above of this functions-toolkit package, Anvil is required to run local tests. A `Makefile` is included to automate the installation and build process. Simply run `make install` to install Anvil and all npm packages.
+For version 0.3.2 and above of this functions-toolkit package, [Anvil](https://book.getfoundry.sh/anvil/) is required to run local tests. A `Makefile` is included to automate the installation and build process. Simply run `make install` to install Anvil and all npm packages.
 If you already have anvil and/or foundry (the Foundry toolchain) installed, you would not need to run this. But you may want to run `foundryup` to update your version and `npm install` to install packages.
 
 Chainlink Functions requires signing a terms of service agreement before creating a billing subscription. See this [getting started](https://docs.chain.link/chainlink-functions/getting-started) section in the docs.
@@ -638,6 +638,7 @@ export const maxQueryResponseBytes = 2097152 // Maximum size of incoming HTTP re
   functionsRouterContract: Contract // Mock FunctionsRouter contract
 }
 ```
+where Anvil instance is defined as [such](https://github.com/wevm/anvil.js/blob/main/packages/anvil.js/src/anvil/createAnvil.ts#L10)
 
 Now you can connect to the local Functions testnet RPC node with your preferred blockchain tooling, deploy a FunctionsConsumer contract, instantiate and initialize the`SubscriptionManager`, create, add the consumer contract and fund the subscription, send requests, and use the `ResponseListener` to listen for responses all on your machine.
 

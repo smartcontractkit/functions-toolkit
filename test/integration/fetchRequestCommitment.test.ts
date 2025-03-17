@@ -3,6 +3,8 @@ import { setupLocalTestnetFixture } from '../utils'
 
 import { Contract, Wallet, utils, providers } from 'ethers'
 
+const localhost = 'http://127.0.0.1:8004/'
+
 jest.retryTimes(2, { logErrorsBeforeRetry: true })
 
 describe('fetchRequestCommitment', () => {
@@ -62,7 +64,7 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://127.0.0.1:8004/'),
+      provider: new providers.JsonRpcProvider(`${localhost}`),
       functionsRouterAddress,
       donId,
     })
@@ -105,7 +107,7 @@ describe('fetchRequestCommitment', () => {
 
     const commitment = await fetchRequestCommitment({
       requestId: reqId,
-      provider: new providers.JsonRpcProvider('http://127.0.0.1:8004/'),
+      provider: new providers.JsonRpcProvider(`${localhost}`),
       functionsRouterAddress,
       donId,
       toBlock: 1000,
@@ -119,7 +121,7 @@ describe('fetchRequestCommitment', () => {
     await expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xDummyRequestId',
-        provider: new providers.JsonRpcProvider('http://127.0.0.1:8004/'),
+        provider: new providers.JsonRpcProvider(`${localhost}`),
         functionsRouterAddress,
         donId: 'invalid donId',
       })
@@ -132,7 +134,7 @@ describe('fetchRequestCommitment', () => {
     await expect(async () => {
       await fetchRequestCommitment({
         requestId: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        provider: new providers.JsonRpcProvider('http://127.0.0.1:8004/'),
+        provider: new providers.JsonRpcProvider(`${localhost}`),
         functionsRouterAddress,
         donId,
       })
