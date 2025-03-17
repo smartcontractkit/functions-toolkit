@@ -62,7 +62,8 @@ export const startLocalFunctionsTestnet = async (
   })
 
   // this is a hardcoded private key provided by anvil, defined here: https://book.getfoundry.sh/anvil/#getting-started
-  const privateKey = process.env.PRIVATE_KEY || 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+  const privateKey =
+    process.env.PRIVATE_KEY || 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 
   const admin = new Wallet(privateKey, new providers.JsonRpcProvider(`http://127.0.0.1:${port}`))
 
