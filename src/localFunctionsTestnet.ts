@@ -33,6 +33,9 @@ import type {
   RequestEventData,
 } from './types'
 
+// this chain id is defined here as a default: https://github.com/wevm/viem/blob/main/src/chains/definitions/localhost.ts#L4
+const chainId = 1337
+
 export const startLocalFunctionsTestnet = async (
   simulationConfigPath?: string,
   port = 8545,
@@ -41,28 +44,25 @@ export const startLocalFunctionsTestnet = async (
   try {
     anvil = createAnvil({
       port,
-      chainId: 1337,
+      chainId: chainId,
     })
   } catch (error) {
     console.error('Error creating Anvil instance: ', error)
     console.error(
-      'Please refer to README about how to properly set up the environment, including anvil.',
+      'Please refer to README about how to properly set up the environment, including anvil.\n',
     )
     throw error
   }
 
   await anvil.start()
-  console.log(`Anvil started on port ${port} with chain ID 1337`)
+  console.log(`Anvil started on port ${port} with chain ID 1337\n`)
 
   anvil.on('message', message => {
     console.log('Anvil message:', message)
   })
 
-  let privateKey = process.env.PRIVATE_KEY
-  if (!privateKey) {
-    // this is a hardcoded private key provided by anvil
-    privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-  }
+  // this is a hardcoded private key provided by anvil, defined here: https://book.getfoundry.sh/anvil/#getting-started
+  const PRIVATE_KEY = process.env.PRIVATE_KEY || 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 
   const admin = new Wallet(privateKey, new providers.JsonRpcProvider(`http://127.0.0.1:${port}`))
 

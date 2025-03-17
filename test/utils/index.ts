@@ -76,6 +76,7 @@ const createTestWallets = (port = 8545): Wallet[] => {
 
   // these are hardcoded private keys provided by anvil. you can see these private keys in the console output if you simply run `anvil`
   // using these makes sure that these wallets are properly connected to Anvil local node
+  // check https://book.getfoundry.sh/anvil/#getting-started for more details
   const privateKeys = [
     '59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
     '5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
