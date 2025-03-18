@@ -4,6 +4,7 @@ import { FunctionsRouterSource } from './v1_contract_sources'
 
 import type { BigNumber, providers } from 'ethers'
 
+import { FunctionsTopics } from './events'
 import { FulfillmentCode, type FunctionsResponse } from './types'
 
 export class ResponseListener {
@@ -88,7 +89,27 @@ export class ResponseListener {
 
         const check = async () => {
           const receipt = await this.provider.waitForTransaction(txHash, confirmations, timeoutMs)
-          const updatedId = receipt.logs[0].topics[1]
+
+          // There must be logs in the receipt otherwise it's a chain that doesn't support logs or the tx was reverted
+          if (!receipt.logs) {
+            throw new Error('No logs found in the transaction receipt')
+          }
+
+          // Find the RequestStart event in the logs
+          const requestStartLog = receipt.logs.find(
+            log => log.topics[0] === FunctionsTopics.RequestStart,
+          )
+
+          // Ensure the requestID exists in the logs
+          if (!requestStartLog) {
+            throw new Error('RequestStart event not found in the logs')
+          }
+
+          if (!requestStartLog.topics[1]) {
+            throw new Error('Request ID not found in the logs')
+          }
+
+          const updatedId = requestStartLog.topics[1]
           if (updatedId !== requestId) {
             requestId = updatedId
             const response = await this.listenForResponse(requestId, timeoutMs)
@@ -119,7 +140,7 @@ export class ResponseListener {
     }
 
     this.functionsRouter.on(
-      'RequestProcessed',
+      { topics: [FunctionsTopics.RequestProcessed] },
       (
         requestId: string,
         _subscriptionId: BigNumber,
