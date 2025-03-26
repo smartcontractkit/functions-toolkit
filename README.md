@@ -53,7 +53,7 @@ To create a SubscriptionManager you need an object with 3 inputs.
 
 1. An instance of the Ethers.js [signer class](https://docs.ethers.org/v5/api/signer/#Signer). Ensure you have a [provider](https://docs.ethers.org/v5/api/providers/) connected so you can communicate with the blockchain. You can use Infura or Alchemy or another provider that provides access to [blockchains that Chainlink Functions supports](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
 2. The contract address for the LINK token for the corresponding blockchain network from [here](https://docs.chain.link/resources/link-token-contracts).
-3. The contract address for the Functions Router for the corresponding blockchain network contract from [here](<(https://docs.chain.link/chainlink-functions/supported-networks)>).
+3. The contract address for the Functions Router for the corresponding blockchain network contract from [here](https://docs.chain.link/chainlink-functions/supported-networks).
 
 Then create an instance of the SubscriptionManager by passing those 3 inputs.
 
