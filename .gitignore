@@ -8,3 +8,5 @@ dist
 /coverage
 coverage.json
 *report.json
+
+*.env
