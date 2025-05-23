@@ -8,7 +8,7 @@ import {
 } from './v1_contract_sources'
 
 import type { Signer } from 'ethers'
-import type { TransactionReceipt } from '@ethersproject/abstract-provider'
+import type { TransactionReceipt, TransactionResponse } from '@ethersproject/abstract-provider'
 
 import type {
   SubConsumerConfig,
@@ -21,6 +21,7 @@ import type {
   SubCreateConfig,
   EstimateCostConfig,
 } from './types'
+import { FunctionsTopics } from './events'
 
 export class SubscriptionManager {
   private signer: Signer
@@ -109,12 +110,31 @@ export class SubscriptionManager {
           : await this.functionsRouter.createSubscriptionWithConsumer(
               subCreateConfig.consumerAddress,
             )
-        const createSubWithConsumerTxReceipt = await createSubWithConsumerTx.wait(
+
+        const txReceipt: TransactionReceipt = await createSubWithConsumerTx.wait(
           subCreateConfig.txOptions?.confirmations,
         )
 
-        const subscriptionId = createSubWithConsumerTxReceipt.events[0].args['subscriptionId']
+        // Search through logs to find the topic that matches the SubscriptionCreated event
+        if (!txReceipt.logs) {
+          throw new Error('No logs present within transaction receipt')
+        }
 
+        const createSubscriptionLog = txReceipt.logs.find(
+          log => log.topics[0] === FunctionsTopics.SubscriptionCreated,
+        )
+
+        // Sanity checking, ensure that the SubscriptionCreated event was found in the log
+        if (!createSubscriptionLog) {
+          throw new Error('No SubscriptionCreated event found in logs')
+        }
+
+        if (!createSubscriptionLog.topics[1]) {
+          throw new Error('No subscriptionId found in logs')
+        }
+
+        // The signature is SubscriptionCreated(uint64,address) so the subscriptionId is the second topic
+        const subscriptionId = createSubscriptionLog.topics[1]
         return Number(subscriptionId.toString())
       } catch (error) {
         throw Error(`createSubscriptionWithConsumer failed\n${error}`)
@@ -122,11 +142,34 @@ export class SubscriptionManager {
     }
 
     try {
-      const createSubTx = subCreateConfig?.txOptions?.overrides
+      const createSubTx: TransactionResponse = subCreateConfig?.txOptions?.overrides
         ? await this.functionsRouter.createSubscription(subCreateConfig?.txOptions.overrides)
         : await this.functionsRouter.createSubscription()
-      const createSubTxReceipt = await createSubTx.wait(subCreateConfig?.txOptions?.confirmations)
-      const subscriptionId = createSubTxReceipt.events[0].args['subscriptionId']
+
+      const createSubTxReceipt: TransactionReceipt = await createSubTx.wait(
+        subCreateConfig?.txOptions?.confirmations,
+      )
+
+      // Search through logs to find the topic that matches the SubscriptionCreated event
+      if (!createSubTxReceipt.logs) {
+        throw new Error('No logs present within transaction receipt')
+      }
+
+      const createSubscriptionLog = createSubTxReceipt.logs.find(
+        log => log.topics[0] === FunctionsTopics.SubscriptionCreated,
+      )
+
+      // Sanity checking, ensure that the SubscriptionCreated event was found in the log
+      if (!createSubscriptionLog) {
+        throw new Error('No SubscriptionCreated event found in logs')
+      }
+
+      if (!createSubscriptionLog.topics[1]) {
+        throw new Error('No subscriptionId found in logs')
+      }
+
+      // The signature is SubscriptionCreated(uint64,address) so the subscriptionId is the second topic
+      const subscriptionId = createSubscriptionLog.topics[1]
       return Number(subscriptionId.toString())
     } catch (error) {
       throw Error(`createSubscription failed\n${error}`)
