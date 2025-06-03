@@ -7,6 +7,8 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
+- [Use in Remix](#use-in-remix)
+- [Browser Use](#browser-use)
 - [Prerequisites](#prerequisites)
   - [Functions Billing Subscription Management](#functions-billing-subscription-management)
     - [Subscription Initialization](#subscription-initialization)
@@ -34,7 +36,15 @@ Up-to-date documentation on Chainlink Functions can be found [here](https://docs
     - [Building Functions Request CBOR Bytes](#building-functions-request-cbor-bytes)
   - [Browser use](#browser-use)
 
-# Prerequisites
+# Use in Remix
+
+Chainlink Functions-toolkit can also be imported as a scripting dependency inside [Remix IDE scripts](https://remix-ide.readthedocs.io/en/latest/running_js_scripts.html). The rest of this README contains instructions on how to use the package.
+
+# Browser use
+
+This package can also be used in most modern web browsers. You can import the package in your front-end application, and call the APIs as you would in a back end NodeJs/Deno environment.
+
+# Prerequisites For NodeJS Projects
 
 Install Node.js version `18.18.0` or higher _and_ Deno version `1.36.0` or higher.
 
@@ -638,6 +648,7 @@ export const maxQueryResponseBytes = 2097152 // Maximum size of incoming HTTP re
   functionsRouterContract: Contract // Mock FunctionsRouter contract
 }
 ```
+
 where Anvil instance is defined as [such](https://github.com/wevm/anvil.js/blob/main/packages/anvil.js/src/anvil/createAnvil.ts#L10)
 
 Now you can connect to the local Functions testnet RPC node with your preferred blockchain tooling, deploy a FunctionsConsumer contract, instantiate and initialize the`SubscriptionManager`, create, add the consumer contract and fund the subscription, send requests, and use the `ResponseListener` to listen for responses all on your machine.
@@ -730,6 +741,8 @@ const functionsRequestBytesHexString: string = buildRequestCBOR({
 })
 ```
 
-## Browser use
+# Chainlink Functions Status
 
-This package can also be used in most modern web browsers. You can import the package in your front-end application, and call the APIs as you would in a back end NodeJs/Deno environment.
+**Caution**: Chainlink Functions is still in BETA.
+
+The use of secrets (including your private keys) in scripts inside Remix IDE is an experimental feature that may not operate as expected and is subject to change. Please be aware that Chainlink does not control how your secrets or environment variables are used or accessed within Remix or when executing scripts within Remix, and the safekeeping of secrets and environment variables is your responsibility.
