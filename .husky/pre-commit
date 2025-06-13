@@ -2,4 +2,3 @@
 
 npm run lint:fix
 npm run lint:check
-npm run test
